@@ -4,7 +4,7 @@ Tutorials for Pressio
 ## Cloning
 To clone this repo, use this command:
 ```bash
-git clone --recursive https://github.com/Pressio/pressio.git
+git clone https://github.com/Pressio/pressio.git
 ```
 
 ## Building
