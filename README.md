@@ -1,12 +1,11 @@
+
 # pressio-tutorials
-Tutorials for Pressio
 
-### Cloning
-To clone this repo, use this command:
-```bash
-git clone https://github.com/Pressio/pressio.git
-```
+These tutorials cover a few examples detailing how users can interact
+with `pressio` and apply basic reduced-order models (ROMs) to
+a simple mini-app crafted for this purpose.
 
-### Building
 
+<!-- ### Building
 To build the tutorials, follow [these instructions](./wiki/build.md).
+-->
