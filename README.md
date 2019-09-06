@@ -1,17 +1,15 @@
 # pressio-tutorials
 Tutorials for Pressio
 
-## Cloning
+### Cloning
 To clone this repo, use this command:
 ```bash
 git clone https://github.com/Pressio/pressio.git
 ```
 
-## Building
+### Building
 To build the Tutorials, clone the associated repo:
 ```
 git clone https://github.com/Pressio/pressio-builder.git
 ```
 and follows steps in there.
-
-
