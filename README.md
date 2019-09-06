@@ -9,4 +9,4 @@ git clone https://github.com/Pressio/pressio.git
 
 ### Building
 
-Instructions for building the tutorials are here [](./wiki/build.md)
+To build the tutorials, follow [these instructions](./wiki/build.md).
