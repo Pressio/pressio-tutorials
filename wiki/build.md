@@ -69,7 +69,6 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 	-pressio-src=${PRESSIO_REPOS}/pressio \
 	-packages=rom \
 	-target-dir=${PRESSIO_BUILDS} \
-	-wipe-existing=1 \
 	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-cmake-generator-name=default_for_tutorials
 ```
@@ -83,8 +82,7 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 	-dryrun=0 \
 	-pressio-tutorials-src=${PRESSIO_REPOS}pressio-tutorials \
 	-target-dir=$HOME/Desktop/pressio_builds \
-	-wipe-existing=1 \
-	-build-mode=Debug \
+	-build-mode=Release \
 	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-pressio-path=${PRESSIO_BUILDS}/pressio/install
 ```
