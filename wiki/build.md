@@ -56,7 +56,7 @@ git clone git@github.com:Pressio/pressio-tutorials.git
 We only need Eigen (for now), so you can simply run the command:
 ```bash
 cd ${PRESSIO_REPOS}/pressio-builder
-./main_tpls.sh -dryrun=0 -tpls=eigen -target-dir=${PRESSIO_BUILDS} -wipe-existing=1
+./main_tpls.sh -dryrun=0 -tpls=eigen -target-dir=${PRESSIO_BUILDS}
 ```
 To learn more about the script's command line args, type `./main_tpls.sh -h`.
 
@@ -80,11 +80,10 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 ```bash
 ./main_tutorials.sh \
 	-dryrun=0 \
-	-pressio-tutorials-src=${PRESSIO_REPOS}pressio-tutorials \
+	-pressio-tutorials-src=${PRESSIO_REPOS}/pressio-tutorials \
 	-target-dir=$HOME/Desktop/pressio_builds \
 	-build-mode=Release \
 	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-pressio-path=${PRESSIO_BUILDS}/pressio/install
 ```
 To learn more about the script's command line args, type `./main_tutorials.sh -h`.
-
