@@ -25,12 +25,11 @@ mkdir $HOME/pressio_repos
 mkdir $HOME/pressio_builds
 ```
 
-(b) Create environment variables to refer to these directories:
+(b) To make things easier and cleaner below, create environment variables to refer to these directories:
 ```bash
 export PRESSIO_REPOS=$HOME/pressio_repos
 export PRESSIO_BUILDS=$HOME/pressio_builds
 ```
-this will make things easier and cleaner below.
 
 (c) Unless you already have them, set the following compilers environment variable:
 ```bash
