@@ -1,7 +1,7 @@
 
 # pressio-tutorials
 
-These tutorials cover a few examples detailing how users can interact with `pressio` and demonstrate the basic reduced-order models (ROMs) to capabilities of `pressio`.
+These tutorials cover a few examples detailing how users can interact with `pressio` and demonstrate the basic reduced-order models (ROMs) capabilities of `pressio`.
 
 ## License
 Pressio is released with the following [LICENSE](./LICENSE).
