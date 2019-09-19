@@ -47,53 +47,41 @@
 */
 
 #include "CONTAINERS_ALL"
-#include "ODE_ALL"
-#include "SOLVERS_NONLINEAR"
+#include <Eigen/Core>
 
 int main(int argc, char *argv[]){
 
-  // // parse input file
-  // InputParser parser;
-  // int err = parser.parse(argc, argv);
-  // if (err == 1) return 1;
+  // The current version of pressio makes use of container wrappers
+  // to wrap arbitrary data types. These wrappers are thin layers.
+  // This is a ''constraint'' that will be relaxed in future releases.
+  //
+  // Pressio has predefined knowledge about algebra
+  // data structures from specific libraries, e.g. Trilinos, Eigen, Kokkos.
+  // If your application uses vector/matrix/multivector
+  // classes of one of these libraries, you can easily use pressio as follows.
+  // Suppose that you have an application that is based on Eigen.
+  // Therefore, a vector object "a" in your application looks like:
+  //		Eigen::VectorXd a;
+  //
+  // Now, suppose now that you need to use some functionality in pressio.
+  // The first thing to do would be to wrap your object with a pressio container.
+  // e.g. ::pressio::containers::Vector<Eigen::VectorXd> aW(a);
+  //
+  // If the type you are wrapping is one of the already supported by pressio,
+  // then you have seamless access to all pressio functionalities.
+  // If the type you are wrapping is NOT already knownw to pressio,
+  // then you can still wrap it, but in order to instantiate and use pressio
+  // functionalities you might need to provide functionalities to tell pressio
+  // how to do operations with your data types. Obviously, if pressio
+  // does not anything about your type, it cannot do much.
+  //
 
-  // // get the problem name and stepper
-  // const auto problemName    = parser.problemName_;
-  // const auto odeStepperName = parser.odeStepperName_;
+  // this is dynamic double array in Eigen
+  Eigen::VectorXd a;
 
-  // if ( problemName.compare("ms") == 0 ){
-  //   // types
-  //   using pt = MSTypes;
+  // the corresponding pressio wrapper can be created as follows
+  ::pressio::containers::Vector<Eigen::VectorXd> aW(a);
 
-  //   // functors to use
-  //   typename pt::adv_fnct_t advFunctor;
-  //   typename pt::src_fnct_t srcFunctor(parser.D_);
-
-  //   if (odeStepperName.compare("RungeKutta4") == 0 ){
-  //     runRungeKutta4<pt>(parser, srcFunctor, advFunctor);
-  //   }
-  //   if (odeStepperName.compare("bdf1") == 0 ){
-  //     runBDF1<pt>(parser, srcFunctor, advFunctor);
-  //   }
-  // }
-  // if ( problemName.compare("chemABC") == 0 ){
-  //   // types
-  //   using pt = ChemTypes;
-
-  //   // functors to use
-  //   typename pt::adv_fnct_t advFunctor;
-  //   typename pt::src_fnct_t srcFunctor(parser.K_);
-
-  //   if (odeStepperName.compare("RungeKutta4") == 0){
-  //     runRungeKutta4<pt>(parser, srcFunctor, advFunctor);
-  //   }
-  //   if (odeStepperName.compare("bdf1") == 0 ){
-  //     runBDF1<pt>(parser, srcFunctor, advFunctor);
-  //   }
-  // }
-  // else{
-  //   std::cout << "Invalid problemName in input file " << std::endl;
-  // }
 
   return 0;
 }
