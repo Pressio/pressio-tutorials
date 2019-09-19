@@ -67,7 +67,7 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 ./main_pressio.sh \
 	-dryrun=0 \
 	-pressio-src=${PRESSIO_REPOS}/pressio \
-	-packages=rom \
+	-package-name=rom \
 	-target-dir=${PRESSIO_BUILDS} \
 	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-cmake-generator-name=default_for_tutorials
