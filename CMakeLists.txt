@@ -9,5 +9,5 @@ include_directories(${EIGEN_INCLUDE_DIR} ${PRESSIO_INCLUDE_DIR})
 # where the tutorial mains are located
 set(MAINDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
 
-# eigen fom
 add_executable(tutorial1 ${MAINDIR}/tutorial1.cc)
+add_executable(tutorial2 ${MAINDIR}/tutorial2.cc)
