@@ -7,10 +7,12 @@ This step-by-step page explains how to build the tutorials from scratch on Unix.
 ## Prerequisites
 In order for the steps below to be successful, you need:
 
-* C/C++ compilers: either Clang or GNU.
+* C and C++11 compilers: either Clang or GNU.
 The current version of the tutorials does NOT need MPI. But if you have MPI compiler wrappers, you can use those to build.
 
-* CMake, minimun version 2.8.12.
+* CMake >= 3.11.0 (this is known to work, soon we will provide a detailed list of verified versions);
+
+* Bash >= 3.2.57 (this is known to work, soon we will provide a detailed list of verified versions).
 
 **Note**: we purposefully avoid (for the time being) using distributed data structures in these tutorials because we want a simpler framework to explain some concepts. However, we remark that the code shown in the tutorials can be used for MPI-based distributed data structures with almost no change. This will be explained in more detail within some of the tutorials.
 
@@ -56,7 +58,7 @@ git clone git@github.com:Pressio/pressio-tutorials.git
 We only need Eigen (for now), so you can simply run the command:
 ```bash
 cd ${PRESSIO_REPOS}/pressio-builder
-./main_tpls.sh -dryrun=0 -tpls=eigen -target-dir=${PRESSIO_BUILDS}
+./main_tpls.sh -dryrun=no -tpls=eigen -target-dir=${PRESSIO_BUILDS}
 ```
 To learn more about the script's command line args, type `./main_tpls.sh -h`.
 
@@ -65,7 +67,7 @@ To learn more about the script's command line args, type `./main_tpls.sh -h`.
 From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the command:
 ```bash
 ./main_pressio.sh \
-	-dryrun=0 \
+	-dryrun=no \
 	-pressio-src=${PRESSIO_REPOS}/pressio \
 	-package-name=rom \
 	-target-dir=${PRESSIO_BUILDS} \
@@ -79,7 +81,7 @@ To learn more about the script's command line args, type `./main_pressio.sh -h`.
 From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the command:
 ```bash
 ./main_tutorials.sh \
-	-dryrun=0 \
+	-dryrun=no \
 	-pressio-tutorials-src=${PRESSIO_REPOS}/pressio-tutorials \
 	-target-dir=$HOME/Desktop/pressio_builds \
 	-build-mode=Release \
