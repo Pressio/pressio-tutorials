@@ -11,3 +11,4 @@ set(MAINDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
 
 add_executable(tutorial1 ${MAINDIR}/tutorial1.cc)
 add_executable(tutorial2 ${MAINDIR}/tutorial2.cc)
+add_executable(tutorial3 ${MAINDIR}/tutorial3.cc)

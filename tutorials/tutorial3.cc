@@ -2,7 +2,7 @@
 //@HEADER
 // ************************************************************************
 //
-// tutorial2.cc
+// tutorial3.cc
 //                     		  Pressio
 //                             Copyright 2019
 //    National Technology & Engineering Solutions of Sandia, LLC (NTESS)
@@ -48,20 +48,20 @@
 
 #include "CONTAINERS_ALL"
 #include "ODE_EXPLICIT"
-#include <Eigen/Core>
+#include <vector>
 
 struct MyApp{
   using scalar_type   = double;
-  using state_type    = Eigen::Vector
+  using state_type    = std::vector<scalar_type>;
   using velocity_type = state_type;
 
 public:
   void velocity(const state_type & y,
 		scalar_type t,
 		velocity_type & R) const{
-    R(0) = 10. * y(0);
-    R(1) = 10. * y(1);
-    R(2) = 10. * y(2);
+    R[0] = 10. * y[0];
+    R[1] = 10. * y[1];
+    R[2] = 10. * y[2];
   };
 
   velocity_type velocity(const state_type & y,
@@ -72,22 +72,59 @@ public:
   };
 };
 
+
+struct updateOps{
+  using v_t = std::vector<double>;
+
+    static void do_update(v_t & v,
+			  const v_t & v1, const double b){
+    for (size_t i=0; i<v.size(); ++i)
+      v[i] = b*v1[i];
+  }
+
+  static void do_update(v_t & v, const double a,
+			const v_t & v1, const double b){
+    for (size_t i=0; i<v.size(); ++i)
+      v[i] = a*v[i] + b*v1[i];
+  }
+};
+
+struct myops{
+  using update_op = updateOps;
+};
+
+
 int main(int argc, char *argv[]){
 
   // We illustrate here how to leverage the package pressio/ode to do
-  // explicit time-integration for a system of ODEs with Eigen data types,
-  // which is supported by pressio.
+  // explicit time-integration for a system of ODEs with arbitrary data types.
   //
+  // As mentioned in tutorial1, pressio can handle types for which we have wrappers
+  // as well as unknown arbitrary types. While for the former case pressio
+  // knows how to do linear algebra, for the latter case, i.e. unknown types,
+  // pressio does not know which methods those data structures support.
+  //
+  // pressio supports arbitrary type via generic programming and type introspection.
+  // For example, if a vector container wrapper is templated on a Eigen::VectorXd,
+  // pressio detects that and this information propagtes through the classes such that
+  // when operators act on this vector or any other wrapper, pressio leverages the
+  // native algebra of Eigen. If the user instantiates a vector templated on an
+  // arbitrary vector type (for example user-defined), then pressio is also able to
+  // detect that this is an ''unknonw'' type as far as pressio is concerned, and
+  // therefore, the user needs to provide the necessary operations to do the algebra.
+  // These operations can be passed to pressio either as function objects or static methods.
+  // This discussion will be clear from the example below.
+
   // Suppose that you need to use some pressio/ode package for doing explicit time
-  // integration of a system of ODEs which is implemented as in MyApp above.
+  // integration of a system of ODEs which is implemented using the C++ STL.
 
   // For the sake of explanation, MyApp at the top of this page is a class
-  // that defines the target system of ODEs and meets
+  // that defines the target system of ODEs using std::vectors<>, and meets
   // the API needed by pressio to run explicit time integration, i.e.:
   // (a) it has typedefs that pressio detects for scalar, state and velicity
   // (b) it has two overleads for the velocity() method (one void and one non-void)
-
-  // As long as the user-defined class/app or whatever name you want to call has an
+  //
+  // as long as the user-defined class/app or whatever name you want to call has an
   // API as the one in MyApp, then it can be readily used with pressio.
   // Note that if you try to run an explicit time integration with a user-defined system
   // that does not satisfy the target API, pressio throws a compile-time error.
@@ -119,8 +156,20 @@ int main(int argc, char *argv[]){
   (*yptr)[0] = 1.; (*yptr)[1] = 2.; (*yptr)[2] = 3.;
 
   // *** Stage (f): create the pressio stepper ***
+  // since we are using a custom data stucture type, we also need to inform pressio
+  // how to do operations, like vector additions, etc.
+  // To this end, we use a class "myops" see above, with static methods
+  // with specific signatures tht pressio will look for.
+  // pressio will complain at compile time if:
+  // - you forget to pass the myops template to the stepper
+  // - your ops class type does not have the right methods needed for the stepper you want
+  // - your ops class type does not have methods that match what pressio needs.
+  // pressio will introspect your type to check if it is an admissible ops class
+
+  using my_custom_ops = myops<scalar_t>
+
   using stepper_t = ode::ExplicitStepper<
-    ode::ExplicitEnum::Euler, state_t, app_t, res_t, scalar_t>;
+    ode::ExplicitEnum::Euler, state_t, app_t, res_t, scalar_t, my_custom_ops>;
   stepper_t stepperObj(y, appObj);
 
   // *** Stage (g): integrated in time ***
