@@ -48,7 +48,11 @@ To build the tutorials, you need to clone the following repos:
 ```bash
 cd ${PRESSIO_REPOS}
 git clone git@github.com:Pressio/pressio-builder.git
+cd pressio-builder; git checkout v0.1.0; cd -
+
 git clone --recursive git@github.com:Pressio/pressio.git
+cd pressio; git checkout v0.1.0; cd -
+
 git clone git@github.com:Pressio/pressio-tutorials.git
 ```
 
@@ -83,7 +87,7 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 ./main_tutorials.sh \
 	-dryrun=no \
 	-pressio-tutorials-src=${PRESSIO_REPOS}/pressio-tutorials \
-	-target-dir=$HOME/Desktop/pressio_builds \
+	-target-dir=${PRESSIO_BUILDS} \
 	-build-mode=Release \
 	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-pressio-path=${PRESSIO_BUILDS}/pressio/install

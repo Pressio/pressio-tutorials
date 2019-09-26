@@ -48,6 +48,7 @@
 
 #include "CONTAINERS_ALL"
 #include "ODE_EXPLICIT"
+#include "ODE_INTEGRATORS"
 #include <vector>
 
 struct MyApp{
@@ -73,24 +74,26 @@ public:
 };
 
 
+template <typename scalar_t>
 struct updateOps{
-  using v_t = std::vector<double>;
+  using v_t = std::vector<scalar_t>;
 
     static void do_update(v_t & v,
-			  const v_t & v1, const double b){
+			  const v_t & v1, const scalar_t b){
     for (size_t i=0; i<v.size(); ++i)
       v[i] = b*v1[i];
   }
 
-  static void do_update(v_t & v, const double a,
-			const v_t & v1, const double b){
+  static void do_update(v_t & v, const scalar_t a,
+			const v_t & v1, const scalar_t b){
     for (size_t i=0; i<v.size(); ++i)
       v[i] = a*v[i] + b*v1[i];
   }
 };
 
+template <typename scalar_t>
 struct myops{
-  using update_op = updateOps;
+  using update_op = updateOps<scalar_t>;
 };
 
 
@@ -144,7 +147,7 @@ int main(int argc, char *argv[]){
   // in this case, pressio behind the scenes detects what type you
   // are passing as template argument and since it is not (for now) supported,
   // pressio still wraps the object but does not know how to do anythin else.
-  using state_t = containers::Vector<native_state_t>;
+  using state_t = ::pressio::containers::Vector<native_state_t>;
 
   // *** Stage (d): create the initial state object ***
   state_t y(3);
@@ -166,20 +169,22 @@ int main(int argc, char *argv[]){
   // - your ops class type does not have methods that match what pressio needs.
   // pressio will introspect your type to check if it is an admissible ops class
 
-  using my_custom_ops = myops<scalar_t>
+  using my_custom_ops = myops<scalar_t>;
 
-  using stepper_t = ode::ExplicitStepper<
-    ode::ExplicitEnum::Euler, state_t, app_t, res_t, scalar_t, my_custom_ops>;
+  constexpr auto stepper_name = ::pressio::ode::ExplicitEnum::Euler;
+  using stepper_t = ::pressio::ode::ExplicitStepper<
+    stepper_name, state_t, app_t, scalar_t, my_custom_ops>;
   stepper_t stepperObj(y, appObj);
 
   // *** Stage (g): integrated in time ***
   scalar_t dt = 0.1;
-  ode::integrateNSteps(stepperObj, y, 0.0, dt, 1ul);
+  ::pressio::ode::integrateNSteps(stepperObj, y, 0.0, dt, 1ul);
 
   // note that for this system and settings, the solution printed should be 2,4,6
-  std::cout << (*yptr2)[0] << " "
-	    << (*yptr2)[1] << " "
-	    << (*yptr2)[2] << std::endl;
+  std::cout << "Computed solution: ["
+            << (*yptr)[0] << " " << (*yptr)[1] << " " << (*yptr)[2] << "] "
+	    << "Expected solution: [2,4,6] "
+	    << std::endl;
 
   return 0;
 }
