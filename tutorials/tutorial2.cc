@@ -48,11 +48,12 @@
 
 #include "CONTAINERS_ALL"
 #include "ODE_EXPLICIT"
+#include "ODE_INTEGRATORS"
 #include <Eigen/Core>
 
 struct MyApp{
   using scalar_type   = double;
-  using state_type    = Eigen::Vector
+  using state_type    = Eigen::VectorXd;
   using velocity_type = state_type;
 
 public:
@@ -107,7 +108,7 @@ int main(int argc, char *argv[]){
   // in this case, pressio behind the scenes detects what type you
   // are passing as template argument and since it is not (for now) supported,
   // pressio still wraps the object but does not know how to do anythin else.
-  using state_t = containers::Vector<native_state_t>;
+  using state_t = ::pressio::containers::Vector<native_state_t>;
 
   // *** Stage (d): create the initial state object ***
   state_t y(3);
@@ -119,18 +120,21 @@ int main(int argc, char *argv[]){
   (*yptr)[0] = 1.; (*yptr)[1] = 2.; (*yptr)[2] = 3.;
 
   // *** Stage (f): create the pressio stepper ***
-  using stepper_t = ode::ExplicitStepper<
-    ode::ExplicitEnum::Euler, state_t, app_t, res_t, scalar_t>;
+  constexpr auto stepper_name = ::pressio::ode::ExplicitEnum::Euler;
+  using fake_vt = ::pressio::containers::Vector<std::vector<double>>;
+  using stepper_t = ::pressio::ode::ExplicitStepper<
+    stepper_name, state_t, app_t, scalar_t>;
   stepper_t stepperObj(y, appObj);
 
   // *** Stage (g): integrated in time ***
   scalar_t dt = 0.1;
-  ode::integrateNSteps(stepperObj, y, 0.0, dt, 1ul);
+  ::pressio::ode::integrateNSteps(stepperObj, y, 0.0, dt, 1ul);
 
   // note that for this system and settings, the solution printed should be 2,4,6
-  std::cout << (*yptr2)[0] << " "
-	    << (*yptr2)[1] << " "
-	    << (*yptr2)[2] << std::endl;
+  std::cout << "Computed solution: ["
+            << (*yptr)[0] << " " << (*yptr)[1] << " " << (*yptr)[2] << "] "
+	    << "Expected solution: [2,4,6] "
+	    << std::endl;
 
   return 0;
 }
