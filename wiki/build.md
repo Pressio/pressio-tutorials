@@ -51,10 +51,10 @@ To build the tutorials, you need to clone the following repos:
 ```bash
 cd ${PRESSIO_REPOS}
 git clone git@github.com:Pressio/pressio-builder.git
-cd pressio-builder; git checkout v0.1.0; cd -
+cd pressio-builder; git checkout master; cd -
 
-git clone --recursive git@github.com:Pressio/pressio.git
-cd pressio; git checkout v0.1.0; cd -
+git clone git@github.com:Pressio/pressio.git
+cd pressio; git checkout v0.2.0; cd -
 
 git clone git@github.com:Pressio/pressio-tutorials.git
 ```
@@ -78,7 +78,6 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 ./main_pressio.sh \
 	-dryrun=no \
 	-pressio-src=${PRESSIO_REPOS}/pressio \
-	-package-name=rom \
 	-target-dir=${PRESSIO_BUILDS} \
 	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-cmake-generator-name=default_for_tutorials
@@ -99,3 +98,8 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 	-pressio-path=${PRESSIO_BUILDS}/pressio/install
 ```
 To learn more about the script's command line args, type `./main_tutorials.sh -h`.
+
+<!---------------------------------------------------->
+## 6. Running the tutorials
+From the build directory, i.e. `${PRESSIO_BUILDS}/pressio-tutorials/build`, run the executables. 
+
