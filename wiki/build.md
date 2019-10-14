@@ -23,8 +23,7 @@ The current version of the tutorials does NOT need MPI. But if you have MPI comp
 (a) Create (or choose) a directory where you want to clone all repos needed and where to put all builds, e,g.:
 
 ```bash
-mkdir $HOME/pressio_repos
-mkdir $HOME/pressio_builds
+mkdir $HOME/pressio_{repos,builds}
 ```
 
 (b) To make things easier and cleaner below, create environment variables to refer to these directories:
