@@ -80,7 +80,6 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 	-dryrun=no \
 	-pressio-src=${PRESSIO_REPOS}/pressio \
 	-target-dir=${PRESSIO_BUILDS} \
-	-eigen-path=${PRESSIO_BUILDS}/eigen/install \
 	-cmake-generator-name=default_for_tutorials
 ```
 To learn more about the script's command line args, type `./main_pressio.sh -h`.
@@ -101,6 +100,9 @@ From the same directory, i.e. `${PRESSIO_REPOS}/pressio-builder`, run the comman
 To learn more about the script's command line args, type `./main_tutorials.sh -h`.
 
 <!---------------------------------------------------->
-## 6. Running the tutorials
-From the build directory, i.e. `${PRESSIO_BUILDS}/pressio-tutorials/build`, run the executables. 
-
+## 6. Understanding the tutorials
+To understand the tutorials, look at the source codes in `${PRESSIO_REPOS}/pressio-tutorials/tutorials`.
+To run them, from the build directory, i.e. `${PRESSIO_BUILDS}/pressio-tutorials/build`, run the executables as: 
+```bash 
+./executable_name
+```
