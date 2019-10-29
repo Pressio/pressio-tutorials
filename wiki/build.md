@@ -51,7 +51,7 @@ To build the tutorials, you need to clone the following repos:
 cd ${PRESSIO_REPOS}
 
 git clone git@github.com:Pressio/pressio.git
-cd pressio; git checkout v0.2.0; cd -
+cd pressio; git checkout v0.2.1; cd -
 
 git clone git@github.com:Pressio/pressio-builder.git
 cd pressio-builder; git checkout master; cd -
