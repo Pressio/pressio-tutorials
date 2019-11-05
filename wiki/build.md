@@ -10,6 +10,8 @@ In order for the steps below to be successful, you need:
 * C and C++11 compilers: Clang/GNU/Intel.
 The current version of the tutorials does NOT need MPI. But if you have MPI compiler wrappers, you can use those to build.
 
+* wget: this is used to get the source code of Eigen.
+
 * CMake >= 3.11.0.
 
 * Bash >= 3.2.57.
