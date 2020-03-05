@@ -7,4 +7,4 @@ These tutorials cover examples on how users can interact with `pressio` and demo
 Pressio is released with the following [LICENSE](./LICENSE).
 
 ## Building
-To build the tutorials, follow [these instructions](./wiki/build.md).
+To build the tutorials, follow [these instructions](https://github.com/Pressio/pressio-tutorials/wiki/Building-and-Running-pressio-tutorials).
