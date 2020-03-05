@@ -46,9 +46,7 @@
 //@HEADER
 */
 
-#include "CONTAINERS_ALL"
-#include "ODE_EXPLICIT"
-#include "ODE_INTEGRATORS"
+#include "pressio_ode.hpp"
 #include <vector>
 
 struct MyApp{
@@ -75,25 +73,21 @@ public:
 
 
 template <typename scalar_t>
-struct updateOps{
+struct MyOps{
   using v_t = std::vector<scalar_t>;
 
-    static void do_update(v_t & v,
-			  const v_t & v1, const scalar_t b){
+  void do_update(v_t & v, const v_t & v1, const scalar_t b) const
+  {
     for (size_t i=0; i<v.size(); ++i)
       v[i] = b*v1[i];
   }
 
-  static void do_update(v_t & v, const scalar_t a,
-			const v_t & v1, const scalar_t b){
+  void do_update(v_t & v, const scalar_t a,
+		 const v_t & v1, const scalar_t b) const
+  {
     for (size_t i=0; i<v.size(); ++i)
       v[i] = a*v[i] + b*v1[i];
   }
-};
-
-template <typename scalar_t>
-struct myops{
-  using update_op = updateOps<scalar_t>;
 };
 
 
@@ -109,13 +103,12 @@ int main(int argc, char *argv[]){
   //
   // pressio supports arbitrary type via generic programming and type introspection.
   // For example, if a vector container wrapper is templated on a Eigen::VectorXd,
-  // pressio detects that and this information propagtes through the classes such that
-  // when operators act on this vector or any other wrapper, pressio leverages the
-  // native algebra of Eigen. If the user instantiates a vector templated on an
+  // pressio detects that, leverages the native algebra of Eigen.
+  // If the user instantiates a vector templated on an
   // arbitrary vector type (for example user-defined), then pressio is also able to
   // detect that this is an ''unknonw'' type as far as pressio is concerned, and
   // therefore, the user needs to provide the necessary operations to do the algebra.
-  // These operations can be passed to pressio either as function objects or static methods.
+  // These operations can be passed to pressio either as function objects.
   // This discussion will be clear from the example below.
 
   // Suppose that you need to use some pressio/ode package for doing explicit time
@@ -169,12 +162,13 @@ int main(int argc, char *argv[]){
   // - your ops class type does not have methods that match what pressio needs.
   // pressio will introspect your type to check if it is an admissible ops class
 
-  using my_custom_ops = myops<scalar_t>;
+  using my_custom_ops = MyOps<scalar_t>;
+  my_custom_ops ops;
 
-  constexpr auto stepper_name = ::pressio::ode::ExplicitEnum::Euler;
-  using stepper_t = ::pressio::ode::ExplicitStepper<
-    stepper_name, state_t, app_t, scalar_t, my_custom_ops>;
-  stepper_t stepperObj(y, appObj);
+  using ode_tag = ::pressio::ode::explicitmethods::Euler;
+  using stepper_t = ::pressio::ode::ExplicitStepper<ode_tag, state_t, app_t,
+						    scalar_t, my_custom_ops>;
+  stepper_t stepperObj(y, appObj, ops);
 
   // *** Stage (g): integrated in time ***
   scalar_t dt = 0.1;

@@ -46,9 +46,7 @@
 //@HEADER
 */
 
-#include "CONTAINERS_ALL"
-#include "ODE_EXPLICIT"
-#include "ODE_INTEGRATORS"
+#include "pressio_ode.hpp"
 #include <Eigen/Core>
 
 struct MyApp{
@@ -120,10 +118,8 @@ int main(int argc, char *argv[]){
   (*yptr)[0] = 1.; (*yptr)[1] = 2.; (*yptr)[2] = 3.;
 
   // *** Stage (f): create the pressio stepper ***
-  constexpr auto stepper_name = ::pressio::ode::ExplicitEnum::Euler;
-  using fake_vt = ::pressio::containers::Vector<std::vector<double>>;
-  using stepper_t = ::pressio::ode::ExplicitStepper<
-    stepper_name, state_t, app_t, scalar_t>;
+  using ode_tag = ::pressio::ode::explicitmethods::Euler;
+  using stepper_t = ::pressio::ode::ExplicitStepper<ode_tag, state_t, app_t, scalar_t>;
   stepper_t stepperObj(y, appObj);
 
   // *** Stage (g): integrated in time ***

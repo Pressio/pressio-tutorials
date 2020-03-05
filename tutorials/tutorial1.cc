@@ -46,21 +46,13 @@
 //@HEADER
 */
 
-#include "CONTAINERS_ALL"
+#include "pressio_containers.hpp"
 #include <Eigen/Core>
 
 int main(int argc, char *argv[]){
 
-  // The current version of pressio makes use of container wrappers
-  // to wrap arbitrary data types. These wrappers are thin layers.
-  // This is a ''constraint'' that will be relaxed in future releases.
-  // We are indeed working on simply introspecting the templates parameters
-  // passed by the user to check the admissibility of the types based on
-  // the functionality the user wants to use/instantiate.
-  // However, we will keep supporting within pressio wrapper for types
-  // from common libraries like Trilinos, Eigen, Kokkos since this allow the user to
-  // not worry about providing custom functions or functions objects to
-  // specify how to do operations on these structures.
+  // Pressio makes use of container wrappers to wrap arbitrary data types.
+  // These wrappers are thin layers.
   //
   // Pressio has predefined knowledge about algebra data structures
   // from specific libraries, e.g. Trilinos, Eigen, Kokkos.
@@ -80,11 +72,10 @@ int main(int argc, char *argv[]){
   // then you have seamless access to all pressio functionalities, since pressio
   // behind the scenes knows how to do algebra with these objects and in fact
   // leverages the native algebra functionalities of the target library.
-  // If the type you are wrapping is NOT already knownw to pressio,
+  // If the type you are wrapping is NOT already known to pressio,
   // then you can still wrap it, but in order to instantiate and use pressio
   // functionalities you might need to provide functionalities to tell pressio
-  // how to do operations with your data types. Obviously, if pressio
-  // does not anything about your type, it cannot do much.
+  // how to do operations with your data types.
   // An example of this will be shown in tutorial3.cc
 
   // this is dynamic double array in Eigen
