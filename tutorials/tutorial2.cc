@@ -63,11 +63,8 @@ public:
     R(2) = 10. * y(2);
   };
 
-  velocity_type velocity(const state_type & y,
-			 scalar_type t) const{
-    velocity_type R(y);
-    velocity(y, t, R);
-    return R;
+  velocity_type createVelocity() const{
+    return velocity_type(3);
   };
 };
 
@@ -119,12 +116,12 @@ int main(int argc, char *argv[]){
 
   // *** Stage (f): create the pressio stepper ***
   using ode_tag = ::pressio::ode::explicitmethods::Euler;
-  using stepper_t = ::pressio::ode::ExplicitStepper<ode_tag, state_t, app_t, scalar_t>;
+  using stepper_t = ::pressio::ode::ExplicitStepper<ode_tag, state_t, app_t>;
   stepper_t stepperObj(y, appObj);
 
   // *** Stage (g): integrated in time ***
   scalar_t dt = 0.1;
-  ::pressio::ode::integrateNSteps(stepperObj, y, 0.0, dt, 1ul);
+  ::pressio::ode::advanceNSteps(stepperObj, y, 0.0, dt, 1ul);
 
   // note that for this system and settings, the solution printed should be 2,4,6
   std::cout << "Computed solution: ["
