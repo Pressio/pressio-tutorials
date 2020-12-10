@@ -14,6 +14,7 @@ set(BURG1DDIR ${CMAKE_CURRENT_SOURCE_DIR}/burgers1d)
 add_executable(tutorial1 ${TUTDIR}/tutorial1.cc)
 add_executable(tutorial2 ${TUTDIR}/tutorial2.cc)
 add_executable(tutorial3 ${TUTDIR}/tutorial3.cc)
+add_executable(tutorial4 ${TUTDIR}/tutorial4.cc)
 
 #add_executable(tutorial4 ${TUTDIR}/tutorial4/tutorial4.cc)
 #target_include_directories(tutorial4 BEFORE PUBLIC ${BURG1DDIR})
