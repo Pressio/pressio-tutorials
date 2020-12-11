@@ -51,18 +51,15 @@
 template <typename scalar_t>
 struct MyOps
 {
-  using z_t = std::vector<scalar_t>;
-  using A_t = std::vector<std::vector<scalar_t>>;
-
   // z = beta*z + alpha * A * x
   // where x is something that is subscritable as x(i)
   template< typename x_t>
   void product(pressio::nontranspose,
 	       scalar_t alpha,
-	       const A_t & A,
+	       const std::vector<std::vector<scalar_t>> & A,
 	       const x_t & x,
 	       scalar_t beta,
-	       z_t & z) const
+	       std::vector<scalar_t> & z) const
   {
     // obviously not efficient, just for demonstration
     for (std::size_t i=0; i<A.size(); ++i)
@@ -120,7 +117,7 @@ int main(int argc, char *argv[])
   using decoder_jac_t	= pressio::containers::DenseMatrix<native_phi_t>;
 
   // *** fill phi ***
-  // create a native phi with 10 rows and 3 columns and fill with ones
+  // create a native phi and fill with ones
   native_phi_t phiNative(6);
   for (auto & iRow : phiNative){
     iRow.resize(2, 1.);
@@ -129,8 +126,8 @@ int main(int argc, char *argv[])
   // *** construct decoder  ***
   using ops_t = MyOps<scalar_t>;
   using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t, ops_t>;
-  // Need to pass the native matrix and an object that knows
-  // how to compute the operations (see MyOps at the top)
+  // Need to pass the native phi (here we assume the native type is copy-constructible)
+  // and an object that knows how to compute the operations (see MyOps at top)
   ops_t ops;
   decoder_t decoder(phiNative, ops);
 
