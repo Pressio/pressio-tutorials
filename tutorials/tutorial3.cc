@@ -90,6 +90,8 @@ struct MyOps
 
 int main(int argc, char *argv[])
 {
+  std::cout << "Running tutorial 3\n";
+
   /*
     We illustrate here how to leverage the package pressio/ode to do
     explicit time-integration for a system of ODEs with arbitrary data types.
@@ -126,31 +128,31 @@ int main(int argc, char *argv[])
 
   // for this tutorial, we run Forward Euler on the system defined by MyApp.
 
-  // *** Stage (a): define some types ***
+  // *** define some types ***
   using app_t		= MyApp;
   using scalar_t	= typename app_t::scalar_type;
   using native_state_t  = typename app_t::state_type;
   using native_veloc_t  = typename app_t::velocity_type;
 
-  // *** Stage (b): create the app object ***
+  // *** create the app object ***
   app_t appObj;
 
-  // *** Stage (c): define pressio wrapper types for the state ***
+  // *** define pressio wrapper types for the state ***
   // in this case, pressio behind the scenes detects what type you
   // are passing as template argument and since it is not (for now) supported,
   // pressio still wraps the object but does not know how to do anythin else.
   using state_t = ::pressio::containers::Vector<native_state_t>;
 
-  // *** Stage (d): create the initial state object ***
+  // *** create the initial state object ***
   state_t y(3);
 
-  // *** Stage (e): fill the initial state vector ***
+  // *** fill the initial state vector ***
   // any pressio wrapper provides the data() method to get a pointer to the wrapped object
   auto yptr = y.data();
   // i can now use regular std vector [] operator to fill in
   (*yptr)[0] = 1.; (*yptr)[1] = 2.; (*yptr)[2] = 3.;
 
-  // *** Stage (f): create the pressio stepper ***
+  // *** create the pressio stepper ***
   // since we are using a custom data stucture type, we also need to inform pressio
   // how to do operations, like vector additions, etc.
   // To this end, we use a class "myops" see above, with static methods
@@ -168,7 +170,7 @@ int main(int argc, char *argv[])
   using stepper_t = ::pressio::ode::ExplicitStepper<ode_tag, state_t, app_t, my_custom_ops>;
   stepper_t stepperObj(y, appObj, ops);
 
-  // *** Stage (g): integrated in time ***
+  // *** integrated in time ***
   scalar_t dt = 0.1;
   ::pressio::ode::advanceNSteps(stepperObj, y, 0.0, dt, 1ul);
 

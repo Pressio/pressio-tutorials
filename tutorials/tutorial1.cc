@@ -49,40 +49,61 @@
 #include "pressio_containers.hpp"
 #include <Eigen/Core>
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
+  std::cout << "Running tutorial 1\n";
 
-  // Pressio makes use of container wrappers to wrap arbitrary data types.
-  // These wrappers are thin layers.
-  //
-  // Pressio has predefined knowledge about algebra data structures
-  // from specific libraries, e.g. Trilinos, Eigen, Kokkos.
-  // If your application uses vector/matrix/multivector
-  // classes of one of these libraries, you can easily use pressio as follows.
-  //
-  // Suppose that you have an application that is based on Eigen.
-  // Therefore, a (dynamic) vector object "a" in your application looks like:
-  //
-  //		Eigen::VectorXd a;
-  //
-  // Now, suppose now that you need to use some functionality in pressio.
-  // The first thing to do would be to wrap your object with a pressio container.
-  // e.g. ::pressio::containers::Vector<Eigen::VectorXd> aW(a);
-  //
-  // If the type you are wrapping is one of the already supported by pressio,
-  // then you have seamless access to all pressio functionalities, since pressio
-  // behind the scenes knows how to do algebra with these objects and in fact
-  // leverages the native algebra functionalities of the target library.
-  // If the type you are wrapping is NOT already known to pressio,
-  // then you can still wrap it, but in order to instantiate and use pressio
-  // functionalities you might need to provide functionalities to tell pressio
-  // how to do operations with your data types.
-  // An example of this will be shown in tutorial3.cc
+  /*
+    Pressio makes use of container wrappers to wrap arbitrary data types.
+    These wrappers are thin layers.
+
+    Pressio has predefined knowledge about data structures
+    from specific libraries, e.g. Trilinos, Eigen, Kokkos.
+    Over time, this support will be extended.
+    If your application uses vector/matrix/multivector classes of one
+    of these libraries, you can easily use pressio as follows.
+
+    Suppose that you have an application that is based on Eigen.
+    Therefore, a (dynamic) vector object "a" in your application looks like:
+
+    Eigen::VectorXd a;
+
+    Now, suppose now that you need to use some functionality in pressio.
+    To do so, you need to wrap your object with a pressio container.
+    e.g. ::pressio::containers::Vector<Eigen::VectorXd> aW(a);
+
+    If the type you are wrapping is one of the already supported by pressio,
+    then you have seamless access to all pressio functionalities, since pressio
+    behind the scenes knows how to do algebra with these objects and in fact
+    leverages the native algebra functionalities of the target library.
+    If the type you are wrapping is NOT already known to pressio,
+    then you can still wrap it, but in order to instantiate and use pressio
+    functionalities you need to provide functionalities to tell pressio
+    how to do operations with your data types.
+    See tutorials{3,5} for examples showing using arbitrary types.
+  */
 
   // this is dynamic double array in Eigen
-  Eigen::VectorXd a;
+  Eigen::VectorXd a(5);
+  a.setConstant(2.2);
 
   // the corresponding pressio wrapper can be created as follows
+  // Note that here pressio makes a deep copy of the object.
+  // This is because the target ROM algorithms are all implemented
+  // such that pressio owns the data and queries the full-order application
+  // to computed things.
   ::pressio::containers::Vector<Eigen::VectorXd> aW(a);
+
+  // we can verify that a deep copy is made
+  for (auto i=0; i<aW.extent(0); ++i)
+    std::cout << "aW(i) = " << aW(i)
+	      << " expected = " << 2.2
+	      << std::endl;
+
+  // note that above we used the "extent" method
+  // extent(i) works for all pressio container wrappers
+  // - extent(i) for 1d objects,
+  // - extent(i,j) for 2d objects
 
   return 0;
 }

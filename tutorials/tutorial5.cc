@@ -2,7 +2,7 @@
 //@HEADER
 // ************************************************************************
 //
-// tutorial4.cc
+// tutorial5.cc
 //                     		  Pressio
 //                             Copyright 2019
 //    National Technology & Engineering Solutions of Sandia, LLC (NTESS)
@@ -48,12 +48,39 @@
 
 #include "pressio_rom.hpp"
 
+template <typename scalar_t>
+struct MyOps
+{
+  using z_t = std::vector<scalar_t>;
+  using A_t = std::vector<std::vector<scalar_t>>;
+
+  // z = beta*z + alpha * A * x
+  // where x is something that is subscritable as x(i)
+  template< typename x_t>
+  void product(pressio::nontranspose,
+	       scalar_t alpha,
+	       const A_t & A,
+	       const x_t & x,
+	       scalar_t beta,
+	       z_t & z) const
+  {
+    // obviously not efficient, just for demonstration
+    for (std::size_t i=0; i<A.size(); ++i)
+    {
+      z[i] += beta*z[i];
+      for (std::size_t j=0; j<A[i].size(); ++j){
+	z[i] += alpha*A[i][j]*x(j);
+      }
+    }
+  }
+};
+
 int main(int argc, char *argv[])
 {
-  std::cout << "Running tutorial 4\n";
+  std::cout << "Running tutorial 5\n";
 
   /*
-   creating a linear decoder (or mapping)
+   creating a linear decoder (or mapping) for arbitrary type.
 
    --why and what--:
    one of the main assumptions of projection-based ROMs
@@ -72,32 +99,40 @@ int main(int argc, char *argv[])
    The Jacobian of the mapping is: d(yFom)/d(yRom) = phi.
 
    --details--:
-   Here we demonstate how to create a linear decoder object using Eigen types.
-   For other types already known to pressio (e.g. Trilinos), it would work similarly.
-   If you work with an arbitrary type currrently unknown to pressio, see tutorial5.cc
+   Here we demonstate how to create a linear decoder object for a type that
+   is NOT know to pressio: this means pressio does not know how to compute
+   operations on this type, so the user is responsible to pass the ops.
+   This tutorial has some similarities to tutorial3.cc since that one
+   also deals with how to use pressio::ode for an arbitrary type.
   */
 
   // *** define some types ***
   // here we assume your FOM application uses an Eigen vector for the state
   // and an Eigen matrix as the type for the Jacobian
-  using native_fom_state_t = Eigen::VectorXd;
-  using native_phi_t	   = Eigen::MatrixXd;
+  using scalar_t	   = double;
+  using native_fom_state_t = std::vector<scalar_t>;
+  using native_phi_t	   = std::vector<std::vector<scalar_t>>;
+
   // the wrapped types
+  // what happens in pressio: std::vector is treated as unknwon type by pressio
+  // so effectively pressio::containers::Vector is labeled as an "arbitrary" type
   using fom_state_t	= pressio::containers::Vector<native_fom_state_t>;
   using decoder_jac_t	= pressio::containers::DenseMatrix<native_phi_t>;
 
   // *** fill phi ***
-  // for simplicity, create a native phi with 10 rows and 3 columns
-  // and fill with ones
-  native_phi_t phiNative(6, 2);
-  phiNative.setConstant(1.);
+  // create a native phi with 10 rows and 3 columns and fill with ones
+  native_phi_t phiNative(6);
+  for (auto & iRow : phiNative){
+    iRow.resize(2, 1.);
+  }
 
   // *** construct decoder  ***
-  using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t>;
-  // here we demonstrate moving phiNative to avoid a deep copy, but one can
-  // also do `decoderObj(phi)` which implies a copy of the matrix.
-  // Obviously, if the matrix is large avoiding a copy is useful.
-  decoder_t decoder(std::move(phiNative));
+  using ops_t = MyOps<scalar_t>;
+  using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t, ops_t>;
+  // Need to pass the native matrix and an object that knows
+  // how to compute the operations (see MyOps at the top)
+  ops_t ops;
+  decoder_t decoder(phiNative, ops);
 
   // *** construct reduced state  ***
   // typically, pressio reduced states for ROMs use Eigen or Kokkos (if enabled)
@@ -112,7 +147,7 @@ int main(int argc, char *argv[])
 
   // *** check solution ***
   // yFom should be = [4. 4. .... 4.]
-  for (auto i=0; i<yFom.extent(0); ++i)
+  for (auto i=0; i<6; ++i)
     std::cout << "i= " << i
 	      << ", yFom(i) = "  << yFom(i)
 	      << ", expected = " << 4.
