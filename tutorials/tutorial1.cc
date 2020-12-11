@@ -101,9 +101,9 @@ int main(int argc, char *argv[])
 	      << std::endl;
 
   // note that above we used the "extent" method
-  // extent(i) works for all pressio container wrappers
-  // - extent(i) for 1d objects,
-  // - extent(i,j) for 2d objects
+  // extent(k) works for all pressio container wrappers
+  // - extent(k1) for 1d objects,
+  // - extent(k1,k2) for 2d objects
 
   return 0;
 }
