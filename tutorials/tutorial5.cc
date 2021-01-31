@@ -66,7 +66,7 @@ struct MyOps
     {
       z[i] += beta*z[i];
       for (std::size_t j=0; j<A[i].size(); ++j){
-	z[i] += alpha*A[i][j]*x(j);
+       z[i] += alpha*A[i][j]*x(j);
       }
     }
   }
@@ -77,65 +77,51 @@ int main(int argc, char *argv[])
   std::cout << "Running tutorial 5\n";
 
   /*
-   creating a linear decoder (or mapping) for arbitrary type.
-
-   --why and what--:
-   one of the main assumptions of projection-based ROMs
-   is to approximate a FOM state, yFom, as:
-
-     yFom = g(yRom)
-
-   where yRom is the reduced state, also called generalized coordinates,
-   and g() is a mapping between the two.
-   If g() is linear, then we can write:
+   creating a linear decoder (or mapping) object representing
 
      yFom = phi * yRom
 
-   where phi is a matrix (for the time being, assume it constant).
-   A linear decoder in pressio represents exactly this linear mapping.
-   The Jacobian of the mapping is: d(yFom)/d(yRom) = phi.
-
-   --details--:
-   Here we demonstate how to create a linear decoder object for a type that
-   is NOT know to pressio: this means pressio does not know how to compute
-   operations on this type, so the user is responsible to pass the ops.
-   This tutorial has some similarities to tutorial3.cc since that one
-   also deals with how to use pressio::ode for an arbitrary type.
+   where yFom is the FOM state, yRom is the reduced state,
+   and phi is a matrix (for the time being, assume it constant).
   */
 
-  // *** define some types ***
-  // here we assume your FOM application uses an Eigen vector for the state
-  // and an Eigen matrix as the type for the Jacobian
+  // *** define types ***
+  // the FOM application uses std::vector
   using scalar_t	   = double;
   using native_fom_state_t = std::vector<scalar_t>;
   using native_phi_t	   = std::vector<std::vector<scalar_t>>;
 
   // the wrapped types
-  // what happens in pressio: std::vector is treated as unknwon type by pressio
-  // so effectively pressio::containers::Vector is labeled as an "arbitrary" type
-  using fom_state_t	= pressio::containers::Vector<native_fom_state_t>;
-  using decoder_jac_t	= pressio::containers::DenseMatrix<native_phi_t>;
+  // what happens in pressio when we wrap native_fom_state_t and native_phi_t?
+  // Practically, both pressio::containers::Vector<native_fom_state_t>
+  // and pressio::containers::DenseMatrix<native_fom_state_t> are "labeled"
+  // as "arbitrary" wrapper types for which pressio does not know how to operate on.
+  using fom_state_t   = pressio::containers::Vector<native_fom_state_t>;
+  using decoder_jac_t = pressio::containers::DenseMatrix<native_phi_t>;
 
   // *** fill phi ***
   // create a native phi and fill with ones
   native_phi_t phiNative(6);
   for (auto & iRow : phiNative){
-    iRow.resize(2, 1.);
+    iRow.resize(3, 1.);
   }
 
   // *** construct decoder  ***
-  using ops_t = MyOps<scalar_t>;
+  // Since the FOM types are "arbitrary", we need to declare the
+  // decoder type by passing as a template argument the type of
+  // class (see MyOps struct in this file) containing kernels for operating on the data.
+  // And we need to pass an object to the constructor of the decoder
+  // an object that knows how to compute the the operations needed.
+  using ops_t     = MyOps<scalar_t>;
   using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t, ops_t>;
-  // Need to pass the native phi (here we assume the native type is copy-constructible)
-  // and an object that knows how to compute the operations (see MyOps at top)
   ops_t ops;
   decoder_t decoder(phiNative, ops);
 
   // *** construct reduced state  ***
-  // typically, pressio reduced states for ROMs use Eigen or Kokkos (if enabled)
+  // use Eigen for the ROM state
   using rom_state_t = pressio::containers::Vector<Eigen::VectorXd>;
-  rom_state_t yRom(2);
-  // set yRom = 2.
+  rom_state_t yRom(3);
+  // fill with 2.
   pressio::ops::fill(yRom, 2.);
 
   // *** apply mapping ***
