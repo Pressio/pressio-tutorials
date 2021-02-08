@@ -71,7 +71,7 @@ if __name__== "__main__":
   if method == 'qsampling':
     snapshots = np.zeros((0,3*nx*ny))
     for i in range(0,9):
-      data = np.fromfile('solution' + str(i) + '.bin',dtype='float64')
+      data = np.fromfile('../solution' + str(i) + '.bin',dtype='float64')
       nt = int(np.size(data)/(nx*ny*3))
       ulocal = np.reshape(data,(nt,3*nx*ny) )
       snapshots = np.append(snapshots,ulocal,axis=0)

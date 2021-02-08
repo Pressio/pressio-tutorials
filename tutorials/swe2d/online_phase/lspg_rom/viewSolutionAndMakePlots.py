@@ -11,6 +11,7 @@ if __name__== "__main__":
   nx = 128 
   ny = 128
   fom_final_time = 10.
+  rom_final_time = 10.
   K = 30
   animate = False
   def index_mapper(i,j):
@@ -28,7 +29,7 @@ if __name__== "__main__":
 
 
   data_rom = np.fromfile('solution.bin')
-  y_Ref = np.fromfile('state_ref.bin')
+  yRef = np.fromfile('state_ref.bin')
   basis = np.genfromtxt('basis.txt')
   nt_rom = int(np.size(data_rom)/(K))
   u_rom = np.reshape(data_rom,(nt_rom,K) )
