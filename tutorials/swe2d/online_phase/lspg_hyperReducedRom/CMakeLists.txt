@@ -1,0 +1,4 @@
+add_executable(run_lspg_with_hyperreduction run_lspg_with_hyperreduction.cc)
+configure_file(viewSolutionAndMakePlots.py viewSolutionAndMakePlots.py COPYONLY)
+
+

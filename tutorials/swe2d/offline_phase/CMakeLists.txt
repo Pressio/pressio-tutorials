@@ -1,0 +1,3 @@
+add_executable(run_fom_for_training_params run_fom_for_training_params.cc)
+add_subdirectory(supporting_python_scripts)
+
