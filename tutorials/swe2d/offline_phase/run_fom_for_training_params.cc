@@ -34,21 +34,23 @@ int main(int argc, char *argv[]){
   using app_rhs_t	= typename app_t::velocity_type;
   using app_jacob_t	= typename app_t::jacobian_type;
 
+  // Create arrays for parameter sweep
+  std::vector<double> params0Array{3.,6.,9.}; //parameter controls gravity
+  double              params1 = 0.125; //parameter controls the magnitude of the initial pulse (kept constant here)
+  std::vector<double> params2Array{0.05,0.15,0.25}; // parameter controls the forcing
 
+  // Construct the app
   int nx = 128;
   int ny = 128;
-  scalar_t params[3];
-  std::vector<double> params0Array{3.,6.,9.}; //parameter controls gravity
-  std::vector<double> params2Array{0.05,0.15,0.25}; // parameter controls the forcing
-  scalar_t params1 = 0.125;
-
-  params[0] = params0Array[0]; 
-  params[1] = 0.125; //parameter controls the magnitude of the initial pulse (kept constant here)
-  params[2] = params2Array[0]; 
   scalar_t Lx = 5;
   scalar_t Ly = 5;
-  scalar_t mu_ic = params1;
+  scalar_t params[3];
+  params[0] = params0Array[0]; 
+  params[1] = params1; 
+  params[2] = params2Array[0]; 
   app_t appObj(Lx,Ly,nx,ny,params);
+
+
   scalar_t t = 0;
   scalar_t et = 10.;
   scalar_t dt = 0.02;
@@ -76,7 +78,7 @@ int main(int argc, char *argv[]){
       params[2] = params2Array[params2Counter];
       appObj.setParams(params);
 
-      ode_state_t y(appObj.getGaussianIC(params1));
+      ode_state_t y(appObj.getGaussianIC(params[1]));
 
       stepper_t stepperObj(y, appObj);
 
