@@ -1,7 +1,7 @@
-
 #include "pressio_rom_lspg.hpp"
 #include "pressio_apps.hpp"
-//#include "utils_eigen.hpp"
+
+
 
 template <typename T = std::size_t>
 auto convertFromVVecToMultiVec(
@@ -69,14 +69,11 @@ int main(int argc, char *argv[])
 {
   pressio::log::initialize(pressio::logto::terminal);
 
-  std::string checkStr {"PASSED"};
-
-  using fom_t		= pressio::apps::swe2d;
-  using scalar_t	= typename fom_t::scalar_type;
-
   // -------------------------------------------------------
   // create FOM object
   // -------------------------------------------------------
+  using fom_t		= pressio::apps::swe2d;
+  using scalar_t	= typename fom_t::scalar_type;
   constexpr int nx = 128;
   constexpr int ny = 128;
   scalar_t params[3];
@@ -88,10 +85,6 @@ int main(int argc, char *argv[])
   scalar_t Lx = 5;
   scalar_t Ly = 5;
   fom_t appObj(Lx,Ly,nx,ny,params);
-  scalar_t t = 0;
-  scalar_t et = 10.;
-  scalar_t dt = 0.01;
-
 
   // -------------------------------------------------------
   // read basis
@@ -110,19 +103,22 @@ int main(int argc, char *argv[])
   using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t>;
   decoder_t decoderObj(phi);
 
+  // -------------------------------------------------------
+  // create reference state 
+  // -------------------------------------------------------
   native_state_t yRef(appObj.getGaussianIC(params[1]));
+
   // -------------------------------------------------------
   // create ROM problem
   // -------------------------------------------------------
   using lspg_state_t = pressio::containers::Vector<Eigen::Matrix<scalar_t,-1,1>>;
-
   // define ROM state
   lspg_state_t yROM(romSize);
   // initialize to zero (reference state is IC)
   pressio::ops::fill(yROM, 0.0);
 
   // define LSPG type
-  using ode_tag  = pressio::ode::implicitmethods::Euler;
+  using ode_tag  = pressio::ode::implicitmethods::CrankNicolson;
   auto lspgProblem = pressio::rom::lspg::createDefaultProblemUnsteady<ode_tag>(
     appObj, decoderObj, yROM, yRef);
 
@@ -135,15 +131,24 @@ int main(int argc, char *argv[])
 
   // GaussNewton solver with normal equations
   auto solver = pressio::rom::lspg::createGaussNewtonSolver(lspgProblem, yROM, linSolverObj);
-  auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
   solver.setTolerance(1e-13);
   solver.setMaxIterations(10);
 
+  scalar_t t = 0;
+  scalar_t et = 10.;
+  scalar_t dt = 0.02;
+  auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
+
   // define observer
   observer<lspg_state_t,native_state_t> Obs(yRef);
+
+  auto startTime = std::chrono::high_resolution_clock::now();
   // solve
   pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs,solver);
   auto yFomFinal = lspgProblem.fomStateReconstructorCRef()(yROM);
   Obs.closeFile();
+  auto finishTime = std::chrono::high_resolution_clock::now();
+  const std::chrono::duration<double> elapsed2 = finishTime - startTime;
+  std::cout << "Walltime (single ROM run) = " << elapsed2.count() << '\n';
   return 0;
 }

@@ -1,2 +1,3 @@
 add_subdirectory(offline_phase)
 add_subdirectory(online_phase)
+add_subdirectory(offline_phase_uq)

@@ -1,4 +1,3 @@
-
 #include "pressio_rom_lspg.hpp"
 #include "pressio_apps.hpp"
 
@@ -62,36 +61,17 @@ struct observer{
 int main(int argc, char *argv[])
 {
   pressio::log::initialize(pressio::logto::terminal);
-  std::string checkStr {"PASSED"};
 
   using fom_t		= pressio::apps::swe2d_hyper<std::vector<int>>;
   using scalar_t	= typename fom_t::scalar_type;
 
   // -------------------------------------------------------
-  // create FOM object
+  // Read in information for ROM and hyper-reducction 
   // -------------------------------------------------------
-  constexpr int nx = 128;
-  constexpr int ny = 128;
-  scalar_t params[3];
-  std::ifstream params_file("../novel_params.txt");
-  for (int i = 0; i < 3; i++){
-    params_file >> params[i];
-  }
-  params_file.close();
-
-  scalar_t Lx = 5;
-  scalar_t Ly = 5;
-  scalar_t mu_ic = params[1];
-  scalar_t t = 0;
-  scalar_t et = 10.;
-  scalar_t dt = 0.01;
-
-
   int romSize;
   int sampleMeshSize;
   int sampleMeshPlusStencilSize;
-
-  //======== Read in information to enable hyper-reduction=================
+  //======== Read in information on ROM size and sample/stencil mesh=========
   std::ifstream info_file("info_file.txt");
   info_file >> romSize;
   std::cout << romSize << std::endl;;
@@ -103,10 +83,32 @@ int main(int argc, char *argv[])
             << "| |  sampleMeshPlusStencilSize " << sampleMeshPlusStencilSize
             << std::endl;
 
+  // Create data structures to contain sample mesh index information
   std::vector<int> sm_gids(sampleMeshSize);
-  Eigen::VectorXd sm_rel_lids(3*sampleMeshSize);
   std::vector<int> smps_gids(sampleMeshPlusStencilSize);
+  Eigen::VectorXd sm_rel_lids(3*sampleMeshSize);
+  
+  // Required for the app
+  /*
+    read in the global indices of the sample mesh. Note that we could alternatively extract these 
+    from the information contained in sm_rel_lids and and smps_gids 
+  */
+  std::ifstream sample_mesh_gids_file("sample_mesh_gids.txt");
+  for (int i =0; i < sampleMeshSize ; i++){
+    sample_mesh_gids_file >> sm_gids[i];
+  }
+  sample_mesh_gids_file.close();
 
+  // Required for the app
+  /*
+    read in the global indices of the stencil mesh. The underlying app is a structured solver, 
+    and these indices allow us to find the correct location on a structured grid
+  */
+  std::ifstream sample_mesh_gids_plus_stencil_file("sample_mesh_plus_stencil_gids.txt");
+  for (int i =0; i < sampleMeshPlusStencilSize; i++){
+    sample_mesh_gids_plus_stencil_file >>smps_gids[i];
+  }
+  sample_mesh_gids_plus_stencil_file.close();
 
   // Required for Pressio
   /*
@@ -123,33 +125,20 @@ int main(int argc, char *argv[])
   }
   sample_mesh_rel_lids_file.close();
   pressio::containers::Vector<Eigen::VectorXd> sampleMeshRelIds(sm_rel_lids);
-  
-  // Required for the app
-  /*
-    read in the global indices of the stencil mesh. The underlying app is a structured solver, 
-    and these indices allow us to find the correct location on a structured grid
-  */
-  std::ifstream sample_mesh_gids_plus_stencil_file("sample_mesh_plus_stencil_gids.txt");
-  for (int i =0; i < sampleMeshPlusStencilSize; i++){
-    sample_mesh_gids_plus_stencil_file >>smps_gids[i];
-  }
-  sample_mesh_gids_plus_stencil_file.close();
-
-
-  // Required for the app
-  /*
-    read in the global indices of the sample mesh. Note that we could alternatively extract these 
-    from the information contained in sm_rel_lids and and smps_gids 
-  */
-  std::ifstream sample_mesh_gids_file("sample_mesh_gids.txt");
-  for (int i =0; i < sampleMeshSize ; i++){
-    sample_mesh_gids_file >> sm_gids[i];
-  }
-  sample_mesh_gids_file.close();
-
   //============
 
   // Construct the app 
+  constexpr int nx = 128;
+  constexpr int ny = 128;
+  scalar_t params[3];
+  std::ifstream params_file("../novel_params.txt");
+  for (int i = 0; i < 3; i++){
+    params_file >> params[i];
+  }
+  params_file.close();
+  scalar_t Lx = 5;
+  scalar_t Ly = 5;
+
   fom_t appObj(Lx,Ly,nx,ny,params,sm_gids,smps_gids);
 
   // -------------------------------------------------------
@@ -163,29 +152,28 @@ int main(int argc, char *argv[])
   // ------------------------------------------------------
   // construct decoder 
   // ------------------------------------------------------
-
   using native_state_t  = typename fom_t::state_type;
   using fom_state_t  = pressio::containers::Vector<native_state_t>;
   using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t>;
   decoder_t decoderObj(phi);
 
   // create the reference vector (on the stencil mesh).
-  native_state_t yRef(appObj.getGaussianIC(mu_ic));
+  native_state_t yRef(appObj.getGaussianIC(params[1]));
   // For post processing, we also make a vector on the full mesh
-  native_state_t yRefFull(appObj.getGaussianICFull(mu_ic)); 
+  native_state_t yRefFull(appObj.getGaussianICFull(params[1])); 
 
   // -------------------------------------------------------
   // create ROM problem
   // -------------------------------------------------------
-  using lspg_state_t = pressio::containers::Vector<Eigen::Matrix<scalar_t,-1,1>>;
 
+  using lspg_state_t = pressio::containers::Vector<Eigen::Matrix<scalar_t,-1,1>>;
   // define ROM state
   lspg_state_t yROM(romSize);
   // initialize to zero (reference state is the initial condition)
   pressio::ops::fill(yROM, 0.0);
 
   // define LSPG type
-  using ode_tag  = pressio::ode::implicitmethods::Euler;
+  using ode_tag  = pressio::ode::implicitmethods::CrankNicolson;
   auto lspgProblem = pressio::rom::lspg::createHyperReducedProblemUnsteady<ode_tag>(appObj, decoderObj, yROM, yRef,sampleMeshRelIds);
 
   // linear solver
@@ -197,17 +185,25 @@ int main(int argc, char *argv[])
 
   // GaussNewton solver with normal equations
   auto solver = pressio::rom::lspg::createGaussNewtonSolver(lspgProblem, yROM, linSolverObj);
-  auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
   solver.setTolerance(1e-6);
   solver.setMaxIterations(10);
+
+
+  scalar_t t = 0;
+  scalar_t et = 10.;
+  scalar_t dt = 0.02;
+  auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
   // define observer
   observer<lspg_state_t,native_state_t> Obs(yRefFull);
   // solve
+  auto startTime = std::chrono::high_resolution_clock::now();
   pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs,solver);
   auto yFomFinal = lspgProblem.fomStateReconstructorCRef()(yROM);
   auto solNorm = (*yFomFinal.data()).norm();
   std::cout << std::setprecision(14) << solNorm << std::endl;
   Obs.closeFile();
-  std::cout << checkStr << std::endl;
+  auto finishTime = std::chrono::high_resolution_clock::now();
+  const std::chrono::duration<double> elapsed2 = finishTime - startTime;
+  std::cout << "Walltime (single ROM run) = " << elapsed2.count() << '\n';
   return 0;
 }

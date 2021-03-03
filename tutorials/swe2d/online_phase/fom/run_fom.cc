@@ -75,7 +75,10 @@ int main(int argc, char *argv[]){
   pressio::solvers::nonlinear::createNewtonRaphson(stepperObj, y,linSolverObj);
   NonLinSolver.setTolerance(1e-11);
 
+  auto startTime = std::chrono::high_resolution_clock::now();
   pressio::ode::advanceNSteps(stepperObj, y, t, dt, Nsteps,Obs, NonLinSolver);
-  Obs.closeFile();
+  auto finishTime = std::chrono::high_resolution_clock::now();
+  const std::chrono::duration<double> elapsed2 = finishTime - startTime;
+  std::cout << "Walltime (single FOM run) = " << elapsed2.count() << '\n';  Obs.closeFile();
   return 0;
 }

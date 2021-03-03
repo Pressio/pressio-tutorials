@@ -126,6 +126,28 @@ if __name__== "__main__":
   np.savetxt('info_file.txt',info_file_array,fmt='%i')
 
 
+
+  ## create plot for sample mesh (here just re-read in files so this snippet of code can be copied to other locations)
+  sm_ids = np.genfromtxt('sample_mesh_gids.txt',dtype='int')
+  sm_ids_plot = np.zeros((nx*ny))
+  sm_ids_plot[sm_ids] = 1
+  sm_ids = np.reshape(sm_ids_plot,(nx,ny))
+
+  smps_ids = np.genfromtxt('sample_mesh_plus_stencil_gids.txt',dtype='int')
+  smps_ids_plot = np.zeros((nx*ny))
+  smps_ids_plot[smps_ids] = 1
+  smps_ids = np.reshape(smps_ids_plot,(nx,ny))
+
+
+  plt.spy(smps_ids,marker='s',markersize=1.5,color='red')
+  plt.spy(sm_ids,marker='s',markersize=1.5,color='black')
+  plt.xlabel(r'$x$ index')
+  plt.ylabel(r'$y$ index')
+
+  plt.savefig('samplemesh.png', format="png", bbox_inches='tight', dpi=300)
+
+
+
   ### convert final solution file from binary to .txt for docker
   #data_fom = np.fromfile('solution100.bin')
   #np.savetxt('solution100_fom.txt',data_fom)
