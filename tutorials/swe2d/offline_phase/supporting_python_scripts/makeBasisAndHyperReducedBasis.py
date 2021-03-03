@@ -3,7 +3,8 @@
 import copy
 import scipy.linalg
 import numpy as np
-
+import pressiotools.linalg as ptla
+import matplotlib.pyplot as plt
 np.random.seed(1)
 def get_gid_from_ij(i,j):
   return int( (j%ny)*nx + i%nx )
@@ -21,16 +22,21 @@ if __name__== "__main__":
   nBasis = 10
 
   def pod(S):
-    U,S,V = np.linalg.svd(S,full_matrices='False')
-    K = nBasis
-    return U[:,0:K]
-
-  def pod2(S):
-    Kern = np.dot(S.transpose(),S)
-    u,sigma_sqr,_ = np.linalg.svd(Kern)
-    sigma = np.sqrt(sigma_sqr)
-    U = np.dot(S,1./sigma*u)
-    return U[:,0:nBasis]
+    #construct svd obect
+    svdO = ptla.Svd()
+    dim1,dim2 = np.shape(S)
+    if (dim1 <= dim2):
+      #compute the thin svd
+      svdO.computeThin( ptla.MultiVector(np.asfortranarray(S)))
+      U = svdO.viewLeftSingVectorsLocal()
+      return U[:,0:nBasis]
+    else:
+     Kern = np.dot(S.transpose(),S)
+     svdO.computeThin( ptla.MultiVector(np.asfortranarray(Kern)))
+     sigma = np.sqrt(svdO.viewSingValues())
+     u = svdO.viewLeftSingVectorsLocal()
+     U = np.dot(S,1./sigma*u)
+     return U[:,0:nBasis]   
 
   print('Building basis!')
   snapshots = np.zeros((0,3*nx*ny))
@@ -46,7 +52,7 @@ if __name__== "__main__":
   for i in range(0,3):
     snapshots_l = np.rollaxis(snapshots[:,:,i],1)
     print('Performing SVD of matrix of size ' + str(np.shape(snapshots_l)))
-    PhiA[i] = pod2(snapshots_l)
+    PhiA[i] = pod(snapshots_l)
 
   K1 = np.shape(PhiA[0])[1]
   K2 = np.shape(PhiA[1])[1]
