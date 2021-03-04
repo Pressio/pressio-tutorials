@@ -18,7 +18,7 @@ if __name__== "__main__":
   nx = 128
   ny = 128
   N_cell = nx*ny
-  N_sample = 100
+  N_sample = 2000
   nBasis = 10
 
   def pod(S):
