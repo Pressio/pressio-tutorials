@@ -17,5 +17,6 @@ add_executable(tutorial3 ${TUTDIR}/tutorial3.cc)
 add_executable(tutorial4 ${TUTDIR}/tutorial4.cc)
 add_executable(tutorial5 ${TUTDIR}/tutorial5.cc)
 
+add_subdirectory(tutorials/swe2d)
 #add_executable(tutorial4 ${TUTDIR}/tutorial4/tutorial4.cc)
 #target_include_directories(tutorial4 BEFORE PUBLIC ${BURG1DDIR})

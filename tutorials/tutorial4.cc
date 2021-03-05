@@ -53,57 +53,39 @@ int main(int argc, char *argv[])
   std::cout << "Running tutorial 4\n";
 
   /*
-   creating a linear decoder (or mapping)
-
-   --why and what--:
-   one of the main assumptions of projection-based ROMs
-   is to approximate a FOM state, yFom, as:
-
-     yFom = g(yRom)
-
-   where yRom is the reduced state, also called generalized coordinates,
-   and g() is a mapping between the two.
-   If g() is linear, then we can write:
+   creating a linear decoder (or mapping) object representing
 
      yFom = phi * yRom
 
-   where phi is a matrix (for the time being, assume it constant).
-   A linear decoder in pressio represents exactly this linear mapping.
-   The Jacobian of the mapping is: d(yFom)/d(yRom) = phi.
-
-   --details--:
-   Here we demonstate how to create a linear decoder object using Eigen types.
-   For other types already known to pressio (e.g. Trilinos), it would work similarly.
-   If you work with an arbitrary type currrently unknown to pressio, see tutorial5.cc
+   where yFom is the FOM state, yRom is the reduced state,
+   and phi is a matrix (for the time being, assume it constant).
   */
 
-  // *** define some types ***
-  // here we assume your FOM application uses an Eigen vector for the state
-  // and an Eigen matrix as the type for the Jacobian
+  // *** define types ***
   using native_fom_state_t = Eigen::VectorXd;
   using native_phi_t	   = Eigen::MatrixXd;
-  // the wrapped types
-  using fom_state_t	= pressio::containers::Vector<native_fom_state_t>;
-  using decoder_jac_t	= pressio::containers::DenseMatrix<native_phi_t>;
+  // wrap types using pressio containers
+  using fom_state_t   = pressio::containers::Vector<native_fom_state_t>;
+  using decoder_jac_t = pressio::containers::DenseMatrix<native_phi_t>;
 
-  // *** fill phi ***
-  // for simplicity, create a native phi with 10 rows and 3 columns
-  // and fill with ones
-  native_phi_t phiNative(6, 2);
+  // *** create native phi ***
+  // for simplicity, phi is filled with ones
+  native_phi_t phiNative(6, 3);
   phiNative.setConstant(1.);
 
   // *** construct decoder  ***
   using decoder_t = pressio::rom::LinearDecoder<decoder_jac_t, fom_state_t>;
-  // here we demonstrate moving phiNative to avoid a deep copy, but one can
-  // also do `decoderObj(phi)` which implies a copy of the matrix.
+  // by moving phiNative (since Eigen supports move semantics) we avoid a deep copy.
+  // Note that after the move, you should not use phiNative directly.
+  // One also do `decoderObj(phi)` which implies a copy of the matrix.
   // Obviously, if the matrix is large avoiding a copy is useful.
   decoder_t decoder(std::move(phiNative));
 
   // *** construct reduced state  ***
-  // typically, pressio reduced states for ROMs use Eigen or Kokkos (if enabled)
+  // pressio ROM state is always either Eigen or Kokkos (if enabled)
   using rom_state_t = pressio::containers::Vector<Eigen::VectorXd>;
-  rom_state_t yRom(2);
-  // set yRom = 2.
+  rom_state_t yRom(3);
+  // fill with 2.
   pressio::ops::fill(yRom, 2.);
 
   // *** apply mapping ***
@@ -111,7 +93,7 @@ int main(int argc, char *argv[])
   decoder.applyMapping(yRom, yFom);
 
   // *** check solution ***
-  // yFom should be = [4. 4. .... 4.]
+  // yFom should be = [4. 4. ..., 4.]
   for (auto i=0; i<yFom.extent(0); ++i)
     std::cout << "i= " << i
 	      << ", yFom(i) = "  << yFom(i)
