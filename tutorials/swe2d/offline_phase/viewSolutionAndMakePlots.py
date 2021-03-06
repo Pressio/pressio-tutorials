@@ -8,8 +8,8 @@ axis_font = {'size':20,'family':'serif'}
 
 if __name__== "__main__":
   ## Post processing file. Makes plots of solution h at x,y=1.25
-  nx = 128 
-  ny = 128
+  nx = 64
+  ny = nx
   fom_final_time = 10.
   animate = True
   def index_mapper(i,j):
@@ -18,8 +18,7 @@ if __name__== "__main__":
   ##data goes in the following order
   # h_{11}^1, u_{11}^1, v_{11}^1, h_{12}^1, ... , h_{11}^2
 
-  # load nearest neighbors solution
-  data_fom = np.fromfile('../solution0.bin')
+  data_fom = np.fromfile('solution0.bin')
   nt_fom = int(np.size(data_fom)/(nx*ny*3))
   u_fom = np.reshape(data_fom,(nt_fom,3*nx*ny) )
   u_fom = np.reshape(u_fom,(nt_fom,nx,ny,3))
@@ -33,7 +32,7 @@ if __name__== "__main__":
   plt.tight_layout()
   fig.savefig('result.png', format="png", bbox_inches='tight', dpi=300)
   plt.close("all")
-  
+
   if animate:
     x = np.linspace(0,5,nx)
     y = np.linspace(0,5,ny)
@@ -46,4 +45,3 @@ if __name__== "__main__":
       ax.plot_surface(x,y,u_fom[i,:,:,0],cmap=cm.jet)
       ax.set_zlim(np.amin(u_fom[...,0]),np.amax(u_fom[...,0]))
       plt.pause(0.001)
-

@@ -5,6 +5,7 @@ import scipy.linalg
 import numpy as np
 import pressiotools.linalg as ptla
 import matplotlib.pyplot as plt
+
 np.random.seed(1)
 def get_gid_from_ij(i,j):
   return int( (j%ny)*nx + i%nx )
@@ -15,11 +16,11 @@ def get_ij_from_gid(gid):
   return int( i), int(j)
 
 if __name__== "__main__":
-  nx = 128
-  ny = 128
+  nx = 64
+  ny = nx
   N_cell = nx*ny
-  N_sample = 2000
-  nBasis = 10
+  N_sample = int(0.1 * N_cell) # use 10%
+  nBasis = 10  # num basis per dof
 
   def pod(S):
     #construct svd obect
@@ -36,12 +37,14 @@ if __name__== "__main__":
      sigma = np.sqrt(svdO.viewSingValues())
      u = svdO.viewLeftSingVectorsLocal()
      U = np.dot(S,1./sigma*u)
-     return U[:,0:nBasis]   
+     return U[:,0:nBasis]
 
+  print('===================')
   print('Building basis!')
+  print('===================')
   snapshots = np.zeros((0,3*nx*ny))
   for i in range(0,9):
-    data = np.fromfile('../solution' + str(i) + '.bin',dtype='float64')
+    data = np.fromfile('solution' + str(i) + '.bin',dtype='float64')
     nt = int(np.size(data)/(nx*ny*3))
     ulocal = np.reshape(data,(nt,3*nx*ny) )
     snapshots = np.append(snapshots,ulocal,axis=0)
@@ -66,6 +69,7 @@ if __name__== "__main__":
 
   print('===================')
   print('Making sample mesh!')
+  print('===================')
   #create random list of cells
   method = 'qsampling'
   sample_mesh = np.zeros(N_sample,dtype='int')
@@ -77,7 +81,7 @@ if __name__== "__main__":
   if method == 'qsampling':
     snapshots = np.zeros((0,3*nx*ny))
     for i in range(0,9):
-      data = np.fromfile('../solution' + str(i) + '.bin',dtype='float64')
+      data = np.fromfile('solution' + str(i) + '.bin',dtype='float64')
       nt = int(np.size(data)/(nx*ny*3))
       ulocal = np.reshape(data,(nt,3*nx*ny) )
       snapshots = np.append(snapshots,ulocal,axis=0)
@@ -131,9 +135,8 @@ if __name__== "__main__":
                               int(np.size(sample_mesh_plus_stencil))])
   np.savetxt('info_file.txt',info_file_array,fmt='%i')
 
-
-
-  ## create plot for sample mesh (here just re-read in files so this snippet of code can be copied to other locations)
+  ## create plot for sample mesh (here just re-read in files
+  ## so this snippet of code can be copied to other locations)
   sm_ids = np.genfromtxt('sample_mesh_gids.txt',dtype='int')
   sm_ids_plot = np.zeros((nx*ny))
   sm_ids_plot[sm_ids] = 1
@@ -143,7 +146,6 @@ if __name__== "__main__":
   smps_ids_plot = np.zeros((nx*ny))
   smps_ids_plot[smps_ids] = 1
   smps_ids = np.reshape(smps_ids_plot,(nx,ny))
-
 
   plt.spy(smps_ids,marker='s',markersize=1.5,color='red')
   plt.spy(sm_ids,marker='s',markersize=1.5,color='black')
@@ -159,4 +161,3 @@ if __name__== "__main__":
   #np.savetxt('solution100_fom.txt',data_fom)
   #data_fom_nn = np.fromfile('solution4.bin')
   #np.savetxt('solution_nn.txt',data_fom_nn)
-

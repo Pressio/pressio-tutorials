@@ -8,12 +8,11 @@ axis_font = {'size':20,'family':'serif'}
 
 if __name__== "__main__":
   ## Post processing file. Makes plots of solution h at x,y=1.25
-  nx = 128 
-  ny = 128
+  nx = 64 
+  ny = 64
   fom_final_time = 10.
   rom_final_time = 10.
-
-  K = 30
+  K = 30 #10 bases * 3 dofs
   animate = False
   def index_mapper(i,j):
     return (j%ny)*nx + i%nx
@@ -22,7 +21,7 @@ if __name__== "__main__":
   # h_{11}^1, u_{11}^1, v_{11}^1, h_{12}^1, ... , h_{11}^2
 
   # load nearest neighbors solution
-  data_fom = np.fromfile('../fom/solution_fom.bin')
+  data_fom = np.fromfile('../fom/solution0.bin')
   nt_fom = int(np.size(data_fom)/(nx*ny*3))
   u_fom = np.reshape(data_fom,(nt_fom,3*nx*ny) )
   u_fom = np.reshape(u_fom,(nt_fom,nx,ny,3))

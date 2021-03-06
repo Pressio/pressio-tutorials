@@ -1,3 +1,0 @@
-configure_file(makeBasisAndHyperReducedBasis.py makeBasisAndHyperReducedBasis.py COPYONLY)
-configure_file(viewSolutionAndMakePlots.py viewSolutionAndMakePlots.py COPYONLY)
-

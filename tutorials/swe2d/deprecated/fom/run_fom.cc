@@ -1,19 +1,23 @@
+
 #include "pressio_ode_implicit.hpp"
 #include "pressio_apps.hpp"
-std::string checkStr {"PASSED"};
+
 template <typename state_t>
-struct observer{
+struct observer
+{
   std::ofstream myfile_;
-  observer(const std::string filename): myfile_(filename,  std::ios::out | std::ios::binary){}
+  observer(const std::string filename)
+    : myfile_(filename,  std::ios::out | std::ios::binary){}
 
   void operator()(size_t step,
   		  double t,
-  		  const state_t & y){
+  		  const state_t & y)
+  {
     auto ydata = *y.data();
     for (int i=0;i<y.extent(0);i++){
       myfile_.write(reinterpret_cast<const char*>(&ydata(i)),sizeof(ydata(i)));
     }
-    std::cout << "Time = " << t << std::endl; 
+    std::cout << "Time = " << t << std::endl;
   }
 
   void closeFile(){
@@ -23,8 +27,8 @@ struct observer{
 
 /*
    Regression test for the 2D Shallow Water Equations with Eigen data structures
-   and Crank Nicolson time stepping. Solution will be written to a solution.bin 
-   output file. 
+   and Crank Nicolson time stepping. Solution will be written to a solution.bin
+   output file.
 */
 
 int main(int argc, char *argv[]){
