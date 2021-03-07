@@ -67,7 +67,7 @@ The full tutorial can be found [here](https://github.com/Pressio/pressio-tutoria
 
 ```cpp
 @codesnippet
-../../../../pressio-tutorials/tutorials/tutorial4.cc
+../../../tutorials/tutorial4.cc
 51:104
 ```
 
@@ -90,7 +90,7 @@ The full tutorial can be found [here](https://github.com/Pressio/pressio-tutoria
 
 ```cpp
 @codesnippet
-../../../../pressio-tutorials/tutorials/tutorial5.cc
+../../../tutorials/tutorial5.cc
 75:137
 ```
 
@@ -101,7 +101,7 @@ you need to pass to the `LinearDecoder` constructor an object to handle that com
 To compute the mapping, pressio will call the `product` method.
 ```cpp
 @codesnippet
-../../../../pressio-tutorials/tutorials/tutorial5.cc
+../../../tutorials/tutorial5.cc
 51:73
 ```
 
