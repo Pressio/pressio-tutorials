@@ -1,0 +1,137 @@
+This page walks through writing a driver file for an L\+S\+PG R\+OM of the shallow water equations. The full code for this coupler is available in the \mbox{[}pressio-\/tutorials repo\mbox{]}((\href{https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_rom/run_lspg.cc}{\texttt{ https\+://github.\+com/\+Pressio/pressio-\/tutorials/blob/swe2d\+\_\+tutorial/tutorials/swe2d/online\+\_\+phase/lspg\+\_\+rom/run\+\_\+lspg.\+cc}}). The first step in writing our driver is to include the relevant headers from the Pressio library. Here, we include \href{https://github.com/Pressio/pressio/blob/master/packages/pressio_apps.hpp}{\texttt{ pressio\+\_\+apps.\+hpp}}, and \href{https://github.com/Pressio/pressio/blob/master/packages/pressio_lspg.hpp}{\texttt{ pressio\+\_\+rom\+\_\+lspg.\+hpp}}, which enable us to access our Shallow Water application and L\+S\+PG capabilities, respectively. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{1:2}
+\end{DoxyCode}
+
+
+The next step for us is to start out int main file, and first we define and initialize the F\+OM. To do this, we define the domain, number of grid points, load in parameter, etc.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{68:87}
+\end{DoxyCode}
+
+
+After constructing the app object, we now read in the bases. For standard L\+S\+PG, we need to read in the bases for all mesh points. Here, we assume the basis exists in a local file named {\itshape basis.\+txt}. The following lines of code read in the basis\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{89:97}
+\end{DoxyCode}
+
+
+We note that the above code uses the {\itshape convert\+From\+V\+Vec\+To\+Multi\+Vec} and {\itshape read\+Basis} functions, which are defined at the top of the script.
+
+Now that we have read in the basis, we create a Pressio decoder object. In this instance where we have a linear basis, the decoder, in essence, computes the product $\boldsymbol \Phi \hat{\boldsymbol x} $. We construct a decoder as follows 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{98:104}
+\end{DoxyCode}
+
+
+Next, we set the reference state for the R\+OM, $\boldsymbol x^{ref}$. Note that this reference state will be used when we reconstruct the state vector, i.\+e., the state will be reconstructed as \[\hat{ \boldsymbol x} = \boldsymbol \Phi \hat{\boldsymbol x} + \boldsymbol x^{ref}\] In this case we set the reference state to be the initial condition, and set the reference states as 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{106:109}
+\end{DoxyCode}
+
+
+We now begin constructing the R\+OM problem. We start by setting our L\+S\+PG state type to be an eigen vector. We note that this is decoupled from the F\+OM, and we could alternatively use, e.\+g., Kokkos. In the following snippet of code, we set this type, initialize the R\+OM state, and set it to be zero. Note that this last step is due to the fact that we employ the initial condition as our R\+OM reference state, so the initial conditions for our R\+OM state are zero. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{111:118}
+\end{DoxyCode}
+
+
+We now construct the L\+S\+PG problem. To do this, we have to define the time marching scheme, which here we set to be the second-\/order Crank Nicolson method. We define this time stepping scheme and construct the L\+S\+PG R\+OM as follows 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{120:123}
+\end{DoxyCode}
+
+
+Now, we need to define the linear and nonlinear solvers use in our L\+S\+PG problem. Here, we employ a least-\/squares conjugate gradient solver, which is constructed via 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{125:130}
+\end{DoxyCode}
+
+
+With these elements defined, we can define a Gauss--Newton solver for our L\+S\+PG R\+OM. We do this in the following snippet off code, and additionally set the convergence tolerance and maximum number of iterations 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{132:135}
+\end{DoxyCode}
+
+
+Next we define information for our time marching. We set the initial time, time step, end time, and total number of time steps, respectively, 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{137:140}
+\end{DoxyCode}
+
+
+Next, we construct an observer. Observers act like hooks, and are called at the end of each time step. The observer itself is defined outside of int main, and here looks like\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{34:61}
+\end{DoxyCode}
+
+
+When initialized, our observer writes the reference state to file in {\itshape state\+\_\+ref.\+bin}. When this observer is called after each time step, it will then write the R\+OM solution to a {\itshape solution.\+bin} file. We initialize this object inside our int main as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{142:143}
+\end{DoxyCode}
+
+
+Finally, we can now use Pressio to solve the R\+OM. The following code advances the R\+OM in time for {\itshape Nsteps} time steps. Note that, as L\+S\+PG consists of solving a series of residual minimization problems, we call this {\itshape solve\+N\+Sequential\+Minimizations}\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/online\_phase/lspg\_rom/run\_lspg.cc}
+\DoxyCodeLine{145:150}
+\end{DoxyCode}
+
+
+Next, we construct a Crank Nicolson time stepper that we will use to march the problem in time. In Pressio, the steppers (1) act on Pressio data types that wrap the native datatype and (2) are templated on the time scheme types for the state, residual, Jacobian, and application. As such, we first define the relevant Pressio wrapped data types, and then define the stepper type. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/offline\_phase/run\_fom\_for\_training\_params.cc}
+\DoxyCodeLine{54:62}
+\end{DoxyCode}
+
+
+Next, we define the linear solver type, and construct the solver. Here, we use the stabilized bi-\/conjugate gradient method. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/offline\_phase/run\_fom\_for\_training\_params.cc}
+\DoxyCodeLine{64:67}
+\end{DoxyCode}
+
+
+Finally, we define the relevant information for our time grid, loop over the parameter instances, and then solve the F\+OM. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@codesnippet}
+\DoxyCodeLine{../../../../pressio-\/tutorials/tutorials/swe2d/offline\_phase/run\_fom\_for\_training\_params.cc}
+\DoxyCodeLine{68:103}
+\end{DoxyCode}
+
+
+This completes our description of writing the L\+S\+PG coupler. Click \href{./md_pages_tutorials_tutorial3.html}{\texttt{ here}} to return to the S\+WE tutorial. 

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.20" xml:lang="en-US">
+  <compounddef id="md_pages_rom_tutorial3_lspg_hyper" kind="page">
+    <compoundname>md_pages_rom_tutorial3_lspg_hyper</compoundname>
+    <title>Tutorial: End-to-end analysis of the Shallow Water Equations with LSPG: Writing the hyperreduced LSPG ROM</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This page walks through writing a driver file for an LSPG ROM with collocation-based hyper-reduction of the shallow water equations. The full code for this coupler is available in the <ulink url="https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc">pressio-tutorials repo</ulink>. The first step in writing our driver is to include the relevant headers from the Pressio library. Here, we include <ulink url="https://github.com/Pressio/pressio/blob/master/packages/pressio_apps.hpp">pressio_apps.hpp</ulink>, and <ulink url="https://github.com/Pressio/pressio/blob/master/packages/pressio_lspg.hpp">pressio_rom_lspg.hpp</ulink>, which enable us to access our Shallow Water application and LSPG capabilities, respectively.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">1:4</highlight></codeline>
+</programlisting></para>
+<para>The next step for us is to start out int main file, and initialize the types for our FOM, as well as the scalar type <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">61:66</highlight></codeline>
+</programlisting></para>
+<para>Note that, here we use the <ulink url=".">swe2d_hyper</ulink> application, opposed to the <ulink url=".">swe2d</ulink> application. These two applications are the same, with the exception that the <emphasis>swe2d_hyper</emphasis> application loads in indices for the sample and stencil mesh, and only computes the velocity/Jacobians at these points.</para>
+<para>The next thing that we will do is read in information on our ROM, and information for hyper-reduction. First, we read in <emphasis>info_file.txt</emphasis>. We wrote this file in the <ulink url=".">training phase</ulink>, and it contains information on the size of the ROM, sample mesh, and sample plus stencil mesh, respectively: <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">68:84</highlight></codeline>
+</programlisting></para>
+<para>Next we create data structures that will contain our sample mesh information: <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">85:90</highlight></codeline>
+</programlisting></para>
+<para>In the above, we created<orderedlist>
+<listitem><para>An <emphasis>std::vector&lt;int&gt; sm_gids</emphasis> that will contain the global x,y indices of the sample mesh indices (this is required by the app). Note that this vector only contains information on the x,y cells used in the sample mesh, but not the number of conserved variables.</para>
+</listitem><listitem><para>An <emphasis>std::vector&lt;int&gt; smps_gids</emphasis> that will contain the global IDs of the stencil mesh (this is also required by the app). Note that this vector only contains information on the x,y cells used in the stencil mesh, but not the number of conserved variables. <linebreak/>
+</para>
+</listitem><listitem><para>An <emphasis>Eigen::VectorXd sm_rel_gids</emphasis> that will contain the IDs of the sample mesh <emphasis>relative</emphasis> to the IDs of the stencil mesh. Note that this vector will contain information about not only the x,y cells, but also the conserved variables, and hence it has <emphasis>3sampleMeshSize</emphasis> entries. This data is required by Pressio, and is discussed more below.</para>
+</listitem></orderedlist>
+</para>
+<para>In point 3, we create an Eigen vector that contains information about the sample mesh indices, relative to the stencil mesh. What do we mean by this? For example, let&apos;s say our FOM has the (zero-based) indices <formula id="27">\[ \mathcal{I}_{\text{FOM}} = \begin{Bmatrix} 0&amp; 1 &amp; 2 &amp; 3 &amp; 4 &amp; 5 &amp; 6 &amp; 7 &amp; 8 &amp; 9 \end{Bmatrix}\]</formula> Let&apos;s say our sample mesh uses indices 3, 5, and 7, <formula id="28">\[ \mathcal{I}_{\text{sample}} = \begin{Bmatrix} 3 &amp; 5 &amp; 7 \end{Bmatrix}\]</formula> Let&apos;s suppose we use a three-point stencil in our numerical method. In this case, the stencil mesh would be <formula id="29">\[ \mathcal{I}_{\text{stencil}} = \begin{Bmatrix} 2&amp; 3 &amp; 4&amp; 5 &amp;6 &amp; 7 &amp; 8\end{Bmatrix}\]</formula> The indices of the <emphasis>sample mesh</emphasis> relative to the indices of the <emphasis>stencil mesh</emphasis> are thus <formula id="30">\[ \mathcal{I}_{\text{rel}} =\begin{Bmatrix} 1 &amp; 3 &amp; 5 \end{Bmatrix}\]</formula> Why do we need this information? In Pressio, when we perform hyperreduction, we need to load in the basis on the <emphasis>stencil mesh</emphasis> so that we can reconstruct the state at these points, and eventually evaluate the velocity/residual. However, we only then evaluate the residual at the <emphasis>sample mesh</emphasis>, and thus we need to know what indices in the <emphasis>stencil mesh</emphasis> correspond to those that are on the <emphasis>sample mesh</emphasis>. Makes sense? Great!</para>
+<para>We load in our sample mesh, stencil mesh, and relative sample mesh information into these vectors. Recall that we created this information in the offline stage. We load this information in by <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">90:126</highlight></codeline>
+</programlisting></para>
+<para>In our final step for the sample mesh, we create a wrap our sample mesh relative IDs with a Pressio type, <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">127:128</highlight></codeline>
+</programlisting></para>
+<para>With these steps complete, we can now proceed with constructing our application. We define the number of grid points, domain size, and load in our testing parameter from file, <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">129:143</highlight></codeline>
+</programlisting></para>
+<para>We note that, in the last line where we construct the application, the construct additionally requires the sample mesh information that we had loaded in.</para>
+<para>Next, we read in the basis. Note that for hyper-reduction, we only read in the basis on the <emphasis>stencil mesh</emphasis>. The basis on the full mesh is not required. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">144:151</highlight></codeline>
+</programlisting></para>
+<para>We then use this basis information to construct the decoder. For hyper-reduced LSPG the decoder, in essence, is used to compute the product <formula id="31">$\boldsymbol \Phi_{\text{stencil}} \hat{\boldsymbol x} $</formula>, where <formula id="32">$\boldsymbol \Phi_{\text{stencil}}$</formula> is the basis on the stencil mesh. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">152:158</highlight></codeline>
+</programlisting></para>
+<para>Next we create our reference state. For hyper-reduction, Pressio requires the reference state on the <emphasis>stencil_mesh</emphasis>. If we want to view the entire solution field, however, we will also need the reference state on the full mesh. Here, we create both entities: <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">160:164</highlight></codeline>
+</programlisting></para>
+<para>We can now create the LSPG problem. First, we create the ROM state vector and initialize it to zero (again, the initial conditions are the reference state), <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">165:174</highlight></codeline>
+</programlisting></para>
+<para>Next, we define our LSPG problem. We again use the Crank Nicolson time marching scheme, and create our LSPG problem with <emphasis>pressio::rom::lspg::createHyperReducedProblemUnsteady</emphasis>: <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">165:174</highlight></codeline>
+</programlisting></para>
+<para>Note that in the constructor we pass the relative sample mesh indices array.</para>
+<para>The remainder of our driver follows closely that which was written for LSPG. We define our linear and nonlinear solvers <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">179:189</highlight></codeline>
+</programlisting></para>
+<para>Then we finally define our time steps sizes, create our observer, and solve the ROM <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/online_phase/lspg_hyperReducedRom/run_lspg_with_hyperreduction.cc</highlight></codeline>
+<codeline><highlight class="normal">192:209</highlight></codeline>
+</programlisting></para>
+<para>This completes our description of writing the LSPG hyper-reduction coupler. Click <ulink url="./md_pages_tutorials_tutorial3.html">here</ulink> to return to the SWE tutorial. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

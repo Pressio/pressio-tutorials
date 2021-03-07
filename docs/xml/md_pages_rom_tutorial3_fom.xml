@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.20" xml:lang="en-US">
+  <compounddef id="md_pages_rom_tutorial3_fom" kind="page">
+    <compoundname>md_pages_rom_tutorial3_fom</compoundname>
+    <title>Tutorial: End-to-end analysis of the Shallow Water Equations with LSPG: Coupling to the FOM</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This page walks through writing a driver file for a FOM of the shallow water equations using Pressio&apos;s time marching schemes. The full code for this coupler is available in the <ulink url="https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/offline_phase/run_fom_for_training_params.cc">pressio-tutorials repo</ulink>. The first step in our driver file is to define types. Here, we start by defining our application to be the swe2d app, and then extract the relevant types from the app. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/offline_phase/run_fom_for_training_params.cc</highlight></codeline>
+<codeline><highlight class="normal">30:37</highlight></codeline>
+</programlisting></para>
+<para>After extracting the relevant types, we now define a parameter grid on which we will solve the FOM, and then initialize the app. The interface required to initialize the app can be viewed in the swe2d.hpp source file, and requires arguments for the length of the domain and number of grid points in the x and y directions, as well as an array that sets the system parameters. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/offline_phase/run_fom_for_training_params.cc</highlight></codeline>
+<codeline><highlight class="normal">37:51</highlight></codeline>
+</programlisting></para>
+<para>Next, we construct a Crank Nicolson time stepper that we will use to march the problem in time. In Pressio, the steppers (1) act on Pressio data types that wrap the native datatype and (2) are templated on the time scheme types for the state, residual, Jacobian, and application. As such, we first define the relevant Pressio wrapped data types, and then define the stepper type. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/offline_phase/run_fom_for_training_params.cc</highlight></codeline>
+<codeline><highlight class="normal">54:62</highlight></codeline>
+</programlisting></para>
+<para>Next, we define the linear solver type, and construct the solver. Here, we use the stabilized bi-conjugate gradient method. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/offline_phase/run_fom_for_training_params.cc</highlight></codeline>
+<codeline><highlight class="normal">64:67</highlight></codeline>
+</programlisting></para>
+<para>Finally, we define the relevant information for our time grid, loop over the parameter instances, and then solve the FOM. <programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
+<codeline><highlight class="normal">../../../../pressio-tutorials/tutorials/swe2d/offline_phase/run_fom_for_training_params.cc</highlight></codeline>
+<codeline><highlight class="normal">68:103</highlight></codeline>
+</programlisting></para>
+<para>This completes our description of writing the FOM coupler. Click <ulink url="./md_pages_tutorials_tutorial3.html">here</ulink> to return to the SWE tutorial. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>
