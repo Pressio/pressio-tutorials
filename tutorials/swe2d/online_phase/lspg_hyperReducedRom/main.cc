@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
   using scalar_t = double;
   int N = 64;
-  scalar_t et = 10.;
+  scalar_t finalTime = 10.;
   scalar_t dt = 0.02;
   scalar_t gravity = 7.5;
   scalar_t pulse   = 0.125;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
   app.add_option("-N,--numCells", N,
 		 "Number of cells along each axis: default = 64");
 
-  app.add_option("-T,--finalTime", et,
+  app.add_option("-T,--finalTime", finalTime,
 		 "Simulation time: default = 10.");
 
   app.add_option("--dt", dt,
@@ -176,16 +176,16 @@ int main(int argc, char *argv[])
 
   // GaussNewton solver with normal equations
   auto solver = pressio::rom::lspg::createGaussNewtonSolver(lspgProblem, yROM, linSolverObj);
-  solver.setTolerance(1e-6);
+  solver.setTolerance(1e-8);
   solver.setMaxIterations(10);
 
   // define observer to monitor time evolution of generalized coordinates
   observer<lspg_state_t,native_state_t> Obs(yRefFull);
 
   // solve
-  const auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
+  const auto Nsteps = static_cast<::pressio::ode::types::step_t>(finalTime/dt);
   auto startTime = std::chrono::high_resolution_clock::now();
-  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, /*Obs,*/ solver);
+  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs, solver);
   auto finishTime = std::chrono::high_resolution_clock::now();
   const std::chrono::duration<double> elapsed2 = finishTime - startTime;
   std::cout << "Walltime (single ROM run) = " << elapsed2.count() << '\n';
@@ -193,8 +193,6 @@ int main(int argc, char *argv[])
   auto yFomFinal = lspgProblem.fomStateReconstructorCRef()(yROM);
   auto solNorm = (*yFomFinal.data()).norm();
   std::cout << std::setprecision(14) << solNorm << std::endl;
-
-  Obs.closeFile();
 
   return 0;
 }

@@ -1,5 +1,5 @@
 
-# Tutorial: Linear Decoder
+# Linear Decoder
 
 @m_class{m-block m-info}
 

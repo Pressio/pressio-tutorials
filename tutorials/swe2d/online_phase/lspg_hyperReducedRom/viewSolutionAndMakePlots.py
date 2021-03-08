@@ -3,17 +3,17 @@
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
+from plotsetting import edit_figure_for_web
+
 axis_font = {'size':20,'family':'serif'}
-#close("all")
 
 if __name__== "__main__":
   ## Post processing file. Makes plots of solution h at x,y=1.25
-  nx = 64 
+  nx = 64
   ny = 64
   fom_final_time = 10.
   rom_final_time = 10.
   K = 30 #10 bases * 3 dofs
-  animate = False
   def index_mapper(i,j):
     return (j%ny)*nx + i%nx
 
@@ -27,7 +27,6 @@ if __name__== "__main__":
   u_fom = np.reshape(u_fom,(nt_fom,nx,ny,3))
   t_fom = np.linspace(0,fom_final_time,nt_fom)
 
-
   data_rom = np.fromfile('solution.bin')
   yRef = np.fromfile('state_ref.bin')
   basis = np.genfromtxt('basis.txt')
@@ -38,25 +37,12 @@ if __name__== "__main__":
   t_rom = np.linspace(0,rom_final_time,nt_rom)
 
   fig, ax = plt.subplots()
-  plt.plot(t_fom, u_fom[:,int(nx/4),int(ny/4), 0],'o',mfc='None',label='Truth')
-  plt.plot(t_rom, u_rom[:,int(nx/4),int(ny/4), 0],lw=2,color='blue',label='LSPG')
-  plt.xlabel(r'$t$',**axis_font)
-  plt.ylabel(r'$h(1.25,1.25,t)$',**axis_font)
-  ax.legend(loc=1)
+  ax.plot(t_fom, u_fom[:,int(nx/4),int(ny/4), 0],'or',mfc='None',label='Truth')
+  ax.plot(t_rom, u_rom[:,int(nx/4),int(ny/4), 0],lw=1.8,color='y',label='hr-LSPG')
+  ax.set_xlabel(r'$t$',**axis_font)
+  ax.set_ylabel(r'$h(1.25,1.25,t)$',**axis_font)
+  leg = plt.legend(loc=1, fancybox=True, framealpha=0)
+  edit_figure_for_web(ax, leg)
   plt.tight_layout()
-  fig.savefig('result.png', format="png", bbox_inches='tight', dpi=300)
+  fig.savefig('result.png', format="png", bbox_inches='tight', dpi=250, transparent=True)
   plt.close("all")
-  
-  if animate:
-    x = np.linspace(0,5,nx)
-    y = np.linspace(0,5,ny)
-    x,y = np.meshgrid(x,y)
-    fig = plt.figure(1)
-
-    for i in range(0,np.shape(u_fom)[0]):
-      plt.clf()
-      ax = fig.gca(projection='3d')
-      ax.plot_surface(x,y,u_fom[i,:,:,0],cmap=cm.jet)
-      ax.set_zlim(np.amin(u_fom[...,0]),np.amax(u_fom[...,0]))
-      plt.pause(0.001)
-

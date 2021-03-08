@@ -1,5 +1,5 @@
 
-# Tutorial: Explicit Time Integration
+# Explicit Time Integration
 
 @m_class{m-block m-info}
 

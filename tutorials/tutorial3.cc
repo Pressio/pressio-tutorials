@@ -68,7 +68,6 @@ public:
   };
 };
 
-
 template <typename scalar_t>
 struct MyOps
 {

@@ -7,13 +7,12 @@
 
 int main(int argc, char *argv[])
 {
-  pressio::log::initialize(pressio::logto::terminal);
   CLI::App app{"LSPG ROM of 2D Shallow Water Equations"};
 
   using scalar_t = double;
   int N = 64;
   int romSizePerDof = 10;
-  scalar_t et = 10.;
+  scalar_t finalTime = 10.;
   scalar_t dt = 0.02;
   scalar_t gravity = 7.5;
   scalar_t pulse   = 0.125;
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
   app.add_option("-k,--romSize", romSizePerDof,
 		 "Number of modes for each dof to use: default = 10");
 
-  app.add_option("-T,--finalTime", et,
+  app.add_option("-T,--finalTime", finalTime,
 		 "Simulation time: default = 10.");
 
   app.add_option("--dt", dt,
@@ -41,6 +40,8 @@ int main(int argc, char *argv[])
 		 "Forcing value(s) to simulate: default = 0.2");
 
   CLI11_PARSE(app, argc, argv);
+
+  pressio::log::initialize(pressio::logto::terminal);
 
   // -------------------------------------------------------
   // create FOM object
@@ -94,22 +95,19 @@ int main(int argc, char *argv[])
 
   // GaussNewton solver with normal equations
   auto solver = pressio::rom::lspg::createGaussNewtonSolver(lspgProblem, yROM, linSolverObj);
-  solver.setTolerance(1e-13);
+  solver.setTolerance(1e-10);
   solver.setMaxIterations(10);
 
-  // define observer
+  // create observer (see rom_time_integration_observer.hpp in parent dir)
   observer<lspg_state_t,native_state_t> Obs(yRef);
 
   // solve
-  const auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
+  const auto Nsteps = static_cast<::pressio::ode::types::step_t>(finalTime/dt);
   auto startTime = std::chrono::high_resolution_clock::now();
-  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt,
-						    Nsteps, Obs,solver);
-  auto yFomFinal = lspgProblem.fomStateReconstructorCRef()(yROM);
+  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs,solver);
   auto finishTime = std::chrono::high_resolution_clock::now();
   const std::chrono::duration<double> elapsed2 = finishTime - startTime;
   std::cout << "Walltime (single ROM run) = " << elapsed2.count() << '\n';
 
-  Obs.closeFile();
   return 0;
 }

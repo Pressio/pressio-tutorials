@@ -4,12 +4,13 @@
 #include "CLI11.hpp"
 
 template <typename state_t>
-struct observer
+class observer
 {
-  std::ofstream myfile_;
-
+public:
   observer(const std::string filename)
     : myfile_(filename,  std::ios::out | std::ios::binary){}
+
+  ~observer(){ myfile_.close(); }
 
   template<typename time_t>
   void operator()(const size_t step,
@@ -25,9 +26,8 @@ struct observer
     }
   }
 
-  void closeFile(){
-    myfile_.close();
-  }
+private:
+  std::ofstream myfile_;
 };
 
 template <typename T>
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
   using scalar_t = double;
 
   int N = 64;
-  scalar_t et = 10.;
+  scalar_t finalTime = 10.;
   scalar_t dt = 0.02;
   std::vector<scalar_t> gravity = {7.5};
   scalar_t pulse  = 0.125;
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
   app.add_option("-N,--numCells", N,
 		 "Number of cells along each axis: default = 64");
 
-  app.add_option("-T,--finalTime", et,
+  app.add_option("-T,--finalTime", finalTime,
 		 "Simulation time: default = 10.");
 
   app.add_option("--dt", dt,
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
   using app_rhs_t   = typename app_t::velocity_type;
   using app_jacob_t = typename app_t::jacobian_type;
 
-  // create FOM object
+  // create FOM object/problem: contains grid, how to compute operators, etc
   app_t appObj(N);
 
   // ode types
@@ -101,14 +101,14 @@ int main(int argc, char *argv[])
   using stepper_t = pressio::ode::ImplicitStepper<
     ode_tag, ode_state_t, ode_residual_t, ode_jacobian_t, app_t>;
 
-  // define solver
+  // linear solver
   using solver_tag = pressio::solvers::linear::iterative::Bicgstab;
   using lin_solver_t = pressio::solvers::linear::Solver<solver_tag, ode_jacobian_t>;
   lin_solver_t linSolverObj;
 
   // solve for each parameter
-  const auto Nsteps = static_cast<::pressio::ode::types::step_t>(et/dt);
-  int fileNo = 0;
+  const auto Nsteps = static_cast<::pressio::ode::types::step_t>(finalTime/dt);
+  int runCounter = 0;
   for (const auto & it0 : gravity)
   {
     for (const auto & it2 : forcing)
@@ -118,26 +118,27 @@ int main(int argc, char *argv[])
       appObj.setParams(params);
 
       // initial condition
-      ode_state_t y(appObj.getGaussianIC(params[1]));
+      ode_state_t state(appObj.getGaussianIC(pulse));
 
       // create stepper
-      stepper_t stepperObj(y, appObj);
+      stepper_t stepperObj(state, appObj);
 
+      // create observer (see class at top) to monitor state during time evolution
+      // such that the data is then stored
       std::string filename = "solution";
-      filename += std::to_string(fileNo) + ".bin";
+      filename += std::to_string(runCounter++) + ".bin";
       observer<ode_state_t> Obs(filename);
-      auto NonLinSolver =
-	pressio::solvers::nonlinear::createNewtonRaphson(stepperObj, y, linSolverObj);
+
+      //create nonlinear solver
+      auto NonLinSolver = pressio::solvers::nonlinear::createNewtonRaphson(stepperObj, state, linSolverObj);
       NonLinSolver.setTolerance(1e-11);
 
+      // run time integration and time execution
       auto startTime = std::chrono::high_resolution_clock::now();
-      pressio::ode::advanceNSteps(stepperObj, y, 0., dt, Nsteps, /*Obs,*/ NonLinSolver);
+      pressio::ode::advanceNSteps(stepperObj, state, 0., dt, Nsteps, Obs, NonLinSolver);
       auto finishTime = std::chrono::high_resolution_clock::now();
       const std::chrono::duration<double> elapsed2 = finishTime - startTime;
-      std::cout << "Walltime (single FOM run) = " << elapsed2.count() << '\n';  Obs.closeFile();
-
-      Obs.closeFile();
-      fileNo += 1;
+      std::cout << "Walltime (single FOM run) = " << elapsed2.count() << '\n';
     }
   }
 

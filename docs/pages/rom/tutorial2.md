@@ -1,5 +1,5 @@
 
-# Tutorial: Default Galerkin with explicit time stepping
+# Default Galerkin with explicit time stepping
 
 @m_class{m-block m-info}
 

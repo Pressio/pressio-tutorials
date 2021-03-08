@@ -4,16 +4,24 @@ MAIN_PROJECT_URL: ""
 
 LINKS_NAVBAR1 = [
 
-  ("<a href=>ODE</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+  ("<a>ODE</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
      ("<a href=\"md_pages_ode_tutorial1.html\">Explicit Time Integration</a>", ),
+     ("<a href=\"md_pages_ode_tutorial2.html\">Explicit Time Integration (Custom Types)</a>", )
    ]),
 
-  ("<a href=>ROM</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+  ("<a>ROM</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
      ("<a href=\"md_pages_rom_tutorial1.html\">Linear Decoder</a>", ),
-     ("<a href=\"md_pages_rom_tutorial2.html\">Default Galerkin explicit</a>", ),
-     ("<a href=\"md_pages_rom_tutorial3.html\">LSPG ROM of the shallow water equations</a>", )
+     ("<a href=\"md_pages_rom_tutorial2.html\">Default Galerkin explicit</a>", )
+   ]),
+
+  ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
+   [
+     ("<a href=\"md_pages_swe_fom.html\">FOM Driver</a>", ),
+     ("<a href=\"md_pages_swe_lspg.html\">LSPG Driver</a>", ),
+     ("<a href=\"md_pages_swe_endtoend.html\">End-to-end Usecase</a>", )
+     #("<a href=\"md_pages_swe_endtoend.html\">End-to-end LSPG example</a>", )
    ])
 
   # # demos
