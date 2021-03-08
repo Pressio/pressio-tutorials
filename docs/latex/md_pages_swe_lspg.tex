@@ -1,0 +1,164 @@
+
+
+\begin{DoxyParagraph}{}
+This page walks through an example code to construct and run a standard L\+S\+PG R\+OM of the S\+WE. ~\newline
+ The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_rom/run_lspg.cc}{\texttt{ here}}.
+\end{DoxyParagraph}
+First, we include the relevant headers. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio\_rom\_lspg.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio\_apps.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}read\_basis.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}rom\_time\_integration\_observer.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}CLI11.hpp"{}}}
+\end{DoxyCode}
+
+
+Next, is the main function, where we first process the command line arguments and initialize the pressio logger. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  CLI::App app\{\textcolor{stringliteral}{"{}LSPG ROM of 2D Shallow Water Equations"{}}\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t = double;}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} N = 64;}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} romSizePerDof = 10;}
+\DoxyCodeLine{  scalar\_t finalTime = 10.;}
+\DoxyCodeLine{  scalar\_t dt = 0.02;}
+\DoxyCodeLine{  scalar\_t gravity = 7.5;}
+\DoxyCodeLine{  scalar\_t pulse   = 0.125;}
+\DoxyCodeLine{  scalar\_t forcing = 0.2;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/k,-\/-\/romSize"{}}, romSizePerDof,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Number of modes for each dof to use: default = 10"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/N,-\/-\/numCells"{}}, N,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Number of cells along each axis: default = 64"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/T,-\/-\/finalTime"{}}, finalTime,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Simulation time: default = 10."{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/-\/dt"{}}, dt,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Time step size: default = 0.02"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/g,-\/-\/gravity"{}}, gravity,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Gravity value(s) to simulate: default = 7.5"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/p,-\/-\/pulse"{}}, pulse,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Pulse magnitude, default = 0.125"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/f,-\/-\/forcing"{}}, forcing,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Forcing value(s) to simulate: default = 0.2"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  CLI11\_PARSE(app, argc, argv);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  pressio::log::initialize(pressio::logto::terminal);}
+\end{DoxyCode}
+
+
+We construct the app object, and read in the bases. For standard L\+S\+PG, we need to read in the bases for all mesh points. Here, we assume the basis exists in a local file named {\itshape basis.\+txt}. The following lines of code read in the basis\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// create FOM object}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} fom\_t = pressio::apps::swe2d;}
+\DoxyCodeLine{\textcolor{keyword}{const} scalar\_t params[3] = \{gravity, pulse, forcing\};}
+\DoxyCodeLine{fom\_t appObj(N, params);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// read basis}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} decoder\_jac\_t   = pressio::containers::MultiVector<Eigen::MatrixXd>;}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{int} romSizeTotal = romSizePerDof*3;}
+\DoxyCodeLine{decoder\_jac\_t phi = readBasis(\textcolor{stringliteral}{"{}basis.txt"{}}, romSizeTotal, appObj.numDofs());}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{int} numBasis = phi.numVectors();}
+\DoxyCodeLine{\textcolor{keywordflow}{if}( numBasis != romSizeTotal ) \textcolor{keywordflow}{return} 0;}
+\end{DoxyCode}
+
+
+Now that we have the basis, we create a Pressio decoder object. In this instance where we have a linear basis, the decoder, in essence, computes the product $\boldsymbol \Phi \hat{\boldsymbol x} $. We construct a decoder as follows 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// create decoder obj}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} native\_state\_t  = \textcolor{keyword}{typename} fom\_t::state\_type;}
+\DoxyCodeLine{\textcolor{keyword}{using} fom\_state\_t  = pressio::containers::Vector<native\_state\_t>;}
+\DoxyCodeLine{\textcolor{keyword}{using} decoder\_t = pressio::rom::LinearDecoder<decoder\_jac\_t, fom\_state\_t>;}
+\DoxyCodeLine{decoder\_t decoderObj(phi);}
+\end{DoxyCode}
+
+
+Next, we set the reference state for the R\+OM, $\boldsymbol x^{ref}$. Note that this reference state will be used when we reconstruct the state vector, i.\+e., the state will be reconstructed as \[\hat{ \boldsymbol x} = \boldsymbol \Phi \hat{\boldsymbol x} + \boldsymbol x^{ref}\] In this case we set the reference state to be the initial condition, and set the reference states as 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// create reference state}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{native\_state\_t yRef(appObj.getGaussianIC(pulse));}
+\end{DoxyCode}
+
+
+We now begin constructing the R\+OM problem. We start by setting our L\+S\+PG state type to be a Pressio vector wrapping an Eigen vector. We note that this is decoupled from the F\+OM, and we could alternatively use, e.\+g., Kokkos with a host backend. In the following snippet of code, we set this type, initialize the R\+OM state, and set it to be zero. Note that this last step is due to the fact that we employ the initial condition as our R\+OM reference state, so the initial conditions for our R\+OM state are zero. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// create ROM problem}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} lspg\_state\_t = pressio::containers::Vector<Eigen::Matrix<scalar\_t,-\/1,1>>;}
+\DoxyCodeLine{\textcolor{comment}{// define ROM state}}
+\DoxyCodeLine{lspg\_state\_t yROM(romSizeTotal);}
+\DoxyCodeLine{\textcolor{comment}{// initialize to zero (reference state is IC)}}
+\DoxyCodeLine{pressio::ops::fill(yROM, 0.0);}
+\end{DoxyCode}
+
+
+We now construct the L\+S\+PG problem. To do this, we have to define the time marching scheme, which here we set to be the second-\/order Crank Nicolson method. We define this time stepping scheme and construct the L\+S\+PG R\+OM as follows 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// define LSPG type}}
+\DoxyCodeLine{\textcolor{keyword}{using} ode\_tag  = pressio::ode::implicitmethods::CrankNicolson;}
+\DoxyCodeLine{\textcolor{keyword}{auto} lspgProblem = pressio::rom::lspg::createDefaultProblemUnsteady}
+\DoxyCodeLine{  <ode\_tag>(appObj, decoderObj, yROM, yRef);}
+\end{DoxyCode}
+
+
+Now, we need to define the linear and nonlinear solvers use in our L\+S\+PG problem. Here, we employ a least-\/squares conjugate gradient solver to use within the Gauss--Newton solver for our L\+S\+PG R\+OM, where we additionally set the convergence tolerance and maximum number of iterations 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// linear solver}}
+\DoxyCodeLine{\textcolor{keyword}{using} eig\_dyn\_mat = Eigen::Matrix<scalar\_t, -\/1, -\/1>;}
+\DoxyCodeLine{\textcolor{keyword}{using} hessian\_t   = pressio::containers::DenseMatrix<eig\_dyn\_mat>;}
+\DoxyCodeLine{\textcolor{keyword}{using} solver\_tag      = pressio::solvers::linear::iterative::LSCG;}
+\DoxyCodeLine{\textcolor{keyword}{using} linear\_solver\_t = pressio::solvers::linear::Solver<solver\_tag, hessian\_t>;}
+\DoxyCodeLine{linear\_solver\_t linSolverObj;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// GaussNewton solver with normal equations}}
+\DoxyCodeLine{\textcolor{keyword}{auto} solver = pressio::rom::lspg::createGaussNewtonSolver(lspgProblem, yROM, linSolverObj);}
+\DoxyCodeLine{solver.setTolerance(1e-\/10);}
+\DoxyCodeLine{solver.setMaxIterations(10);}
+\end{DoxyCode}
+
+
+Next, we construct an observer.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// create observer (see rom\_time\_integration\_observer.hpp in parent dir)}}
+\DoxyCodeLine{observer<lspg\_state\_t,native\_state\_t> Obs(yRef);}
+\end{DoxyCode}
+
+
+Observers act like hooks, and are called at the end of each time step/minimization problem. The observer class can be found \mbox{[}here\mbox{]}(todo). When initialized, our observer writes the reference state to file in {\ttfamily state\+\_\+ref.\+bin}. When this observer is called after each time step, it will then write the R\+OM solution to a {\ttfamily solution.\+bin} file.
+
+Next we define information for our time marching, e.\+g. initial time, time step, end time, and total number of time steps, and solve the problem. The code advances the R\+OM in time for {\itshape Nsteps} time steps. Note that, as L\+S\+PG consists of solving a series of residual minimization problems, so we call this {\ttfamily solve\+N\+Sequential\+Minimizations}\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \textcolor{comment}{// solve}}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keyword}{auto} Nsteps = \textcolor{keyword}{static\_cast<}::pressio::ode::types::step\_t\textcolor{keyword}{>}(finalTime/dt);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} startTime = std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs, solver);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} finishTime = std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{  \textcolor{keyword}{const} std::chrono::duration<double> elapsed2 = finishTime -\/ startTime;}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Walltime (single ROM run) = "{}} << elapsed2.count() << \textcolor{charliteral}{'\(\backslash\)n'};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+
+
+This completes our description of writing the L\+S\+PG coupler. \#\+Click \href{./md_pages_tutorials_tutorial3.html}{\texttt{ here}} to return to the S\+WE tutorial. 

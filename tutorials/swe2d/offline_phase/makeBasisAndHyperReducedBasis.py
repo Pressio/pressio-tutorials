@@ -5,6 +5,7 @@ import scipy.linalg
 import numpy as np
 import pressiotools.linalg as ptla
 import matplotlib.pyplot as plt
+from webplotsetting import edit_figure_for_web
 
 np.random.seed(1)
 def get_gid_from_ij(i,j):
@@ -130,10 +131,10 @@ if __name__== "__main__":
 
   np.savetxt('sample_mesh_relative_indices.txt',rel_indx,fmt='%i')
 
-  info_file_array = np.array([np.shape(Phi)[1],
-                              int(np.size(sample_mesh)),
-                              int(np.size(sample_mesh_plus_stencil))])
-  np.savetxt('info_file.txt',info_file_array,fmt='%i')
+  # info_file_array = np.array([np.shape(Phi)[1],
+  #                             int(np.size(sample_mesh)),
+  #                             int(np.size(sample_mesh_plus_stencil))])
+  # np.savetxt('info_file.txt',info_file_array,fmt='%i')
 
   ## create plot for sample mesh (here just re-read in files
   ## so this snippet of code can be copied to other locations)
@@ -147,17 +148,11 @@ if __name__== "__main__":
   smps_ids_plot[smps_ids] = 1
   smps_ids = np.reshape(smps_ids_plot,(nx,ny))
 
-  plt.spy(smps_ids,marker='s',markersize=1.5,color='red')
-  plt.spy(sm_ids,marker='s',markersize=1.5,color='black')
-  plt.xlabel(r'$x$ index')
-  plt.ylabel(r'$y$ index')
-
-  plt.savefig('samplemesh.png', format="png", bbox_inches='tight', dpi=300)
-
-
-
-  ### convert final solution file from binary to .txt for docker
-  #data_fom = np.fromfile('solution100.bin')
-  #np.savetxt('solution100_fom.txt',data_fom)
-  #data_fom_nn = np.fromfile('solution4.bin')
-  #np.savetxt('solution_nn.txt',data_fom_nn)
+  fig, ax = plt.subplots()
+  ax.spy(smps_ids,marker='s',markersize=1.5,color='m')
+  ax.spy(sm_ids,marker='s',markersize=1.5,color='greenyellow')
+  ax.set_xlabel(r'$x$ index')
+  ax.set_ylabel(r'$y$ index')
+  edit_figure_for_web(ax)
+  plt.savefig('samplemesh.png', format="png", bbox_inches='tight', dpi=250, transparent=True)
+  plt.show()

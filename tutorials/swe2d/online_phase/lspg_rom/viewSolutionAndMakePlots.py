@@ -3,7 +3,7 @@
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
-from plotsetting import edit_figure_for_web
+from webplotsetting import edit_figure_for_web
 
 axis_font = {'size':20,'family':'serif'}
 

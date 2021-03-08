@@ -4,7 +4,7 @@
 @m_class{m-block m-info}
 
 @par
-This page walks through the code to construct and run a standard LSPG ROM of the SWE. <br>
+This page walks through an example code to construct and run a standard LSPG ROM of the SWE. <br>
 The full code is available [here](https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_rom/run_lspg.cc).
 
 First, we include the relevant headers.
@@ -14,20 +14,12 @@ First, we include the relevant headers.
 2:6
 ```
 
-Next, is the main function, where we first process the command line arguments.
-<!-- To do this, we define the domain, number of grid points, load in parameter, etc. -->
+Next, is the main function, where we first process the command line arguments
+and initialize the pressio logger.
 ```cpp
 @codesnippet
 ../../../tutorials/swe2d/online_phase/lspg_rom/main.cc
-8:42
-```
-
-We initialize the pressio logger.
-
-```cpp
-@codesnippet
-../../../tutorials/swe2d/online_phase/lspg_rom/main.cc
-44:45
+8:45
 ```
 
 We construct the app object, and read in the bases.

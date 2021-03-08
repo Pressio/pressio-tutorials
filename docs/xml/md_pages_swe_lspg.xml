@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.20" xml:lang="en-US">
+  <compounddef id="md_pages_swe_lspg" kind="page">
+    <compoundname>md_pages_swe_lspg</compoundname>
+    <title>LSPG ROM Driver</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
+<para><simplesect kind="par"><title></title><para>This page walks through an example code to construct and run a standard LSPG ROM of the SWE. <linebreak/>
+ The full code is available <ulink url="https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_rom/run_lspg.cc">here</ulink>.</para>
+</simplesect>
+First, we include the relevant headers. <programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&quot;pressio_rom_lspg.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pressio_apps.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;read_basis.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;rom_time_integration_observer.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;CLI11.hpp&quot;</highlight></codeline>
+</programlisting></para>
+<para>Next, is the main function, where we first process the command line arguments and initialize the pressio logger. <programlisting filename=".cpp"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*argv[])</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>CLI::App<sp/>app{</highlight><highlight class="stringliteral">&quot;LSPG<sp/>ROM<sp/>of<sp/>2D<sp/>Shallow<sp/>Water<sp/>Equations&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>scalar_t<sp/>=<sp/>double;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N<sp/>=<sp/>64;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>romSizePerDof<sp/>=<sp/>10;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scalar_t<sp/>finalTime<sp/>=<sp/>10.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scalar_t<sp/>dt<sp/>=<sp/>0.02;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scalar_t<sp/>gravity<sp/>=<sp/>7.5;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scalar_t<sp/>pulse<sp/><sp/><sp/>=<sp/>0.125;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>scalar_t<sp/>forcing<sp/>=<sp/>0.2;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;-k,--romSize&quot;</highlight><highlight class="normal">,<sp/>romSizePerDof,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Number<sp/>of<sp/>modes<sp/>for<sp/>each<sp/>dof<sp/>to<sp/>use:<sp/>default<sp/>=<sp/>10&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;-N,--numCells&quot;</highlight><highlight class="normal">,<sp/>N,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Number<sp/>of<sp/>cells<sp/>along<sp/>each<sp/>axis:<sp/>default<sp/>=<sp/>64&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;-T,--finalTime&quot;</highlight><highlight class="normal">,<sp/>finalTime,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Simulation<sp/>time:<sp/>default<sp/>=<sp/>10.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;--dt&quot;</highlight><highlight class="normal">,<sp/>dt,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>step<sp/>size:<sp/>default<sp/>=<sp/>0.02&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;-g,--gravity&quot;</highlight><highlight class="normal">,<sp/>gravity,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Gravity<sp/>value(s)<sp/>to<sp/>simulate:<sp/>default<sp/>=<sp/>7.5&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;-p,--pulse&quot;</highlight><highlight class="normal">,<sp/>pulse,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Pulse<sp/>magnitude,<sp/>default<sp/>=<sp/>0.125&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>app.add_option(</highlight><highlight class="stringliteral">&quot;-f,--forcing&quot;</highlight><highlight class="normal">,<sp/>forcing,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Forcing<sp/>value(s)<sp/>to<sp/>simulate:<sp/>default<sp/>=<sp/>0.2&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>CLI11_PARSE(app,<sp/>argc,<sp/>argv);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pressio::log::initialize(pressio::logto::terminal);</highlight></codeline>
+</programlisting></para>
+<para>We construct the app object, and read in the bases. For standard LSPG, we need to read in the bases for all mesh points. Here, we assume the basis exists in a local file named <emphasis>basis.txt</emphasis>. The following lines of code read in the basis: <programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>create<sp/>FOM<sp/>object</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>fom_t<sp/>=<sp/>pressio::apps::swe2d;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>scalar_t<sp/>params[3]<sp/>=<sp/>{gravity,<sp/>pulse,<sp/>forcing};</highlight></codeline>
+<codeline><highlight class="normal">fom_t<sp/>appObj(N,<sp/>params);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>read<sp/>basis</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>decoder_jac_t<sp/><sp/><sp/>=<sp/>pressio::containers::MultiVector&lt;Eigen::MatrixXd&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>romSizeTotal<sp/>=<sp/>romSizePerDof*3;</highlight></codeline>
+<codeline><highlight class="normal">decoder_jac_t<sp/>phi<sp/>=<sp/>readBasis(</highlight><highlight class="stringliteral">&quot;basis.txt&quot;</highlight><highlight class="normal">,<sp/>romSizeTotal,<sp/>appObj.numDofs());</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numBasis<sp/>=<sp/>phi.numVectors();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<sp/>numBasis<sp/>!=<sp/>romSizeTotal<sp/>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+</programlisting></para>
+<para>Now that we have the basis, we create a Pressio decoder object. In this instance where we have a linear basis, the decoder, in essence, computes the product <formula id="23">$\boldsymbol \Phi \hat{\boldsymbol x} $</formula>. We construct a decoder as follows <programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>create<sp/>decoder<sp/>obj</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>native_state_t<sp/><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>fom_t::state_type;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>fom_state_t<sp/><sp/>=<sp/>pressio::containers::Vector&lt;native_state_t&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>decoder_t<sp/>=<sp/>pressio::rom::LinearDecoder&lt;decoder_jac_t,<sp/>fom_state_t&gt;;</highlight></codeline>
+<codeline><highlight class="normal">decoder_t<sp/>decoderObj(phi);</highlight></codeline>
+</programlisting></para>
+<para>Next, we set the reference state for the ROM, <formula id="24">$\boldsymbol x^{ref}$</formula>. Note that this reference state will be used when we reconstruct the state vector, i.e., the state will be reconstructed as <formula id="25">\[\hat{ \boldsymbol x} = \boldsymbol \Phi \hat{\boldsymbol x} + \boldsymbol x^{ref}\]</formula> In this case we set the reference state to be the initial condition, and set the reference states as <programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>create<sp/>reference<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">native_state_t<sp/>yRef(appObj.getGaussianIC(pulse));</highlight></codeline>
+</programlisting></para>
+<para>We now begin constructing the ROM problem. We start by setting our LSPG state type to be a Pressio vector wrapping an Eigen vector. We note that this is decoupled from the FOM, and we could alternatively use, e.g., Kokkos with a host backend. In the following snippet of code, we set this type, initialize the ROM state, and set it to be zero. Note that this last step is due to the fact that we employ the initial condition as our ROM reference state, so the initial conditions for our ROM state are zero. <programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>create<sp/>ROM<sp/>problem</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>lspg_state_t<sp/>=<sp/>pressio::containers::Vector&lt;Eigen::Matrix&lt;scalar_t,-1,1&gt;&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>define<sp/>ROM<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">lspg_state_t<sp/>yROM(romSizeTotal);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>initialize<sp/>to<sp/>zero<sp/>(reference<sp/>state<sp/>is<sp/>IC)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">pressio::ops::fill(yROM,<sp/>0.0);</highlight></codeline>
+</programlisting></para>
+<para>We now construct the LSPG problem. To do this, we have to define the time marching scheme, which here we set to be the second-order Crank Nicolson method. We define this time stepping scheme and construct the LSPG ROM as follows <programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>define<sp/>LSPG<sp/>type</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>ode_tag<sp/><sp/>=<sp/>pressio::ode::implicitmethods::CrankNicolson;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>lspgProblem<sp/>=<sp/>pressio::rom::lspg::createDefaultProblemUnsteady</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>&lt;ode_tag&gt;(appObj,<sp/>decoderObj,<sp/>yROM,<sp/>yRef);</highlight></codeline>
+</programlisting></para>
+<para>Now, we need to define the linear and nonlinear solvers use in our LSPG problem. Here, we employ a least-squares conjugate gradient solver to use within the Gauss<ndash/>Newton solver for our LSPG ROM, where we additionally set the convergence tolerance and maximum number of iterations <programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>linear<sp/>solver</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>eig_dyn_mat<sp/>=<sp/>Eigen::Matrix&lt;scalar_t,<sp/>-1,<sp/>-1&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>hessian_t<sp/><sp/><sp/>=<sp/>pressio::containers::DenseMatrix&lt;eig_dyn_mat&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>solver_tag<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>pressio::solvers::linear::iterative::LSCG;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>linear_solver_t<sp/>=<sp/>pressio::solvers::linear::Solver&lt;solver_tag,<sp/>hessian_t&gt;;</highlight></codeline>
+<codeline><highlight class="normal">linear_solver_t<sp/>linSolverObj;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>GaussNewton<sp/>solver<sp/>with<sp/>normal<sp/>equations</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>solver<sp/>=<sp/>pressio::rom::lspg::createGaussNewtonSolver(lspgProblem,<sp/>yROM,<sp/>linSolverObj);</highlight></codeline>
+<codeline><highlight class="normal">solver.setTolerance(1e-10);</highlight></codeline>
+<codeline><highlight class="normal">solver.setMaxIterations(10);</highlight></codeline>
+</programlisting></para>
+<para>Next, we construct an observer.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>create<sp/>observer<sp/>(see<sp/>rom_time_integration_observer.hpp<sp/>in<sp/>parent<sp/>dir)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">observer&lt;lspg_state_t,native_state_t&gt;<sp/>Obs(yRef);</highlight></codeline>
+</programlisting></para>
+<para>Observers act like hooks, and are called at the end of each time step/minimization problem. The observer class can be found [here]( <mcss:span xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-text m-danger">todo</mcss:span>). When initialized, our observer writes the reference state to file in <computeroutput>state_ref.bin</computeroutput>. When this observer is called after each time step, it will then write the ROM solution to a <computeroutput>solution.bin</computeroutput> file.</para>
+<para>Next we define information for our time marching, e.g. initial time, time step, end time, and total number of time steps, and solve the problem. The code advances the ROM in time for <emphasis>Nsteps</emphasis> time steps. Note that, as LSPG consists of solving a series of residual minimization problems, so we call this <computeroutput>solveNSequentialMinimizations</computeroutput>: <programlisting filename=".cpp"><codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>solve</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Nsteps<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">::pressio::ode::types::step_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(finalTime/dt);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>startTime<sp/>=<sp/>std::chrono::high_resolution_clock::now();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem,<sp/>yROM,<sp/>0.0,<sp/>dt,<sp/>Nsteps,<sp/>Obs,<sp/>solver);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>finishTime<sp/>=<sp/>std::chrono::high_resolution_clock::now();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::chrono::duration&lt;double&gt;<sp/>elapsed2<sp/>=<sp/>finishTime<sp/>-<sp/>startTime;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Walltime<sp/>(single<sp/>ROM<sp/>run)<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>elapsed2.count()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This completes our description of writing the LSPG coupler. #Click <ulink url="./md_pages_tutorials_tutorial3.html">here</ulink> to return to the SWE tutorial. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

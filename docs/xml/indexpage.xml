@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.20" xml:lang="en-US">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>Pressio C++ Tutorials</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><anchor id="index_1md_pages_main"/> <emphasis>Leading-edge projection-based reduced order models (pROMs) for dynamical systems in science and engineering.</emphasis></para>
+<para>This the documentation of the C++ tutorials. The full project website is <ulink url="https://pressio.github.io/">here</ulink>.</para>
+<sect1 id="index_1autotoc_md1">
+<title>License and Citation</title>
+<para>The license (BSD-3) is available <ulink url="https://pressio.github.io/various/license/">here</ulink>.</para>
+<para>We are working on publishing this: you can find our arXiv preprint at: <ulink url="https://arxiv.org/abs/2003.07798">https://arxiv.org/abs/2003.07798</ulink></para>
+</sect1>
+<sect1 id="index_1autotoc_md2">
+<title>Questions?</title>
+<para>Find us on Slack: <ulink url="https://pressioteam.slack.com">https://pressioteam.slack.com</ulink> or open an issue on <ulink url="https://github.com/Pressio/pressio-tutorials">github</ulink>. </para>
+</sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

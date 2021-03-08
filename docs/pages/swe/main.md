@@ -1,7 +1,6 @@
 
 # Shallow Water Equations Demo
 
-## Description
 We consider the shallow water equations (SWE) on the spatial domain
 @f$\Omega = [-\frac{L}{2},\frac{L}{2}] \times  [-\frac{L}{2},\frac{L}{2}]@f$:
 @f[
@@ -22,16 +21,20 @@ The system has three parameters:
 @image html swetut_f1.gif width=90%
 
 
-## Objective and Breakdown
+@m_class{m-block m-success}
+
+@par Objective
+To describe, using the SWE as a concrete example, how to use pressio to run a typical end-to-end ROM workflow.
+
 
 @m_class{m-block m-success}
 
-@par To describe, via a concrete example, all stages involved in a typical end-to-end ROM workflow.
-This demo is broken down into the following parts:
+@par Organization
+This demo is broken down as follows:
 1. A step-by-step walk through of the code to solve the FOM of the SWE: [here](./md_pages_swe_fom.html)
-2. A step-by-step walk through of the code to construct and run a standard LSPG: [here](./md_pages_swe_lspg.html)
-3. A step-by-step walk through of the code to construct and run a hyper-reduced LSPG: [here](./md_pages_swe_lspg.html)
-4. Putting all pieces together: a step-by-step walk through of the full end-to-end ROM workflow: [here](./md_pages_swe_endtoend.html)
+2. A step-by-step walk through of the code to construct and run a *standard LSPG*: [here](./md_pages_swe_lspg.html)
+3. A step-by-step walk through of the code to construct and run a *hyper-reduced LSPG*: [here](./md_pages_swe_hrlspg.html)
+4. Putting all pieces together: step-by-step walk through to run an end-to-end ROM workflow: [here](./md_pages_swe_endtoend.html)
 
 <!-- 1. Interface an SWE solver, written with Eigen data structures, to Pressio. -->
 <!-- 2. Use Pressio's time marching schemes to execute solves of the SWEs to construct training data. -->

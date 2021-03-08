@@ -5,61 +5,72 @@
 #include "rom_time_integration_observer.hpp"
 #include "CLI11.hpp"
 
-auto readSampleMeshGlobalIndices(const int size,
-				 const std::string & fileName)
+auto readSampleMeshGlobalIndices(const std::string & fileName)
   -> std::vector<int>
 {
-  std::vector<int> result(size);
-  std::ifstream files(fileName);
-  for (int i =0; i < size ; i++){
-    files >> result[i];
+  std::vector<int> result;
+  std::ifstream source;
+  source.open( fileName, std::ios_base::in);
+  std::string line;
+  while (std::getline(source, line) ){
+    std::istringstream ss(line);
+    std::string colVal;
+    ss >> colVal;
+    result.push_back(std::stoi(colVal));
   }
-  files.close();
+  source.close();
   return result;
 }
 
-auto readStencilMeshGlobalIndices(const int size,
-				  const std::string & fileName)
+auto readStencilMeshGlobalIndices(const std::string & fileName)
   -> std::vector<int>
 {
-  std::vector<int> result(size);
-  std::ifstream files(fileName);
-  for (int i =0; i < size ; i++){
-    files >> result[i];
+  std::vector<int> result;
+  std::ifstream source;
+  source.open( fileName, std::ios_base::in);
+  std::string line;
+  while (std::getline(source, line) ){
+    std::istringstream ss(line);
+    std::string colVal;
+    ss >> colVal;
+    result.push_back(std::stoi(colVal));
   }
-  files.close();
+  source.close();
   return result;
 }
 
-auto readSampleMeshIndicesRelativeToStencil(const int size,
+auto readSampleMeshIndicesRelativeToStencil(const int smSize,
 					    const std::string & fileName)
   -> pressio::containers::Vector<Eigen::Matrix<int,-1,1>>
 {
-  Eigen::Matrix<int, -1,1> v(size);
-  std::ifstream files(fileName);
-  for (int i =0; i < size ; i++){
-    files >> v(3*i);
+  Eigen::Matrix<int, -1, 1> v(3*smSize);
+  std::ifstream file(fileName);
+  for (int i =0; i < smSize ; i++){
+    file >> v(3*i);
     v(3*i) = v(3*i)*3;
     v(3*i+1) = v(3*i)+1;
     v(3*i+2) = v(3*i)+2;
   }
-  files.close();
+  file.close();
   pressio::containers::Vector<Eigen::Matrix<int,-1,1>> result(std::move(v));
   return result;
 }
 
 int main(int argc, char *argv[])
 {
-  pressio::log::initialize(pressio::logto::terminal);
   CLI::App app{"Hyper-reduced LSPG ROM of 2D Shallow Water Equations"};
 
   using scalar_t = double;
   int N = 64;
+  int romSizePerDof = 10;
   scalar_t finalTime = 10.;
   scalar_t dt = 0.02;
   scalar_t gravity = 7.5;
   scalar_t pulse   = 0.125;
   scalar_t forcing = 0.2;
+
+  app.add_option("-k,--romSize", romSizePerDof,
+		 "Number of modes for each dof to use: default = 10");
 
   app.add_option("-N,--numCells", N,
 		 "Number of cells along each axis: default = 64");
@@ -81,22 +92,7 @@ int main(int argc, char *argv[])
 
   CLI11_PARSE(app, argc, argv);
 
-  // -------------------------------------------------------
-  // Read information for ROM and hyper-reducction
-  // -------------------------------------------------------
-  int romSize;
-  int sampleMeshSize;
-  int sampleMeshPlusStencilSize;
-  std::ifstream info_file("info_file.txt");
-  info_file >> romSize;
-  std::cout << romSize << std::endl;;
-  info_file >> sampleMeshSize;
-  info_file >> sampleMeshPlusStencilSize;
-  info_file.close();
-  std::cout << "| romSize = " << romSize
-            << "| |  sampleMeshSize = " << sampleMeshSize
-            << "| |  sampleMeshPlusStencilSize " << sampleMeshPlusStencilSize
-            << std::endl;
+  pressio::log::initialize(pressio::logto::terminal);
 
   // Required for the app
   /*
@@ -104,8 +100,8 @@ int main(int argc, char *argv[])
     Note that we could alternatively extract these
     from the information contained in sm_rel_lids and and smps_gids
   */
-  auto sm_gids = readSampleMeshGlobalIndices
-    (sampleMeshSize, "sample_mesh_gids.txt");
+  auto sampleMesh_gids = readSampleMeshGlobalIndices("sample_mesh_gids.txt");
+  const auto sampleMeshSize = sampleMesh_gids.size();
 
   // Required for the app
   /*
@@ -113,8 +109,8 @@ int main(int argc, char *argv[])
     The underlying app is a structured solver, and these indices
     allow us to find the correct location on a structured grid.
   */
-  auto smps_gids = readStencilMeshGlobalIndices
-    (sampleMeshPlusStencilSize, "sample_mesh_plus_stencil_gids.txt");
+  auto sampleMeshPlusStencil_gids = readStencilMeshGlobalIndices("sample_mesh_plus_stencil_gids.txt");
+  const auto sampleMeshPlusStencilSize = sampleMeshPlusStencil_gids.size();
 
   // Required for Pressio
   /*
@@ -123,22 +119,23 @@ int main(int argc, char *argv[])
     of the sample mesh, then the zeroth entry would be sm_rel_lids(0) = 4;
   */
   auto sampleMeshRelIds = readSampleMeshIndicesRelativeToStencil
-    (3*sampleMeshSize, "sample_mesh_relative_indices.txt");
+    (sampleMeshSize, "sample_mesh_relative_indices.txt");
 
   // Construct the app
   using fom_t = pressio::apps::swe2d_hyper<std::vector<int>>;
   const scalar_t params[3] = {gravity, pulse, forcing};
-  fom_t appObj(N, params, sm_gids, smps_gids);
+  fom_t appObj(N, params, sampleMesh_gids, sampleMeshPlusStencil_gids);
 
   // -------------------------------------------------------
   // read basis on the sample+stencil mesh
   // -------------------------------------------------------
   using decoder_jac_t	= pressio::containers::MultiVector<Eigen::MatrixXd>;
+  const int romSizeTotal = romSizePerDof*3;
   decoder_jac_t phi = readBasis("PhiSamplePlusStencil.txt",
-				romSize,
-				sampleMeshPlusStencilSize*3);
+				romSizeTotal,
+				(int)sampleMeshPlusStencilSize*3);
   const int numBasis = phi.numVectors();
-  if( numBasis != romSize ) return 0;
+  if( numBasis != romSizeTotal ) return 0;
 
   // ------------------------------------------------------
   // construct decoder
@@ -158,7 +155,7 @@ int main(int argc, char *argv[])
   // -------------------------------------------------------
   using lspg_state_t = pressio::containers::Vector<Eigen::Matrix<scalar_t,-1,1>>;
   // define ROM state
-  lspg_state_t yROM(romSize);
+  lspg_state_t yROM(romSizeTotal);
   // initialize to zero (reference state is the initial condition)
   pressio::ops::fill(yROM, 0.0);
 

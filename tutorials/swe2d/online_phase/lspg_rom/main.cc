@@ -18,11 +18,11 @@ int main(int argc, char *argv[])
   scalar_t pulse   = 0.125;
   scalar_t forcing = 0.2;
 
-  app.add_option("-N,--numCells", N,
-		 "Number of cells along each axis: default = 64");
-
   app.add_option("-k,--romSize", romSizePerDof,
 		 "Number of modes for each dof to use: default = 10");
+
+  app.add_option("-N,--numCells", N,
+		 "Number of cells along each axis: default = 64");
 
   app.add_option("-T,--finalTime", finalTime,
 		 "Simulation time: default = 10.");
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   // read basis
   // -------------------------------------------------------
   using decoder_jac_t	= pressio::containers::MultiVector<Eigen::MatrixXd>;
-  int romSizeTotal = romSizePerDof*3;
+  const int romSizeTotal = romSizePerDof*3;
   decoder_jac_t phi = readBasis("basis.txt", romSizeTotal, appObj.numDofs());
   const int numBasis = phi.numVectors();
   if( numBasis != romSizeTotal ) return 0;
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
   // solve
   const auto Nsteps = static_cast<::pressio::ode::types::step_t>(finalTime/dt);
   auto startTime = std::chrono::high_resolution_clock::now();
-  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs,solver);
+  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs, solver);
   auto finishTime = std::chrono::high_resolution_clock::now();
   const std::chrono::duration<double> elapsed2 = finishTime - startTime;
   std::cout << "Walltime (single ROM run) = " << elapsed2.count() << '\n';

@@ -20,6 +20,7 @@ LINKS_NAVBAR1 = [
    [
      ("<a href=\"md_pages_swe_fom.html\">FOM Driver</a>", ),
      ("<a href=\"md_pages_swe_lspg.html\">LSPG Driver</a>", ),
+     ("<a href=\"md_pages_swe_hrlspg.html\">Hyper-reduced LSPG Driver</a>", ),
      ("<a href=\"md_pages_swe_endtoend.html\">End-to-end Usecase</a>", )
      #("<a href=\"md_pages_swe_endtoend.html\">End-to-end LSPG example</a>", )
    ])
