@@ -11,14 +11,14 @@ This end-\/to-\/end analysis shows how to use the L\+S\+PG approach to accelerat
 \item Construct and run a hyper-\/reduced L\+S\+PG R\+OM for same test parameter instance.
 \end{DoxyEnumerate}
 \end{DoxyParagraph}
-\hypertarget{md_pages_swe_endtoend_autotoc_md18}{}\doxysection{Prerequisites}\label{md_pages_swe_endtoend_autotoc_md18}
+\hypertarget{md_pages_swe_endtoend_autotoc_md19}{}\doxysection{Prerequisites}\label{md_pages_swe_endtoend_autotoc_md19}
 After successfully builing the tutorials, set the following env var\+:
 
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{export SWE2D\_DIR=<where-\/you-\/built-\/pressio-\/tutorials>/tutorials/swe2d}
 \end{DoxyCode}
-\hypertarget{md_pages_swe_endtoend_autotoc_md19}{}\doxysection{Step 1\+: Compute F\+O\+M training data}\label{md_pages_swe_endtoend_autotoc_md19}
+\hypertarget{md_pages_swe_endtoend_autotoc_md20}{}\doxysection{Step 1\+: Compute F\+O\+M training data}\label{md_pages_swe_endtoend_autotoc_md20}
 For this step, we use the executable obtained from the \href{./md_pages_swe_fom.html}{\texttt{ F\+OM driver}} to evaluate the F\+OM for 9 parameter instances on the grid $\mu_1 \times \mu_3 = [3,6,9]\times [0.05,0.15,0.25]$, over the time interval $t \in (0,10)$ and save the solutions to file.
 
 
@@ -35,7 +35,7 @@ This will take some time to run, depending on your system. If successful, a seri
 \end{DoxyCode}
 
 
-This script will bring up a live animation of the solution for the first parameter instance.\hypertarget{md_pages_swe_endtoend_autotoc_md20}{}\doxysection{Step 2\+: Compute the bases and build the sample mesh}\label{md_pages_swe_endtoend_autotoc_md20}
+This script will bring up a live animation of the solution for the first parameter instance.\hypertarget{md_pages_swe_endtoend_autotoc_md21}{}\doxysection{Step 2\+: Compute the bases and build the sample mesh}\label{md_pages_swe_endtoend_autotoc_md21}
 We now need to construct the basis vectors used in the R\+OM. 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{cd \$SWE2D\_DIR/offline\_phase}
@@ -51,7 +51,7 @@ This script loads in the snapshots generated in Step 1. and performs P\+OD to ob
 \item {\ttfamily Phi\+Sample\+Plus\+Stencil.\+txt} This file contains the R\+OM basis, but only at the sample mesh plus stencil mesh. Additionally, this script will create a file ($\ast$samplemesh.png) depicting the sample and stencil mesh which we show below. Cells in bright green are the sample mesh, while purple cells are on the stencil mesh.
 \end{DoxyEnumerate}
 
-\hypertarget{md_pages_swe_endtoend_autotoc_md21}{}\doxysection{Step 3\+: Run F\+O\+M at test point}\label{md_pages_swe_endtoend_autotoc_md21}
+\hypertarget{md_pages_swe_endtoend_autotoc_md22}{}\doxysection{Step 3\+: Run F\+O\+M at test point}\label{md_pages_swe_endtoend_autotoc_md22}
 We run the F\+OM at a new parameter instance (the user is encouraged to play around with different parameters and see how it impacts the results)\+:
 
 
@@ -66,7 +66,7 @@ We run the F\+OM at a new parameter instance (the user is encouraged to play aro
 \begin{DoxyParagraph}{Approximate F\+OM runtime (with data collection disabled)\+:}
 Running the F\+OM on a 2.\+4 G\+Hz 8-\/Core Intel Core i9 using a single thread takes about20 seconds.
 \end{DoxyParagraph}
-\hypertarget{md_pages_swe_endtoend_autotoc_md22}{}\doxysection{Step 4\+: R\+U\+N a standard L\+S\+P\+G R\+OM}\label{md_pages_swe_endtoend_autotoc_md22}
+\hypertarget{md_pages_swe_endtoend_autotoc_md23}{}\doxysection{Step 4\+: R\+U\+N a standard L\+S\+P\+G R\+OM}\label{md_pages_swe_endtoend_autotoc_md23}
 To run a standard L\+S\+PG R\+OM, we use the executable obtained from the \href{./md_pages_swe_lspg.html}{\texttt{ L\+S\+PG driver}} In summary, this code couples the application to Pressio, loads in the basis information we generated in the offline phase, and couples to Pressio\textquotesingle{}s R\+OM capabilities to run an L\+S\+PG R\+OM. To run the L\+S\+PG R\+OM, we can do\+: 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{cd \$SWE2D\_DIR/online\_phase/lspg\_rom}
@@ -85,7 +85,7 @@ Notet that we pass $-k = 10$ to use 10 P\+OD modes for each D\+OF as basis to ru
 \begin{DoxyParagraph}{Approximate runtime (with data collection disabled)\+:}
 Running on a 2.\+4 G\+Hz 8-\/Core Intel Core i9 using a single thread takes about27 seconds.
 \end{DoxyParagraph}
-We immediately note that our {\itshape R\+OM is slower than the F\+O\+M!} This is due to the well-\/known bottleneck associated with nonlinear systems. To gain computational speedups, we need hyper-\/reduction, as shown below.\hypertarget{md_pages_swe_endtoend_autotoc_md23}{}\doxysection{Step 4\+: R\+U\+N the hyper-\/reduced L\+S\+P\+G R\+OM}\label{md_pages_swe_endtoend_autotoc_md23}
+We immediately note that our {\itshape R\+OM is slower than the F\+O\+M!} This is due to the well-\/known bottleneck associated with nonlinear systems. To gain computational speedups, we need hyper-\/reduction, as shown below.\hypertarget{md_pages_swe_endtoend_autotoc_md24}{}\doxysection{Step 4\+: R\+U\+N the hyper-\/reduced L\+S\+P\+G R\+OM}\label{md_pages_swe_endtoend_autotoc_md24}
 To run a hypre-\/reduced L\+S\+PG R\+OM, we use the executable obtained from the \href{./md_pages_swe_hrlspg.html}{\texttt{ hyper-\/reduced L\+S\+PG driver}} In summary, this executable loads the basis on the {\itshape stencil mesh}, loads in information about the {\itshape sample mesh} and {\itshape stencil mesh}, and then constructs and runs an L\+S\+PG R\+OM employing the collocation hyper-\/reduction technique.
 
 To run the L\+S\+PG R\+OM with hyper-\/reduction, we can do\+: 

@@ -18,13 +18,13 @@
 </para>
 </simplesect>
 </para>
-<sect1 id="md_pages_swe_endtoend_1autotoc_md18">
+<sect1 id="md_pages_swe_endtoend_1autotoc_md19">
 <title>Prerequisites</title>
 <para>After successfully builing the tutorials, set the following env var:</para>
 <para><programlisting filename=".bash"><codeline><highlight class="normal">export<sp/>SWE2D_DIR=&lt;where-you-built-pressio-tutorials&gt;/tutorials/swe2d</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_swe_endtoend_1autotoc_md19">
+<sect1 id="md_pages_swe_endtoend_1autotoc_md20">
 <title>Step 1: Compute FOM training data</title>
 <para>For this step, we use the executable obtained from the <ulink url="./md_pages_swe_fom.html">FOM driver</ulink> to evaluate the FOM for 9 parameter instances on the grid <formula id="14">$\mu_1 \times \mu_3 = [3,6,9]\times [0.05,0.15,0.25]$</formula>, over the time interval <formula id="15">$t \in (0,10)$</formula> and save the solutions to file.</para>
 <para><programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/offline_phase</highlight></codeline>
@@ -35,7 +35,7 @@
 </programlisting></para>
 <para>This script will bring up a live animation of the solution for the first parameter instance.</para>
 </sect1>
-<sect1 id="md_pages_swe_endtoend_1autotoc_md20">
+<sect1 id="md_pages_swe_endtoend_1autotoc_md21">
 <title>Step 2: Compute the bases and build the sample mesh</title>
 <para>We now need to construct the basis vectors used in the ROM. <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/offline_phase</highlight></codeline>
 <codeline><highlight class="normal">python3<sp/>makeBasisAndHyperReducedBasis.py</highlight></codeline>
@@ -50,7 +50,7 @@
 <para><image type="html" name="swe_samplemesh.png" width="75%"></image>
 </para>
 </sect1>
-<sect1 id="md_pages_swe_endtoend_1autotoc_md21">
+<sect1 id="md_pages_swe_endtoend_1autotoc_md22">
 <title>Step 3: Run FOM at test point</title>
 <para>We run the FOM at a new parameter instance (the user is encouraged to play around with different parameters and see how it impacts the results):</para>
 <para><programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/fom</highlight></codeline>
@@ -61,7 +61,7 @@
 </simplesect>
 </para>
 </sect1>
-<sect1 id="md_pages_swe_endtoend_1autotoc_md22">
+<sect1 id="md_pages_swe_endtoend_1autotoc_md23">
 <title>Step 4: RUN a standard LSPG ROM</title>
 <para>To run a standard LSPG ROM, we use the executable obtained from the <ulink url="./md_pages_swe_lspg.html">LSPG driver</ulink> In summary, this code couples the application to Pressio, loads in the basis information we generated in the offline phase, and couples to Pressio&apos;s ROM capabilities to run an LSPG ROM. To run the LSPG ROM, we can do: <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/lspg_rom</highlight></codeline>
 <codeline><highlight class="normal">cp<sp/>../../offline_phase/basis.txt<sp/>.</highlight></codeline>
@@ -76,7 +76,7 @@
 </simplesect>
 We immediately note that our <emphasis>ROM is slower than the FOM!</emphasis> This is due to the well-known bottleneck associated with nonlinear systems. To gain computational speedups, we need hyper-reduction, as shown below.</para>
 </sect1>
-<sect1 id="md_pages_swe_endtoend_1autotoc_md23">
+<sect1 id="md_pages_swe_endtoend_1autotoc_md24">
 <title>Step 4: RUN the hyper-reduced LSPG ROM</title>
 <para>To run a hypre-reduced LSPG ROM, we use the executable obtained from the <ulink url="./md_pages_swe_hrlspg.html">hyper-reduced LSPG driver</ulink> In summary, this executable loads the basis on the <emphasis>stencil mesh</emphasis>, loads in information about the <emphasis>sample mesh</emphasis> and <emphasis>stencil mesh</emphasis>, and then constructs and runs an LSPG ROM employing the collocation hyper-reduction technique.</para>
 <para>To run the LSPG ROM with hyper-reduction, we can do: <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/lspg_hyperReducedRom</highlight></codeline>

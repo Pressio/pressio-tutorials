@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 2.8.12)
 project(pressio-tutorials CXX)
 set (CMAKE_CXX_STANDARD 11)
 
-# for now, tutorials depend only on pressio with Eigen
-include_directories(${EIGEN_INCLUDE_DIR} ${PRESSIO_INCLUDE_DIR})
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/tpls/eigen/eigen3
+  ${CMAKE_CURRENT_SOURCE_DIR}/tpls/pressio/include)
 
 set(TUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
 
