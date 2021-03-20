@@ -9,8 +9,8 @@
 <para><anchor id="index_1md_pages_main"/> <emphasis>Leading-edge projection-based reduced order models (pROMs) for dynamical systems in science and engineering.</emphasis></para>
 <para>This the documentation of the C++ tutorials. The full project website is <ulink url="https://pressio.github.io/">here</ulink>.</para>
 <sect1 id="index_1autotoc_md1">
-<title>Building/Get Started</title>
-<para>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support: <programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>git@github.com:Pressio/pressio-tutorials.git</highlight></codeline>
+<title>Get Started</title>
+<para>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support: <programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>git@github.com:Pressio/pressio-tutorials.git</highlight></codeline>
 <codeline></codeline>
 <codeline><highlight class="normal">export<sp/>CXX=&lt;path-to-your-CXX-compiler&gt;</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>pressio-tutorials<sp/>&amp;&amp;<sp/>mkdir<sp/>build<sp/>&amp;&amp;<sp/>cd<sp/>build</highlight></codeline>

@@ -6,7 +6,7 @@ dynamical systems in science and engineering.*
 This the documentation of the C++ tutorials.
 The full project website is [here](https://pressio.github.io/).
 
-## Building/Get Started
+## Get Started
 
 Requires CMake > 3.13.0 and a C++ compiler with C++11 support:
 ```bash
