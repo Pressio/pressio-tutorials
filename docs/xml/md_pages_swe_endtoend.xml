@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.20" xml:lang="en-US">
+  <compounddef id="md_pages_swe_endtoend" kind="page">
+    <compoundname>md_pages_swe_endtoend</compoundname>
+    <title>End-to-end Workflow: train, explore, reduce</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
+<para><simplesect kind="par"><title></title><para>This end-to-end analysis shows how to use the LSPG approach to accelerate a forward model of the SWE. <linebreak/>
+ In this tutorial, we cover the following steps (each with a dedicated section below):<orderedlist>
+<listitem><para>Use Pressio&apos;s time marching schemes to execute solves of the SWEs to construct training data.</para>
+</listitem><listitem><para>Use supporting Python scripts to analyze the training data and construct POD basis vectors.</para>
+</listitem><listitem><para>Run the SWE FOM at a test point in parameter space.</para>
+</listitem><listitem><para>Construct and run a standard LSPG ROM for the same test parameter instance.</para>
+</listitem><listitem><para>Construct and run a hyper-reduced LSPG ROM for same test parameter instance.</para>
+</listitem></orderedlist>
+</para>
+</simplesect>
+</para>
+<sect1 id="md_pages_swe_endtoend_1autotoc_md19">
+<title>Prerequisites</title>
+<para>After successfully builing the tutorials, set the following env var:</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">export<sp/>SWE2D_DIR=&lt;where-you-built-pressio-tutorials&gt;/tutorials/swe2d</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="md_pages_swe_endtoend_1autotoc_md20">
+<title>Step 1: Compute FOM training data</title>
+<para>For this step, we use the executable obtained from the <ulink url="./md_pages_swe_fom.html">FOM driver</ulink> to evaluate the FOM for 9 parameter instances on the grid <formula id="14">$\mu_1 \times \mu_3 = [3,6,9]\times [0.05,0.15,0.25]$</formula>, over the time interval <formula id="15">$t \in (0,10)$</formula> and save the solutions to file.</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/offline_phase</highlight></codeline>
+<codeline><highlight class="normal">./run_fom<sp/>-N<sp/>64<sp/>--gravity<sp/>3.<sp/>6.<sp/>9.<sp/>--forcing<sp/>0.05<sp/>0.15<sp/>0.25</highlight></codeline>
+</programlisting></para>
+<para>This will take some time to run, depending on your system. If successful, a series of <computeroutput>solution#.bin</computeroutput> files should be written. These solution files contain the FOM solutions at every time step for each of the nine training parameter instances. To view the results of one sample simulation, we can do: <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/offline_phase</highlight></codeline>
+<codeline><highlight class="normal">python3<sp/>viewSolutionAndMakePlots.py</highlight></codeline>
+</programlisting></para>
+<para>This script will bring up a live animation of the solution for the first parameter instance.</para>
+</sect1>
+<sect1 id="md_pages_swe_endtoend_1autotoc_md21">
+<title>Step 2: Compute the bases and build the sample mesh</title>
+<para>We now need to construct the basis vectors used in the ROM. <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/offline_phase</highlight></codeline>
+<codeline><highlight class="normal">python3<sp/>makeBasisAndHyperReducedBasis.py</highlight></codeline>
+</programlisting></para>
+<para>This script loads in the snapshots generated in Step 1. and performs POD to obtain the ROM basis. Additionally, this script selects cells for the sample mesh employed in hyper-reduction, and saves the relevant information of this sample mesh to file. Specifically, it generates the following files:<orderedlist>
+<listitem><para><computeroutput>basis.txt</computeroutput> This file contains the basis vectors for the ROM on the global mesh</para>
+</listitem><listitem><para><computeroutput>sample_mesh_gids.txt</computeroutput> This file contains the global IDs of the indices used for the sample mesh</para>
+</listitem><listitem><para><computeroutput>sample_mesh_plus_stencil_gids.txt</computeroutput> This file contains the global IDs of the indices used for the sample <emphasis>and</emphasis> stencil mesh</para>
+</listitem><listitem><para><computeroutput>PhiSamplePlusStencil.txt</computeroutput> This file contains the ROM basis, but only at the sample mesh plus stencil mesh. Additionally, this script will create a file (*samplemesh.png) depicting the sample and stencil mesh which we show below. Cells in bright green are the sample mesh, while purple cells are on the stencil mesh.</para>
+</listitem></orderedlist>
+</para>
+<para><image type="html" name="swe_samplemesh.png" width="75%"></image>
+</para>
+</sect1>
+<sect1 id="md_pages_swe_endtoend_1autotoc_md22">
+<title>Step 3: Run FOM at test point</title>
+<para>We run the FOM at a new parameter instance (the user is encouraged to play around with different parameters and see how it impacts the results):</para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/fom</highlight></codeline>
+<codeline><highlight class="normal">./run_fom<sp/>-N<sp/>64<sp/>--gravity<sp/>7.5<sp/>-p<sp/>0.125<sp/>--forcing<sp/>0.2</highlight></codeline>
+</programlisting></para>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-frame" /></para>
+<para><simplesect kind="par"><title>Approximate FOM runtime (with data collection disabled):</title><para>Running the FOM on a 2.4 GHz 8-Core Intel Core i9 using a single thread takes about <mcss:span xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-text m-danger">20 seconds</mcss:span>.</para>
+</simplesect>
+</para>
+</sect1>
+<sect1 id="md_pages_swe_endtoend_1autotoc_md23">
+<title>Step 4: RUN a standard LSPG ROM</title>
+<para>To run a standard LSPG ROM, we use the executable obtained from the <ulink url="./md_pages_swe_lspg.html">LSPG driver</ulink> In summary, this code couples the application to Pressio, loads in the basis information we generated in the offline phase, and couples to Pressio&apos;s ROM capabilities to run an LSPG ROM. To run the LSPG ROM, we can do: <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/lspg_rom</highlight></codeline>
+<codeline><highlight class="normal">cp<sp/>../../offline_phase/basis.txt<sp/>.</highlight></codeline>
+<codeline><highlight class="normal">./run_lspg<sp/>-k<sp/>10<sp/>-N<sp/>64<sp/>--gravity<sp/>7.5<sp/>-p<sp/>0.125<sp/>-f<sp/>0.2</highlight></codeline>
+<codeline><highlight class="normal">python3<sp/>viewSolutionAndMakePlots.py</highlight></codeline>
+</programlisting></para>
+<para>Notet that we pass <formula id="16">$-k = 10$</formula> to use 10 POD modes for each DOF as basis to run the ROM. This process saves the generalized coordinates of the ROM to the <computeroutput>solution.bin</computeroutput> file, and <computeroutput>viewSolutionAndMakePlots.py</computeroutput> plots the height of the water surface for a given spatial location as a function of time, and saves the plot to <emphasis>result.png</emphasis>. This plot looks as follows:</para>
+<para><image type="html" name="swe_result_lspg.png" width="75%"></image>
+</para>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-frame" /></para>
+<para><simplesect kind="par"><title>Approximate runtime (with data collection disabled):</title><para>Running on a 2.4 GHz 8-Core Intel Core i9 using a single thread takes about <mcss:span xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-text m-danger">27 seconds</mcss:span>.</para>
+</simplesect>
+We immediately note that our <emphasis>ROM is slower than the FOM!</emphasis> This is due to the well-known bottleneck associated with nonlinear systems. To gain computational speedups, we need hyper-reduction, as shown below.</para>
+</sect1>
+<sect1 id="md_pages_swe_endtoend_1autotoc_md24">
+<title>Step 4: RUN the hyper-reduced LSPG ROM</title>
+<para>To run a hypre-reduced LSPG ROM, we use the executable obtained from the <ulink url="./md_pages_swe_hrlspg.html">hyper-reduced LSPG driver</ulink> In summary, this executable loads the basis on the <emphasis>stencil mesh</emphasis>, loads in information about the <emphasis>sample mesh</emphasis> and <emphasis>stencil mesh</emphasis>, and then constructs and runs an LSPG ROM employing the collocation hyper-reduction technique.</para>
+<para>To run the LSPG ROM with hyper-reduction, we can do: <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/lspg_hyperReducedRom</highlight></codeline>
+<codeline><highlight class="normal">cp<sp/>../../offline_phase/*.txt<sp/>.</highlight></codeline>
+<codeline><highlight class="normal">./run_lspg<sp/>-k<sp/>10<sp/>-N<sp/>64<sp/>--gravity<sp/>7.5<sp/>-p<sp/>0.125<sp/>-f<sp/>0.2</highlight></codeline>
+<codeline><highlight class="normal">python3<sp/>viewSolutionAndMakePlots.py</highlight></codeline>
+</programlisting></para>
+<para>If successful, the following plot will be generated. <image type="html" name="swe_result_lspgHyper.png" width="75%"></image>
+</para>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-frame" /></para>
+<para><simplesect kind="par"><title>Approximate runtime (with data collection disabled):</title><para>On a 2.4 GHz 8-Core Intel Core i9 using a single thread takes about <mcss:span xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-text m-danger">3 seconds</mcss:span>: a 6.5X speedup over the FOM!</para>
+</simplesect>
+This completes our tutorial on ROMs for the shallow water equations. </para>
+</sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

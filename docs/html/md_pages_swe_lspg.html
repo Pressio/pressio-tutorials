@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LSPG ROM Driver | Pressio|C++ Tutorials</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="index.html" id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">Pressio|C++ Tutorials</a>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li>
+              <a>ODE</a>
+              <ol>
+                <li><a href="md_pages_ode_tutorial1.html">Explicit Time Integration</a></li>
+                <li><a href="md_pages_ode_tutorial2.html">Explicit Time Integration (Custom Types)</a></li>
+              </ol>
+            </li>
+            <li>
+              <a>ROM</a>
+              <ol>
+                <li><a href="md_pages_rom_tutorial1.html">Linear Decoder</a></li>
+                <li><a href="md_pages_rom_tutorial2.html">Default Galerkin explicit</a></li>
+              </ol>
+            </li>
+            <li>
+              <a href="md_pages_swe_main.html">Shallow Water Eq.</a>
+              <ol>
+                <li><a href="md_pages_swe_fom.html">FOM Driver</a></li>
+                <li><a href="md_pages_swe_lspg.html">LSPG Driver</a></li>
+                <li><a href="md_pages_swe_hrlspg.html">Hyper-reduced LSPG Driver</a></li>
+                <li><a href="md_pages_swe_endtoend.html">End-to-end Usecase</a></li>
+              </ol>
+            </li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="4">
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          LSPG ROM Driver
+        </h1>
+<aside class="m-block m-info"><p>This page walks through an example code to construct and run a standard LSPG ROM of the SWE.<br />The full code is available <a href="https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_rom/run_lspg.cc">here</a>.</p></aside><p>First, we include the relevant headers.</p><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio_rom_lspg.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pressio_apps.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;read_basis.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;rom_time_integration_observer.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;CLI11.hpp&quot;</span><span class="cp"></span></pre><p>Next, is the main function, where we first process the command line arguments and initialize the pressio logger.</p><pre class="m-code"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="n">CLI</span><span class="o">::</span><span class="n">App</span> <span class="n">app</span><span class="p">{</span><span class="s">&quot;LSPG ROM of 2D Shallow Water Equations&quot;</span><span class="p">};</span>
+
+  <span class="k">using</span> <span class="n">scalar_t</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">64</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">romSizePerDof</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="n">scalar_t</span> <span class="n">finalTime</span> <span class="o">=</span> <span class="mf">10.</span><span class="p">;</span>
+  <span class="n">scalar_t</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">;</span>
+  <span class="n">scalar_t</span> <span class="n">gravity</span> <span class="o">=</span> <span class="mf">7.5</span><span class="p">;</span>
+  <span class="n">scalar_t</span> <span class="n">pulse</span>   <span class="o">=</span> <span class="mf">0.125</span><span class="p">;</span>
+  <span class="n">scalar_t</span> <span class="n">forcing</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">;</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-k,--romSize&quot;</span><span class="p">,</span> <span class="n">romSizePerDof</span><span class="p">,</span>
+         <span class="s">&quot;Number of modes for each dof to use: default = 10&quot;</span><span class="p">);</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-N,--numCells&quot;</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span>
+         <span class="s">&quot;Number of cells along each axis: default = 64&quot;</span><span class="p">);</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-T,--finalTime&quot;</span><span class="p">,</span> <span class="n">finalTime</span><span class="p">,</span>
+         <span class="s">&quot;Simulation time: default = 10.&quot;</span><span class="p">);</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;--dt&quot;</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span>
+         <span class="s">&quot;Time step size: default = 0.02&quot;</span><span class="p">);</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-g,--gravity&quot;</span><span class="p">,</span> <span class="n">gravity</span><span class="p">,</span>
+         <span class="s">&quot;Gravity value(s) to simulate: default = 7.5&quot;</span><span class="p">);</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-p,--pulse&quot;</span><span class="p">,</span> <span class="n">pulse</span><span class="p">,</span>
+         <span class="s">&quot;Pulse magnitude, default = 0.125&quot;</span><span class="p">);</span>
+
+  <span class="n">app</span><span class="p">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&quot;-f,--forcing&quot;</span><span class="p">,</span> <span class="n">forcing</span><span class="p">,</span>
+         <span class="s">&quot;Forcing value(s) to simulate: default = 0.2&quot;</span><span class="p">);</span>
+
+  <span class="n">CLI11_PARSE</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span></pre><p>We construct the app object, and read in the bases. For standard LSPG, we need to read in the bases for all mesh points. Here, we assume the basis exists in a local file named <em>basis.txt</em>. The following lines of code read in the basis:</p><pre class="m-code"><span class="c1">// -------------------------------------------------------</span>
+<span class="c1">// create FOM object</span>
+<span class="c1">// -------------------------------------------------------</span>
+<span class="k">using</span> <span class="n">fom_t</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">apps</span><span class="o">::</span><span class="n">swe2d</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">scalar_t</span> <span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">gravity</span><span class="p">,</span> <span class="n">pulse</span><span class="p">,</span> <span class="n">forcing</span><span class="p">};</span>
+<span class="n">fom_t</span> <span class="nf">appObj</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">params</span><span class="p">);</span>
+
+<span class="c1">// -------------------------------------------------------</span>
+<span class="c1">// read basis</span>
+<span class="c1">// -------------------------------------------------------</span>
+<span class="k">using</span> <span class="n">decoder_jac_t</span>   <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">containers</span><span class="o">::</span><span class="n">MultiVector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">romSizeTotal</span> <span class="o">=</span> <span class="n">romSizePerDof</span><span class="o">*</span><span class="mi">3</span><span class="p">;</span>
+<span class="n">decoder_jac_t</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">readBasis</span><span class="p">(</span><span class="s">&quot;basis.txt&quot;</span><span class="p">,</span> <span class="n">romSizeTotal</span><span class="p">,</span> <span class="n">appObj</span><span class="p">.</span><span class="n">numDofs</span><span class="p">());</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">numBasis</span> <span class="o">=</span> <span class="n">phi</span><span class="p">.</span><span class="n">numVectors</span><span class="p">();</span>
+<span class="k">if</span><span class="p">(</span> <span class="n">numBasis</span> <span class="o">!=</span> <span class="n">romSizeTotal</span> <span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span></pre><p>Now that we have the basis, we create a Pressio decoder object. In this instance where we have a linear basis, the decoder, in essence, computes the product <svg class="m-math" style="width: 1.833em; height: 0.882em; vertical-align: -0.000em;" viewBox="0 -8.468225 17.592354 8.468225">
+<title>
+$\boldsymbol \Phi \hat{\boldsymbol x} $
+</title>
+<defs>
+<path id='eq1-g0-120' d='M6.40797-4.794022C5.977584-4.674471 5.762391-4.267995 5.762391-3.969116C5.762391-3.706102 5.965629-3.419178 6.360149-3.419178C6.77858-3.419178 7.220922-3.765878 7.220922-4.351681C7.220922-4.985305 6.587298-5.403736 5.858032-5.403736C5.176588-5.403736 4.734247-4.889664 4.578829-4.674471C4.27995-5.176588 3.610461-5.403736 2.929016-5.403736C1.422665-5.403736 .609714-3.93325 .609714-3.53873C.609714-3.371357 .789041-3.371357 .896638-3.371357C1.0401-3.371357 1.123786-3.371357 1.171606-3.526775C1.518306-4.614695 2.379078-4.97335 2.86924-4.97335C3.323537-4.97335 3.53873-4.758157 3.53873-4.375592C3.53873-4.148443 3.371357-3.490909 3.263761-3.060523L2.857285-1.422665C2.677958-.6934 2.247572-.334745 1.841096-.334745C1.78132-.334745 1.506351-.334745 1.267248-.514072C1.697634-.633624 1.912827-1.0401 1.912827-1.338979C1.912827-1.601993 1.709589-1.888917 1.315068-1.888917C.896638-1.888917 .454296-1.542217 .454296-.956413C.454296-.32279 1.08792 .095641 1.817186 .095641C2.49863 .095641 2.940971-.418431 3.096389-.633624C3.395268-.131507 4.064757 .095641 4.746202 .095641C6.252553 .095641 7.065504-1.374844 7.065504-1.769365C7.065504-1.936737 6.886177-1.936737 6.77858-1.936737C6.635118-1.936737 6.551432-1.936737 6.503611-1.78132C6.156912-.6934 5.296139-.334745 4.805978-.334745C4.351681-.334745 4.136488-.549938 4.136488-.932503C4.136488-1.183562 4.291905-1.817186 4.399502-2.259527C4.483188-2.570361 4.758157-3.694147 4.817933-3.88543C4.99726-4.60274 5.415691-4.97335 5.834122-4.97335C5.893898-4.97335 6.168867-4.97335 6.40797-4.794022Z'/>
+<path id='eq1-g2-94' d='M2.929016-8.296887L1.362889-6.670984L1.554172-6.491656L2.917061-7.723039L4.291905-6.491656L4.483188-6.670984L2.929016-8.296887Z'/>
+<path id='eq1-g1-8' d='M7.12528-7.687173V-8.201245C6.623163-8.177335 5.36787-8.177335 4.805978-8.177335S2.976837-8.177335 2.47472-8.201245V-7.687173H4.064757V-6.43188C1.673724-6.228643 .74122-5.116812 .74122-4.100623C.74122-3.072478 1.685679-1.972603 4.064757-1.769365V-.514072H2.47472V0C2.976837-.02391 4.23213-.02391 4.794022-.02391S6.623163-.02391 7.12528 0V-.514072H5.535243V-1.769365C8.320797-1.972603 8.954421-3.311582 8.954421-4.100623S8.320797-6.228643 5.535243-6.43188V-7.687173H7.12528ZM4.064757-2.187796C2.570361-2.391034 2.367123-3.263761 2.367123-4.100623S2.558406-5.810212 4.064757-6.01345V-2.187796ZM5.535243-6.025405C7.065504-5.846077 7.328518-5.033126 7.328518-4.100623S7.065504-2.355168 5.535243-2.175841V-6.025405Z'/>
+</defs>
+<g id='eq1-page1'>
+<use x='0' y='0' xlink:href='#eq1-g1-8'/>
+<use x='10.726469' y='-.166034' xlink:href='#eq1-g2-94'/>
+<use x='9.713574' y='0' xlink:href='#eq1-g0-120'/>
+</g>
+</svg>. We construct a decoder as follows</p><pre class="m-code"><span class="c1">// -------------------------------------------------------</span>
+<span class="c1">// create decoder obj</span>
+<span class="c1">// -------------------------------------------------------</span>
+<span class="k">using</span> <span class="n">native_state_t</span>  <span class="o">=</span> <span class="k">typename</span> <span class="nc">fom_t</span><span class="o">::</span><span class="n">state_type</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">fom_state_t</span>  <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">containers</span><span class="o">::</span><span class="n">Vector</span><span class="o">&lt;</span><span class="n">native_state_t</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">decoder_t</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">LinearDecoder</span><span class="o">&lt;</span><span class="n">decoder_jac_t</span><span class="p">,</span> <span class="n">fom_state_t</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="n">decoder_t</span> <span class="nf">decoderObj</span><span class="p">(</span><span class="n">phi</span><span class="p">);</span></pre><p>Next, we set the reference state for the ROM, <svg class="m-math" style="width: 2.168em; height: 1.028em; vertical-align: -0.000em;" viewBox="0 -9.873238 20.810526 9.873238">
+<title>
+$\boldsymbol x^{ref}$
+</title>
+<defs>
+<path id='eq2-g1-101' d='M1.601993-1.817186C1.777335-1.817186 2.375093-1.825156 2.797509-1.976588C3.490909-2.215691 3.514819-2.693898 3.514819-2.81345C3.514819-3.259776 3.092403-3.514819 2.574346-3.514819C1.673724-3.514819 .390535-2.805479 .390535-1.39477C.390535-.581818 .884682 .079701 1.761395 .079701C3.004732 .079701 3.674222-.71731 3.674222-.828892C3.674222-.900623 3.594521-.956413 3.5467-.956413S3.474969-.932503 3.435118-.884682C2.805479-.143462 1.912827-.143462 1.777335-.143462C1.195517-.143462 1.020174-.637609 1.020174-1.083935C1.020174-1.323039 1.091905-1.681694 1.123786-1.817186H1.601993ZM1.187547-2.040349C1.44259-3.012702 2.16787-3.291656 2.574346-3.291656C2.893151-3.291656 3.196015-3.132254 3.196015-2.81345C3.196015-2.040349 1.888917-2.040349 1.554172-2.040349H1.187547Z'/>
+<path id='eq2-g1-102' d='M3.052553-3.172105H3.793773C3.953176-3.172105 4.048817-3.172105 4.048817-3.323537C4.048817-3.435118 3.945205-3.435118 3.809714-3.435118H3.100374C3.227895-4.152428 3.307597-4.606725 3.387298-4.96538C3.419178-5.100872 3.443088-5.188543 3.56264-5.284184C3.666252-5.371856 3.730012-5.387796 3.817684-5.387796C3.937235-5.387796 4.064757-5.363885 4.168369-5.300125C4.128518-5.284184 4.080697-5.260274 4.040847-5.236364C3.905355-5.164633 3.809714-5.021171 3.809714-4.861768C3.809714-4.678456 3.953176-4.566874 4.128518-4.566874C4.359651-4.566874 4.574844-4.766127 4.574844-5.045081C4.574844-5.419676 4.192279-5.610959 3.809714-5.610959C3.53873-5.610959 3.036613-5.483437 2.781569-4.750187C2.709838-4.566874 2.709838-4.550934 2.494645-3.435118H1.896887C1.737484-3.435118 1.641843-3.435118 1.641843-3.283686C1.641843-3.172105 1.745455-3.172105 1.880946-3.172105H2.446824L1.872976-.079701C1.721544 .72528 1.601993 1.40274 1.179577 1.40274C1.155666 1.40274 .988294 1.40274 .836862 1.307098C1.203487 1.219427 1.203487 .884682 1.203487 .876712C1.203487 .6934 1.060025 .581818 .884682 .581818C.669489 .581818 .438356 .765131 .438356 1.067995C.438356 1.40274 .781071 1.625903 1.179577 1.625903C1.665753 1.625903 2.000498 1.115816 2.10411 .916563C2.391034 .390535 2.574346-.605729 2.590286-.68543L3.052553-3.172105Z'/>
+<path id='eq2-g1-114' d='M1.538232-1.099875C1.625903-1.44259 1.713574-1.785305 1.793275-2.13599C1.801245-2.15193 1.857036-2.383064 1.865006-2.422914C1.888917-2.494645 2.088169-2.82142 2.295392-3.020672C2.550436-3.251806 2.82142-3.291656 2.964882-3.291656C3.052553-3.291656 3.196015-3.283686 3.307597-3.188045C2.964882-3.116314 2.917061-2.82142 2.917061-2.749689C2.917061-2.574346 3.052553-2.454795 3.227895-2.454795C3.443088-2.454795 3.682192-2.630137 3.682192-2.948941C3.682192-3.235866 3.435118-3.514819 2.980822-3.514819C2.438854-3.514819 2.072229-3.156164 1.904857-2.940971C1.745455-3.514819 1.203487-3.514819 1.123786-3.514819C.836862-3.514819 .637609-3.331507 .510087-3.084433C.326775-2.725778 .239103-2.319303 .239103-2.295392C.239103-2.223661 .294894-2.191781 .358655-2.191781C.462267-2.191781 .470237-2.223661 .526027-2.430884C.621669-2.82142 .765131-3.291656 1.099875-3.291656C1.307098-3.291656 1.354919-3.092403 1.354919-2.917061C1.354919-2.773599 1.315068-2.622167 1.251308-2.359153C1.235367-2.295392 1.115816-1.825156 1.083935-1.713574L.789041-.518057C.757161-.398506 .70934-.199253 .70934-.167372C.70934 .01594 .860772 .079701 .964384 .079701C1.243337 .079701 1.299128-.143462 1.362889-.414446L1.538232-1.099875Z'/>
+<path id='eq2-g0-120' d='M6.40797-4.794022C5.977584-4.674471 5.762391-4.267995 5.762391-3.969116C5.762391-3.706102 5.965629-3.419178 6.360149-3.419178C6.77858-3.419178 7.220922-3.765878 7.220922-4.351681C7.220922-4.985305 6.587298-5.403736 5.858032-5.403736C5.176588-5.403736 4.734247-4.889664 4.578829-4.674471C4.27995-5.176588 3.610461-5.403736 2.929016-5.403736C1.422665-5.403736 .609714-3.93325 .609714-3.53873C.609714-3.371357 .789041-3.371357 .896638-3.371357C1.0401-3.371357 1.123786-3.371357 1.171606-3.526775C1.518306-4.614695 2.379078-4.97335 2.86924-4.97335C3.323537-4.97335 3.53873-4.758157 3.53873-4.375592C3.53873-4.148443 3.371357-3.490909 3.263761-3.060523L2.857285-1.422665C2.677958-.6934 2.247572-.334745 1.841096-.334745C1.78132-.334745 1.506351-.334745 1.267248-.514072C1.697634-.633624 1.912827-1.0401 1.912827-1.338979C1.912827-1.601993 1.709589-1.888917 1.315068-1.888917C.896638-1.888917 .454296-1.542217 .454296-.956413C.454296-.32279 1.08792 .095641 1.817186 .095641C2.49863 .095641 2.940971-.418431 3.096389-.633624C3.395268-.131507 4.064757 .095641 4.746202 .095641C6.252553 .095641 7.065504-1.374844 7.065504-1.769365C7.065504-1.936737 6.886177-1.936737 6.77858-1.936737C6.635118-1.936737 6.551432-1.936737 6.503611-1.78132C6.156912-.6934 5.296139-.334745 4.805978-.334745C4.351681-.334745 4.136488-.549938 4.136488-.932503C4.136488-1.183562 4.291905-1.817186 4.399502-2.259527C4.483188-2.570361 4.758157-3.694147 4.817933-3.88543C4.99726-4.60274 5.415691-4.97335 5.834122-4.97335C5.893898-4.97335 6.168867-4.97335 6.40797-4.794022Z'/>
+</defs>
+<g id='eq2-page1'>
+<use x='0' y='0' xlink:href='#eq2-g0-120'/>
+<use x='7.87878' y='-4.338437' xlink:href='#eq2-g1-114'/>
+<use x='11.935375' y='-4.338437' xlink:href='#eq2-g1-101'/>
+<use x='15.863759' y='-4.338437' xlink:href='#eq2-g1-102'/>
+</g>
+</svg>. Note that this reference state will be used when we reconstruct the state vector, i.e., the state will be reconstructed as</p><div class="m-math"><svg style="width: 7.963em; height: 1.186em;" viewBox="155.79945 -11.384189 76.445948 11.384189">
+<title>
+\[\hat{ \boldsymbol x} = \boldsymbol \Phi \hat{\boldsymbol x} + \boldsymbol x^{ref}\]
+</title>
+<defs>
+<path id='eq3-g0-120' d='M6.40797-4.794022C5.977584-4.674471 5.762391-4.267995 5.762391-3.969116C5.762391-3.706102 5.965629-3.419178 6.360149-3.419178C6.77858-3.419178 7.220922-3.765878 7.220922-4.351681C7.220922-4.985305 6.587298-5.403736 5.858032-5.403736C5.176588-5.403736 4.734247-4.889664 4.578829-4.674471C4.27995-5.176588 3.610461-5.403736 2.929016-5.403736C1.422665-5.403736 .609714-3.93325 .609714-3.53873C.609714-3.371357 .789041-3.371357 .896638-3.371357C1.0401-3.371357 1.123786-3.371357 1.171606-3.526775C1.518306-4.614695 2.379078-4.97335 2.86924-4.97335C3.323537-4.97335 3.53873-4.758157 3.53873-4.375592C3.53873-4.148443 3.371357-3.490909 3.263761-3.060523L2.857285-1.422665C2.677958-.6934 2.247572-.334745 1.841096-.334745C1.78132-.334745 1.506351-.334745 1.267248-.514072C1.697634-.633624 1.912827-1.0401 1.912827-1.338979C1.912827-1.601993 1.709589-1.888917 1.315068-1.888917C.896638-1.888917 .454296-1.542217 .454296-.956413C.454296-.32279 1.08792 .095641 1.817186 .095641C2.49863 .095641 2.940971-.418431 3.096389-.633624C3.395268-.131507 4.064757 .095641 4.746202 .095641C6.252553 .095641 7.065504-1.374844 7.065504-1.769365C7.065504-1.936737 6.886177-1.936737 6.77858-1.936737C6.635118-1.936737 6.551432-1.936737 6.503611-1.78132C6.156912-.6934 5.296139-.334745 4.805978-.334745C4.351681-.334745 4.136488-.549938 4.136488-.932503C4.136488-1.183562 4.291905-1.817186 4.399502-2.259527C4.483188-2.570361 4.758157-3.694147 4.817933-3.88543C4.99726-4.60274 5.415691-4.97335 5.834122-4.97335C5.893898-4.97335 6.168867-4.97335 6.40797-4.794022Z'/>
+<path id='eq3-g2-101' d='M1.601993-1.817186C1.777335-1.817186 2.375093-1.825156 2.797509-1.976588C3.490909-2.215691 3.514819-2.693898 3.514819-2.81345C3.514819-3.259776 3.092403-3.514819 2.574346-3.514819C1.673724-3.514819 .390535-2.805479 .390535-1.39477C.390535-.581818 .884682 .079701 1.761395 .079701C3.004732 .079701 3.674222-.71731 3.674222-.828892C3.674222-.900623 3.594521-.956413 3.5467-.956413S3.474969-.932503 3.435118-.884682C2.805479-.143462 1.912827-.143462 1.777335-.143462C1.195517-.143462 1.020174-.637609 1.020174-1.083935C1.020174-1.323039 1.091905-1.681694 1.123786-1.817186H1.601993ZM1.187547-2.040349C1.44259-3.012702 2.16787-3.291656 2.574346-3.291656C2.893151-3.291656 3.196015-3.132254 3.196015-2.81345C3.196015-2.040349 1.888917-2.040349 1.554172-2.040349H1.187547Z'/>
+<path id='eq3-g2-102' d='M3.052553-3.172105H3.793773C3.953176-3.172105 4.048817-3.172105 4.048817-3.323537C4.048817-3.435118 3.945205-3.435118 3.809714-3.435118H3.100374C3.227895-4.152428 3.307597-4.606725 3.387298-4.96538C3.419178-5.100872 3.443088-5.188543 3.56264-5.284184C3.666252-5.371856 3.730012-5.387796 3.817684-5.387796C3.937235-5.387796 4.064757-5.363885 4.168369-5.300125C4.128518-5.284184 4.080697-5.260274 4.040847-5.236364C3.905355-5.164633 3.809714-5.021171 3.809714-4.861768C3.809714-4.678456 3.953176-4.566874 4.128518-4.566874C4.359651-4.566874 4.574844-4.766127 4.574844-5.045081C4.574844-5.419676 4.192279-5.610959 3.809714-5.610959C3.53873-5.610959 3.036613-5.483437 2.781569-4.750187C2.709838-4.566874 2.709838-4.550934 2.494645-3.435118H1.896887C1.737484-3.435118 1.641843-3.435118 1.641843-3.283686C1.641843-3.172105 1.745455-3.172105 1.880946-3.172105H2.446824L1.872976-.079701C1.721544 .72528 1.601993 1.40274 1.179577 1.40274C1.155666 1.40274 .988294 1.40274 .836862 1.307098C1.203487 1.219427 1.203487 .884682 1.203487 .876712C1.203487 .6934 1.060025 .581818 .884682 .581818C.669489 .581818 .438356 .765131 .438356 1.067995C.438356 1.40274 .781071 1.625903 1.179577 1.625903C1.665753 1.625903 2.000498 1.115816 2.10411 .916563C2.391034 .390535 2.574346-.605729 2.590286-.68543L3.052553-3.172105Z'/>
+<path id='eq3-g2-114' d='M1.538232-1.099875C1.625903-1.44259 1.713574-1.785305 1.793275-2.13599C1.801245-2.15193 1.857036-2.383064 1.865006-2.422914C1.888917-2.494645 2.088169-2.82142 2.295392-3.020672C2.550436-3.251806 2.82142-3.291656 2.964882-3.291656C3.052553-3.291656 3.196015-3.283686 3.307597-3.188045C2.964882-3.116314 2.917061-2.82142 2.917061-2.749689C2.917061-2.574346 3.052553-2.454795 3.227895-2.454795C3.443088-2.454795 3.682192-2.630137 3.682192-2.948941C3.682192-3.235866 3.435118-3.514819 2.980822-3.514819C2.438854-3.514819 2.072229-3.156164 1.904857-2.940971C1.745455-3.514819 1.203487-3.514819 1.123786-3.514819C.836862-3.514819 .637609-3.331507 .510087-3.084433C.326775-2.725778 .239103-2.319303 .239103-2.295392C.239103-2.223661 .294894-2.191781 .358655-2.191781C.462267-2.191781 .470237-2.223661 .526027-2.430884C.621669-2.82142 .765131-3.291656 1.099875-3.291656C1.307098-3.291656 1.354919-3.092403 1.354919-2.917061C1.354919-2.773599 1.315068-2.622167 1.251308-2.359153C1.235367-2.295392 1.115816-1.825156 1.083935-1.713574L.789041-.518057C.757161-.398506 .70934-.199253 .70934-.167372C.70934 .01594 .860772 .079701 .964384 .079701C1.243337 .079701 1.299128-.143462 1.362889-.414446L1.538232-1.099875Z'/>
+<path id='eq3-g1-8' d='M7.12528-7.687173V-8.201245C6.623163-8.177335 5.36787-8.177335 4.805978-8.177335S2.976837-8.177335 2.47472-8.201245V-7.687173H4.064757V-6.43188C1.673724-6.228643 .74122-5.116812 .74122-4.100623C.74122-3.072478 1.685679-1.972603 4.064757-1.769365V-.514072H2.47472V0C2.976837-.02391 4.23213-.02391 4.794022-.02391S6.623163-.02391 7.12528 0V-.514072H5.535243V-1.769365C8.320797-1.972603 8.954421-3.311582 8.954421-4.100623S8.320797-6.228643 5.535243-6.43188V-7.687173H7.12528ZM4.064757-2.187796C2.570361-2.391034 2.367123-3.263761 2.367123-4.100623S2.558406-5.810212 4.064757-6.01345V-2.187796ZM5.535243-6.025405C7.065504-5.846077 7.328518-5.033126 7.328518-4.100623S7.065504-2.355168 5.535243-2.175841V-6.025405Z'/>
+<path id='eq3-g3-43' d='M4.770112-2.761644H8.069738C8.237111-2.761644 8.452304-2.761644 8.452304-2.976837C8.452304-3.203985 8.249066-3.203985 8.069738-3.203985H4.770112V-6.503611C4.770112-6.670984 4.770112-6.886177 4.554919-6.886177C4.327771-6.886177 4.327771-6.682939 4.327771-6.503611V-3.203985H1.028144C.860772-3.203985 .645579-3.203985 .645579-2.988792C.645579-2.761644 .848817-2.761644 1.028144-2.761644H4.327771V.537983C4.327771 .705355 4.327771 .920548 4.542964 .920548C4.770112 .920548 4.770112 .71731 4.770112 .537983V-2.761644Z'/>
+<path id='eq3-g3-61' d='M8.069738-3.873474C8.237111-3.873474 8.452304-3.873474 8.452304-4.088667C8.452304-4.315816 8.249066-4.315816 8.069738-4.315816H1.028144C.860772-4.315816 .645579-4.315816 .645579-4.100623C.645579-3.873474 .848817-3.873474 1.028144-3.873474H8.069738ZM8.069738-1.649813C8.237111-1.649813 8.452304-1.649813 8.452304-1.865006C8.452304-2.092154 8.249066-2.092154 8.069738-2.092154H1.028144C.860772-2.092154 .645579-2.092154 .645579-1.876961C.645579-1.649813 .848817-1.649813 1.028144-1.649813H8.069738Z'/>
+<path id='eq3-g3-94' d='M2.929016-8.296887L1.362889-6.670984L1.554172-6.491656L2.917061-7.723039L4.291905-6.491656L4.483188-6.670984L2.929016-8.296887Z'/>
+</defs>
+<g id='eq3-page1'>
+<use x='156.812344' y='-1.079235' xlink:href='#eq3-g3-94'/>
+<use x='155.79945' y='-.913201' xlink:href='#eq3-g0-120'/>
+<use x='166.999059' y='-.913201' xlink:href='#eq3-g3-61'/>
+<use x='179.42454' y='-.913201' xlink:href='#eq3-g1-8'/>
+<use x='190.151008' y='-1.079235' xlink:href='#eq3-g3-94'/>
+<use x='189.138114' y='-.913201' xlink:href='#eq3-g0-120'/>
+<use x='199.673557' y='-.913201' xlink:href='#eq3-g3-43'/>
+<use x='211.434872' y='-.913201' xlink:href='#eq3-g0-120'/>
+<use x='219.313652' y='-5.849387' xlink:href='#eq3-g2-114'/>
+<use x='223.370247' y='-5.849387' xlink:href='#eq3-g2-101'/>
+<use x='227.298631' y='-5.849387' xlink:href='#eq3-g2-102'/>
+</g>
+</svg></div><p>In this case we set the reference state to be the initial condition, and set the reference states as</p><pre class="m-code"><span class="c1">// -------------------------------------------------------</span>
+<span class="c1">// create reference state</span>
+<span class="c1">// -------------------------------------------------------</span>
+<span class="n">native_state_t</span> <span class="nf">yRef</span><span class="p">(</span><span class="n">appObj</span><span class="p">.</span><span class="n">getGaussianIC</span><span class="p">(</span><span class="n">pulse</span><span class="p">));</span></pre><p>We now begin constructing the ROM problem. We start by setting our LSPG state type to be a Pressio vector wrapping an Eigen vector. We note that this is decoupled from the FOM, and we could alternatively use, e.g., Kokkos with a host backend. In the following snippet of code, we set this type, initialize the ROM state, and set it to be zero. Note that this last step is due to the fact that we employ the initial condition as our ROM reference state, so the initial conditions for our ROM state are zero.</p><pre class="m-code"><span class="c1">// -------------------------------------------------------</span>
+<span class="c1">// create ROM problem</span>
+<span class="c1">// -------------------------------------------------------</span>
+<span class="k">using</span> <span class="n">lspg_state_t</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">containers</span><span class="o">::</span><span class="n">Vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_t</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<span class="c1">// define ROM state</span>
+<span class="n">lspg_state_t</span> <span class="nf">yROM</span><span class="p">(</span><span class="n">romSizeTotal</span><span class="p">);</span>
+<span class="c1">// initialize to zero (reference state is IC)</span>
+<span class="n">pressio</span><span class="o">::</span><span class="n">ops</span><span class="o">::</span><span class="n">fill</span><span class="p">(</span><span class="n">yROM</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span></pre><p>We now construct the LSPG problem. To do this, we have to define the time marching scheme, which here we set to be the second-order Crank Nicolson method. We define this time stepping scheme and construct the LSPG ROM as follows</p><pre class="m-code"><span class="c1">// define LSPG type</span>
+<span class="k">using</span> <span class="n">ode_tag</span>  <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">implicitmethods</span><span class="o">::</span><span class="n">CrankNicolson</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">lspgProblem</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">lspg</span><span class="o">::</span><span class="n">createDefaultProblemUnsteady</span>
+  <span class="o">&lt;</span><span class="n">ode_tag</span><span class="o">&gt;</span><span class="p">(</span><span class="n">appObj</span><span class="p">,</span> <span class="n">decoderObj</span><span class="p">,</span> <span class="n">yROM</span><span class="p">,</span> <span class="n">yRef</span><span class="p">);</span></pre><p>Now, we need to define the linear and nonlinear solvers use in our LSPG problem. Here, we employ a least-squares conjugate gradient solver to use within the Gauss&ndash;Newton solver for our LSPG ROM, where we additionally set the convergence tolerance and maximum number of iterations</p><pre class="m-code"><span class="c1">// linear solver</span>
+<span class="k">using</span> <span class="n">eig_dyn_mat</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_t</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="mi">-1</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">hessian_t</span>   <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">containers</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">eig_dyn_mat</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">solver_tag</span>      <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">solvers</span><span class="o">::</span><span class="n">linear</span><span class="o">::</span><span class="n">iterative</span><span class="o">::</span><span class="n">LSCG</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">linear_solver_t</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">solvers</span><span class="o">::</span><span class="n">linear</span><span class="o">::</span><span class="n">Solver</span><span class="o">&lt;</span><span class="n">solver_tag</span><span class="p">,</span> <span class="n">hessian_t</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="n">linear_solver_t</span> <span class="n">linSolverObj</span><span class="p">;</span>
+
+<span class="c1">// GaussNewton solver with normal equations</span>
+<span class="k">auto</span> <span class="n">solver</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">lspg</span><span class="o">::</span><span class="n">createGaussNewtonSolver</span><span class="p">(</span><span class="n">lspgProblem</span><span class="p">,</span> <span class="n">yROM</span><span class="p">,</span> <span class="n">linSolverObj</span><span class="p">);</span>
+<span class="n">solver</span><span class="p">.</span><span class="n">setTolerance</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">);</span>
+<span class="n">solver</span><span class="p">.</span><span class="n">setMaxIterations</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span></pre><p>Next, we construct an observer.</p><pre class="m-code"><span class="c1">// create observer (see rom_time_integration_observer.hpp in parent dir)</span>
+<span class="n">observer</span><span class="o">&lt;</span><span class="n">lspg_state_t</span><span class="p">,</span><span class="n">native_state_t</span><span class="o">&gt;</span> <span class="n">Obs</span><span class="p">(</span><span class="n">yRef</span><span class="p">);</span></pre><p>Observers act like hooks, and are called at the end of each time step/minimization problem. The observer class can be found [here]( <span class="m-text m-danger">todo</span>). When initialized, our observer writes the reference state to file in <code>state_ref.bin</code>. When this observer is called after each time step, it will then write the ROM solution to a <code>solution.bin</code> file.</p><p>Next we define information for our time marching, e.g. initial time, time step, end time, and total number of time steps, and solve the problem. The code advances the ROM in time for <em>Nsteps</em> time steps. Note that, as LSPG consists of solving a series of residual minimization problems, so we call this <code>solveNSequentialMinimizations</code>:</p><pre class="m-code">  <span class="c1">// solve</span>
+  <span class="k">const</span> <span class="k">auto</span> <span class="n">Nsteps</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;::</span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">step_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">finalTime</span><span class="o">/</span><span class="n">dt</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">startTime</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">lspg</span><span class="o">::</span><span class="n">solveNSequentialMinimizations</span><span class="p">(</span><span class="n">lspgProblem</span><span class="p">,</span> <span class="n">yROM</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">Nsteps</span><span class="p">,</span> <span class="n">Obs</span><span class="p">,</span> <span class="n">solver</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">finishTime</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+  <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">elapsed2</span> <span class="o">=</span> <span class="n">finishTime</span> <span class="o">-</span> <span class="n">startTime</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Walltime (single ROM run) = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">elapsed2</span><span class="p">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></pre><p>This completes our description of writing the LSPG coupler. #Click <a href="./md_pages_tutorials_tutorial3.html">here</a> to return to the SWE tutorial.</p>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>Pressio|C++ Tutorials. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.20 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

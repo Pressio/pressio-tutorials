@@ -1,0 +1,195 @@
+
+
+\begin{DoxyParagraph}{}
+This page walks through an example code to construct and run L\+S\+PR R\+OM of the S\+WE with {\itshape collocation-\/based hyperreduction}. The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/online_phase/lspg_hyperReducedRom/main.cc}{\texttt{ here}}.
+\end{DoxyParagraph}
+First, we include the relevant headers. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio\_rom\_lspg.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio\_apps.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}read\_basis.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}rom\_time\_integration\_observer.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}CLI11.hpp"{}}}
+\end{DoxyCode}
+
+
+The main function starts by processing the command line arguments and we initialize the pressio logger. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  CLI::App app\{\textcolor{stringliteral}{"{}Hyper-\/reduced LSPG ROM of 2D Shallow Water Equations"{}}\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t = double;}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} N = 64;}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} romSizePerDof = 10;}
+\DoxyCodeLine{  scalar\_t finalTime = 10.;}
+\DoxyCodeLine{  scalar\_t dt = 0.02;}
+\DoxyCodeLine{  scalar\_t gravity = 7.5;}
+\DoxyCodeLine{  scalar\_t pulse   = 0.125;}
+\DoxyCodeLine{  scalar\_t forcing = 0.2;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/k,-\/-\/romSize"{}}, romSizePerDof,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Number of modes for each dof to use: default = 10"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/N,-\/-\/numCells"{}}, N,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Number of cells along each axis: default = 64"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/T,-\/-\/finalTime"{}}, finalTime,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Simulation time: default = 10."{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/-\/dt"{}}, dt,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Time step size: default = 0.02"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/g,-\/-\/gravity"{}}, gravity,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Gravity value(s) to simulate: default = 7.5"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/p,-\/-\/pulse"{}}, pulse,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Pulse magnitude, default = 0.125"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  app.add\_option(\textcolor{stringliteral}{"{}-\/f,-\/-\/forcing"{}}, forcing,}
+\DoxyCodeLine{         \textcolor{stringliteral}{"{}Forcing value(s) to simulate: default = 0.2"{}});}
+\end{DoxyCode}
+
+
+Next, we read information on the R\+OM and hyper-\/reduction, namely the global indices of the target sample mesh, stencil mesh, and relative sample mesh information. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Required for the app}}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{  read in the global indices (gids) of the sample mesh.}}
+\DoxyCodeLine{\textcolor{comment}{  Note that we could alternatively extract these}}
+\DoxyCodeLine{\textcolor{comment}{  from the information contained in sm\_rel\_lids and and smps\_gids}}
+\DoxyCodeLine{\textcolor{comment}{*/}}
+\DoxyCodeLine{\textcolor{keyword}{auto} sampleMesh\_gids = readSampleMeshGlobalIndices(\textcolor{stringliteral}{"{}sample\_mesh\_gids.txt"{}});}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keyword}{auto} sampleMeshSize = sampleMesh\_gids.size();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Required for the app}}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{  read in the global indices (gids) of the stencil mesh.}}
+\DoxyCodeLine{\textcolor{comment}{  The underlying app is a structured solver, and these indices}}
+\DoxyCodeLine{\textcolor{comment}{  allow us to find the correct location on a structured grid.}}
+\DoxyCodeLine{\textcolor{comment}{*/}}
+\DoxyCodeLine{\textcolor{keyword}{auto} sampleMeshPlusStencil\_gids = readStencilMeshGlobalIndices(\textcolor{stringliteral}{"{}sample\_mesh\_plus\_stencil\_gids.txt"{}});}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keyword}{auto} sampleMeshPlusStencilSize = sampleMeshPlusStencil\_gids.size();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Required for Pressio}}
+\DoxyCodeLine{\textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{  read in the indices of the sample mesh relative to the stencil mesh,}}
+\DoxyCodeLine{\textcolor{comment}{  i.e., if the 4th element of the stencil mesh is the zeroth element}}
+\DoxyCodeLine{\textcolor{comment}{  of the sample mesh, then the zeroth entry would be sm\_rel\_lids(0) = 4;}}
+\DoxyCodeLine{\textcolor{comment}{*/}}
+\DoxyCodeLine{\textcolor{keyword}{auto} sampleMeshRelIds = readSampleMeshIndicesRelativeToStencil}
+\DoxyCodeLine{  (sampleMeshSize, \textcolor{stringliteral}{"{}sample\_mesh\_relative\_indices.txt"{}});}
+\end{DoxyCode}
+
+
+In the above, we have\+:
+\begin{DoxyEnumerate}
+\item {\ttfamily sample\+Mesh\+\_\+gids}\+: contains the global x,y indices of the sample mesh indices (this is required by the app). Note that this vector only contains information on the x,y cells used in the sample mesh, {\bfseries{not}} the number of conserved variables.
+\item {\ttfamily sample\+Mesh\+Plus\+Stencil\+\_\+gids}\+: contains the global I\+Ds of the stencil mesh (this is also required by the app). Note that this vector only contains information on the x,y cells used in the stencil mesh, but not the number of conserved variables.
+\item {\ttfamily sample\+Mesh\+Red\+Ids}\+: contains the I\+Ds of the sample mesh {\itshape relative} to the I\+Ds of the stencil mesh. Note that this vector will contain information about not only the x,y cells, but also the conserved variables, and hence it has {\itshape 3sample\+Mesh\+Size} entries. This data is required by Pressio, and is discussed more below. What do we mean by {\itshape information about the sample mesh indices, relative to the stencil mesh} For example, let\textquotesingle{}s say our F\+OM has the (zero-\/based) indices \[ \mathcal{I}_{\text{FOM}} = \begin{Bmatrix} 0& 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \end{Bmatrix}\] Let\textquotesingle{}s say our sample mesh uses indices 3, 5, and 7, \[ \mathcal{I}_{\text{sample}} = \begin{Bmatrix} 3 & 5 & 7 \end{Bmatrix}\]
+\end{DoxyEnumerate}
+
+Let\textquotesingle{}s suppose we use a three-\/point stencil in our numerical method. In this case, the stencil mesh would be \[ \mathcal{I}_{\text{stencil}} = \begin{Bmatrix} 2& 3 & 4& 5 &6 & 7 & 8\end{Bmatrix}\]
+
+The indices of the {\itshape sample mesh} relative to the indices of the {\itshape stencil mesh} are thus \[ \mathcal{I}_{\text{rel}} =\begin{Bmatrix} 1 & 3 & 5 \end{Bmatrix}\] Why do we need this information? In Pressio, when we perform hyperreduction, we need to load in the basis on the {\itshape stencil mesh} so that we can reconstruct the state at these points, and eventually evaluate the velocity/residual. However, we only then evaluate the residual at the {\itshape sample mesh}, and thus we need to know what indices in the {\itshape stencil mesh} correspond to those that are on the {\itshape sample mesh}. Makes sense? Great!
+
+Next, we construct the application/\+F\+OM problem object. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Construct the app}}
+\DoxyCodeLine{\textcolor{keyword}{using} fom\_t = pressio::apps::swe2d\_hyper<std::vector<int>>;}
+\DoxyCodeLine{\textcolor{keyword}{const} scalar\_t params[3] = \{gravity, pulse, forcing\};}
+\DoxyCodeLine{fom\_t appObj(N, params, sampleMesh\_gids, sampleMeshPlusStencil\_gids);}
+\end{DoxyCode}
+
+
+Note that here we use the \href{.}{\texttt{ swe2d\+\_\+hyper}} class, opposed to the \href{.}{\texttt{ swe2d}} application. These two applications are the same, with the exception that the {\itshape swe2d\+\_\+hyper} application loads in indices for the sample and stencil mesh, and only computes the velocity/\+Jacobians at these points. We note that, in the last line where we construct the application, the constructor additionally requires the sample mesh information.
+
+Next, we read in the basis\+: for hyper-\/reduction, we only read in the basis on the {\itshape stencil mesh}. The basis on the full mesh is not required to solve the problem. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// read basis on the sample+stencil mesh}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} decoder\_jac\_t   = pressio::containers::MultiVector<Eigen::MatrixXd>;}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{int} romSizeTotal = romSizePerDof*3;}
+\DoxyCodeLine{decoder\_jac\_t phi = readBasis(\textcolor{stringliteral}{"{}PhiSamplePlusStencil.txt"{}},}
+\DoxyCodeLine{              romSizeTotal,}
+\DoxyCodeLine{              (\textcolor{keywordtype}{int})sampleMeshPlusStencilSize*3);}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{int} numBasis = phi.numVectors();}
+\DoxyCodeLine{\textcolor{keywordflow}{if}( numBasis != romSizeTotal ) \textcolor{keywordflow}{return} 0;}
+\end{DoxyCode}
+
+
+We then use the basis information to construct the decoder. For hyper-\/reduced L\+S\+PG the decoder, in essence, is used to compute the product $\boldsymbol \Phi_{\text{stencil}} \hat{\boldsymbol x} $, where $\boldsymbol \Phi_{\text{stencil}}$ is the basis on the {\itshape stencil mesh}. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// construct decoder}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} native\_state\_t  = \textcolor{keyword}{typename} fom\_t::state\_type;}
+\DoxyCodeLine{\textcolor{keyword}{using} fom\_state\_t  = pressio::containers::Vector<native\_state\_t>;}
+\DoxyCodeLine{\textcolor{keyword}{using} decoder\_t = pressio::rom::LinearDecoder<decoder\_jac\_t, fom\_state\_t>;}
+\DoxyCodeLine{decoder\_t decoderObj(phi);}
+\end{DoxyCode}
+
+
+Next we create our reference state. For hyper-\/reduction, Pressio requires the reference state on the {\itshape stencil\+\_\+mesh}. If we want to view the entire solution field, however, we will also need the reference state on the full mesh. Here, we create both entities\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// create the reference vector (on the stencil mesh).}}
+\DoxyCodeLine{native\_state\_t yRef(appObj.getGaussianIC(params[1]));}
+\DoxyCodeLine{\textcolor{comment}{// For post processing, we also make a vector on the full mesh}}
+\DoxyCodeLine{native\_state\_t yRefFull(appObj.getGaussianICFull(params[1]));}
+\end{DoxyCode}
+
+
+We now create the R\+OM state and initialize it to zero (again, the initial conditions are the reference state), and create the L\+S\+PG problem object. We again use the Crank Nicolson time marching scheme. Note that to construct the L\+S\+PG R\+OM proble, the constructor needs the relative sample mesh indices. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{comment}{// create ROM problem}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\textcolor{keyword}{using} lspg\_state\_t = pressio::containers::Vector<Eigen::Matrix<scalar\_t,-\/1,1>>;}
+\DoxyCodeLine{\textcolor{comment}{// define ROM state}}
+\DoxyCodeLine{lspg\_state\_t yROM(romSizeTotal);}
+\DoxyCodeLine{\textcolor{comment}{// initialize to zero (reference state is the initial condition)}}
+\DoxyCodeLine{pressio::ops::fill(yROM, 0.0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// define LSPG type}}
+\DoxyCodeLine{\textcolor{keyword}{using} ode\_tag  = pressio::ode::implicitmethods::CrankNicolson;}
+\DoxyCodeLine{\textcolor{keyword}{auto} lspgProblem = pressio::rom::lspg::createHyperReducedProblemUnsteady}
+\DoxyCodeLine{  <ode\_tag>(appObj, decoderObj, yROM, yRef, sampleMeshRelIds);}
+\end{DoxyCode}
+
+
+The remainder of our driver follows closely that which was written for L\+S\+PG. We define our linear and nonlinear solvers\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{  \textcolor{comment}{// linear solver}}
+\DoxyCodeLine{  \textcolor{keyword}{using} eig\_dyn\_mat     = Eigen::Matrix<scalar\_t, -\/1, -\/1>;}
+\DoxyCodeLine{  \textcolor{keyword}{using} hessian\_t       = pressio::containers::DenseMatrix<eig\_dyn\_mat>;}
+\DoxyCodeLine{  \textcolor{keyword}{using} solver\_tag      = pressio::solvers::linear::iterative::LSCG;}
+\DoxyCodeLine{  \textcolor{keyword}{using} linear\_solver\_t = pressio::solvers::linear::Solver<solver\_tag, hessian\_t>;}
+\DoxyCodeLine{  linear\_solver\_t linSolverObj;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// GaussNewton solver with normal equations}}
+\DoxyCodeLine{  \textcolor{keyword}{auto} solver = pressio::rom::lspg::createGaussNewtonSolver(lspgProblem, yROM, linSolverObj);}
+\DoxyCodeLine{  solver.setTolerance(1e-\/8);}
+\DoxyCodeLine{  solver.setMaxIterations(10);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// define observer to monitor time evolution of generalized coordinates}}
+\DoxyCodeLine{  observer<lspg\_state\_t,native\_state\_t> Obs(yRefFull);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// solve}}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keyword}{auto} Nsteps = \textcolor{keyword}{static\_cast<}::pressio::ode::types::step\_t\textcolor{keyword}{>}(finalTime/dt);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} startTime = std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{  pressio::rom::lspg::solveNSequentialMinimizations(lspgProblem, yROM, 0.0, dt, Nsteps, Obs, solver);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} finishTime = std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{  \textcolor{keyword}{const} std::chrono::duration<double> elapsed2 = finishTime -\/ startTime;}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Walltime (single ROM run) = "{}} << elapsed2.count() << \textcolor{charliteral}{'\(\backslash\)n'};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{auto} yFomFinal = lspgProblem.fomStateReconstructorCRef()(yROM);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} solNorm = (*yFomFinal.data()).norm();}
+\DoxyCodeLine{  std::cout << std::setprecision(14) << solNorm << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+
+
+This completes our description of writing the L\+S\+PG hyper-\/reduction driver. \#\+Click \href{./md_pages_tutorials_tutorial3.html}{\texttt{ here}} to return to the S\+WE tutorial. 

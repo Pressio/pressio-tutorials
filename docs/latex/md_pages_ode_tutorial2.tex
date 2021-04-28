@@ -1,0 +1,149 @@
+
+
+\begin{DoxyParagraph}{}
+This tutorial shows how to do {\itshape explicit time integration} in pressio with custom types, i.\+e. data types that pressio does not know how to operate on.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial 3\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{    We illustrate here how to leverage the package pressio/ode to do}}
+\DoxyCodeLine{\textcolor{comment}{    explicit time-\/integration for a system of ODEs with arbitrary data types.}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{    As mentioned in tutorial1, pressio can handle types for which we have wrappers}}
+\DoxyCodeLine{\textcolor{comment}{    as well as unknown arbitrary types. While for the former case pressio}}
+\DoxyCodeLine{\textcolor{comment}{    knows how to do linear algebra, for the latter case, i.e. unknown types,}}
+\DoxyCodeLine{\textcolor{comment}{    pressio does not know which methods those data structures support.}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{    pressio supports arbitrary type via generic programming and type introspection.}}
+\DoxyCodeLine{\textcolor{comment}{    For example, if a vector container wrapper is templated on a Eigen::VectorXd,}}
+\DoxyCodeLine{\textcolor{comment}{    pressio detects/recognizes the type and leverages the native algebra of Eigen.}}
+\DoxyCodeLine{\textcolor{comment}{    If the user instantiates a vector templated on an}}
+\DoxyCodeLine{\textcolor{comment}{    arbitrary vector type (for example user-\/defined), then pressio is also able to}}
+\DoxyCodeLine{\textcolor{comment}{    detect that this is an ''unknown'' type, and the user needs to provide}}
+\DoxyCodeLine{\textcolor{comment}{    the necessary operations to do the algebra.}}
+\DoxyCodeLine{\textcolor{comment}{    These operations can be passed to pressio either as function objects.}}
+\DoxyCodeLine{\textcolor{comment}{    This discussion will be clear from the example below.}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{    Suppose that you need to use some pressio/ode package for doing explicit time}}
+\DoxyCodeLine{\textcolor{comment}{    integration of a system of ODEs which is implemented using the C++ STL.}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{    For the sake of explanation, MyApp at the top of this page is a class}}
+\DoxyCodeLine{\textcolor{comment}{    that defines the target system of ODEs using std::vectors<>, and meets}}
+\DoxyCodeLine{\textcolor{comment}{    the API needed by pressio to run explicit time integration, i.e.:}}
+\DoxyCodeLine{\textcolor{comment}{    (a) it has typedefs for scalar, state and velicity}}
+\DoxyCodeLine{\textcolor{comment}{    (b) it has a velocity() and createVelocity() method}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{    As long as the user-\/defined class/app or whatever name you want to call has an}}
+\DoxyCodeLine{\textcolor{comment}{    API as MyApp, then it can be used with pressio for explicit time integratio..}}
+\DoxyCodeLine{\textcolor{comment}{    Note that if you try to run an explicit time integration with a user-\/defined system}}
+\DoxyCodeLine{\textcolor{comment}{    that does not satisfy the target API, pressio throws a compile-\/time error.}}
+\DoxyCodeLine{\textcolor{comment}{  */}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// for this tutorial, we run Forward Euler on the system defined by MyApp.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** define some types ***}}
+\DoxyCodeLine{  \textcolor{keyword}{using} app\_t       = MyApp;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t    = \textcolor{keyword}{typename} app\_t::scalar\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} native\_state\_t  = \textcolor{keyword}{typename} app\_t::state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} native\_veloc\_t  = \textcolor{keyword}{typename} app\_t::velocity\_type;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** create the app object ***}}
+\DoxyCodeLine{  app\_t appObj;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** define pressio wrapper types for the state ***}}
+\DoxyCodeLine{  \textcolor{comment}{// in this case, pressio behind the scenes detects what type you}}
+\DoxyCodeLine{  \textcolor{comment}{// are passing as template argument and since it is not (for now) supported,}}
+\DoxyCodeLine{  \textcolor{comment}{// pressio still wraps the object but does not know how to do anythin else.}}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_t = ::pressio::containers::Vector<native\_state\_t>;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** create the initial state object ***}}
+\DoxyCodeLine{  state\_t y(3);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** fill the initial state vector ***}}
+\DoxyCodeLine{  \textcolor{comment}{// any pressio wrapper provides the data() method to get a pointer to the wrapped object}}
+\DoxyCodeLine{  \textcolor{keyword}{auto} yptr = y.data();}
+\DoxyCodeLine{  \textcolor{comment}{// i can now use regular std vector [] operator to fill in}}
+\DoxyCodeLine{  (*yptr)[0] = 1.; (*yptr)[1] = 2.; (*yptr)[2] = 3.;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** create the pressio stepper ***}}
+\DoxyCodeLine{  \textcolor{comment}{// since we are using a custom data stucture type, we also need to inform pressio}}
+\DoxyCodeLine{  \textcolor{comment}{// how to do operations, like vector additions, etc.}}
+\DoxyCodeLine{  \textcolor{comment}{// To this end, we use a class "{}myops"{} see above, with static methods}}
+\DoxyCodeLine{  \textcolor{comment}{// with specific signatures tht pressio will look for.}}
+\DoxyCodeLine{  \textcolor{comment}{// pressio will complain at compile time if:}}
+\DoxyCodeLine{  \textcolor{comment}{// -\/ you forget to pass the myops template to the stepper}}
+\DoxyCodeLine{  \textcolor{comment}{// -\/ your ops class type does not have the right methods needed for the stepper you want}}
+\DoxyCodeLine{  \textcolor{comment}{// -\/ your ops class type does not have methods that match what pressio needs.}}
+\DoxyCodeLine{  \textcolor{comment}{// pressio will introspect your type to check if it is an admissible ops class}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} my\_custom\_ops = MyOps<scalar\_t>;}
+\DoxyCodeLine{  my\_custom\_ops ops;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag = ::pressio::ode::explicitmethods::Euler;}
+\DoxyCodeLine{  \textcolor{keyword}{using} stepper\_t = ::pressio::ode::ExplicitStepper<ode\_tag, state\_t, app\_t, my\_custom\_ops>;}
+\DoxyCodeLine{  stepper\_t stepperObj(y, appObj, ops);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// *** integrated in time ***}}
+\DoxyCodeLine{  scalar\_t dt = 0.1;}
+\DoxyCodeLine{  ::pressio::ode::advanceNSteps(stepperObj, y, 0.0, dt, 1ul);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// note that for this system and settings, the solution printed should be 2,4,6}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
+\DoxyCodeLine{            << (*yptr)[0] << \textcolor{stringliteral}{"{} "{}} << (*yptr)[1] << \textcolor{stringliteral}{"{} "{}} << (*yptr)[2] << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{        << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}
+\DoxyCodeLine{        << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+\end{DoxyCode}
+
+
+And the system class is\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }MyApp\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type   = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = std::vector<scalar\_type>;}
+\DoxyCodeLine{  \textcolor{keyword}{using} velocity\_type = state\_type;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} velocity(\textcolor{keyword}{const} state\_type \& y,}
+\DoxyCodeLine{        scalar\_type t,}
+\DoxyCodeLine{        velocity\_type \& R)\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{    R[0] = 10. * y[0];}
+\DoxyCodeLine{    R[1] = 10. * y[1];}
+\DoxyCodeLine{    R[2] = 10. * y[2];}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  velocity\_type createVelocity()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} velocity\_type(3);}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{\};}
+\end{DoxyCode}
+
+
+And the ops class is\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template} <\textcolor{keyword}{typename} scalar\_t>}
+\DoxyCodeLine{\textcolor{keyword}{struct }MyOps}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} v\_t = std::vector<scalar\_t>;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} update(v\_t \& v, \textcolor{keyword}{const} v\_t \& v1, \textcolor{keyword}{const} scalar\_t b)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.size(); ++i)}
+\DoxyCodeLine{      v[i] = b*v1[i];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} update(v\_t \& v, \textcolor{keyword}{const} scalar\_t a,}
+\DoxyCodeLine{          \textcolor{keyword}{const} v\_t \& v1, \textcolor{keyword}{const} scalar\_t b)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.size(); ++i)}
+\DoxyCodeLine{      v[i] = a*v[i] + b*v1[i];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+\end{DoxyCode}
+ 
