@@ -68,23 +68,23 @@
 #include "pressio_ode.hpp"
 
 // common classes for rom
-#include "rom/src/pressio_rom_common.hpp"
+#include "rom/pressio_rom_common.hpp"
 
 // wls classes
-#include "rom/src/utils/rom_utils_set_gen_coordinates.hpp"
-#include "rom/src/wls/rom_wls_types.hpp"
-#include "rom/src/wls/rom_wls_jacobian_updating_tag.hpp"
-#include "rom/src/wls/rom_wls_jacobians_container.hpp"
-#include "rom/src/wls/rom_wls_preconditioners.hpp"
+#include "rom/utils/rom_utils_set_gen_coordinates.hpp"
+#include "rom/wls/rom_wls_types.hpp"
+#include "rom/wls/rom_wls_jacobian_updating_tag.hpp"
+#include "rom/wls/rom_wls_jacobians_container.hpp"
+#include "rom/wls/rom_wls_preconditioners.hpp"
 
-#include "rom/src/wls/predicates/rom_wls_is_legitimate_preconditioner_type.hpp"
-#include "rom/src/wls/predicates/rom_wls_is_legitimate_jacobian_updating_tag.hpp"
-#include "rom/src/wls/time_schemes/rom_wls_implicit_euler.hpp"
-#include "rom/src/wls/time_schemes/rom_wls_bdf2.hpp"
-#include "rom/src/wls/time_schemes/rom_wls_select_timescheme_helper.hpp"
+#include "rom/wls/predicates/rom_wls_is_legitimate_preconditioner_type.hpp"
+#include "rom/wls/predicates/rom_wls_is_legitimate_jacobian_updating_tag.hpp"
+#include "rom/wls/time_schemes/rom_wls_implicit_euler.hpp"
+#include "rom/wls/time_schemes/rom_wls_bdf2.hpp"
+#include "rom/wls/time_schemes/rom_wls_select_timescheme_helper.hpp"
 
-#include "rom/src/wls/rom_wls_hessian_gradient_system_api.hpp"
-#include "rom/src/wls/rom_wls_hessian_and_gradient_sequential_policy.hpp"
-#include "rom/src/wls/rom_wls_solve_windows.hpp"
+#include "rom/wls/rom_wls_hessian_gradient_system_api.hpp"
+#include "rom/wls/rom_wls_hessian_and_gradient_sequential_policy.hpp"
+#include "rom/wls/rom_wls_solve_windows.hpp"
 
 #endif

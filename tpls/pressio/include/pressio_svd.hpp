@@ -55,13 +55,13 @@
 #include "pressio_ops.hpp"
 #include "pressio_qr.hpp"
 
-#include "svd/src/svd_ConfigDefs.hpp"
-#include "svd/src/svd_fwd.hpp"
+#include "svd/svd_ConfigDefs.hpp"
+#include "svd/svd_fwd.hpp"
 
-#include "svd/src/svd_solver_traits.hpp"
-#include "svd/src/svd_solver_generic_base.hpp"
+#include "svd/svd_solver_traits.hpp"
+#include "svd/svd_solver_generic_base.hpp"
 #if defined(PRESSIO_ENABLE_TPL_TRILINOS) and defined(PRESSIO_ENABLE_TPL_EIGEN)
-#include "svd/src/svd_multi_vector_epetra.hpp"
+#include "svd/svd_multi_vector_epetra.hpp"
 #endif
 
 #endif

@@ -66,18 +66,18 @@
 #include "pressio_solvers.hpp"
 
 // common things
-#include "ode/src/pressio_ode_common.hpp"
+#include "ode/pressio_ode_common.hpp"
 
 // specific to explicit
-#include "ode/src/explicit/constraints/ode_explicit_state.hpp"
-#include "ode/src/explicit/constraints/ode_explicit_velocity.hpp"
-#include "ode/src/explicit/constraints/ode_explicit_velocity_policy.hpp"
-#include "ode/src/explicit/constraints/ode_explicitly_steppable.hpp"
-#include "ode/src/explicit/constraints/ode_user_defined_ops_for_explicit_euler.hpp"
-#include "ode/src/explicit/constraints/ode_user_defined_ops_for_explicit_rk4.hpp"
-#include "ode/src/explicit/constraints/ode_user_defined_ops_for_explicit_ab2.hpp"
-#include "ode/src/explicit/ode_explicit_velocity_standard_policy.hpp"
-#include "ode/src/explicit/ode_explicit_stepper.hpp"
-#include "ode/src/integrators/ode_advance_n_steps_explicit.hpp"
+#include "ode/explicit/constraints/ode_explicit_state.hpp"
+#include "ode/explicit/constraints/ode_explicit_velocity.hpp"
+#include "ode/explicit/constraints/ode_explicit_velocity_policy.hpp"
+#include "ode/explicit/constraints/ode_explicitly_steppable.hpp"
+#include "ode/explicit/constraints/ode_user_defined_ops_for_explicit_euler.hpp"
+#include "ode/explicit/constraints/ode_user_defined_ops_for_explicit_rk4.hpp"
+#include "ode/explicit/constraints/ode_user_defined_ops_for_explicit_ab2.hpp"
+#include "ode/explicit/ode_explicit_velocity_standard_policy.hpp"
+#include "ode/explicit/ode_explicit_stepper.hpp"
+#include "ode/integrators/ode_advance_n_steps_explicit.hpp"
 
 #endif

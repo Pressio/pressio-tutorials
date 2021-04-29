@@ -70,11 +70,10 @@ Here, for demonstration purposes, we pretend the F\+OM uses Eigen types too. For
 \DoxyCodeLine{  decoder.applyMapping(yRom, yFom);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// *** check solution ***}}
-\DoxyCodeLine{  \textcolor{comment}{// yFom should be = [4. 4. ..., 4.]}}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i=0; i<yFom.extent(0); ++i)}
 \DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}i= "{}} << i}
 \DoxyCodeLine{          << \textcolor{stringliteral}{"{}, yFom(i) = "{}}  << yFom(i)}
-\DoxyCodeLine{          << \textcolor{stringliteral}{"{}, expected = "{}} << 4.}
+\DoxyCodeLine{          << \textcolor{stringliteral}{"{}, expected = "{}} << 6.}
 \DoxyCodeLine{          << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
@@ -150,12 +149,14 @@ Note that the code below would work for any other "{}arbitrary\textquotesingle{}
 \DoxyCodeLine{  decoder.applyMapping(yRom, yFom);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// *** check solution ***}}
-\DoxyCodeLine{  \textcolor{comment}{// yFom should be = [4. 4. .... 4.]}}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i=0; i<6; ++i)}
 \DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}i= "{}} << i}
 \DoxyCodeLine{          << \textcolor{stringliteral}{"{}, yFom(i) = "{}}  << yFom(i)}
-\DoxyCodeLine{          << \textcolor{stringliteral}{"{}, expected = "{}} << 4.}
+\DoxyCodeLine{          << \textcolor{stringliteral}{"{}, expected = "{}} << 6.}
 \DoxyCodeLine{          << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
 \end{DoxyCode}
 \hypertarget{md_pages_rom_tutorial1_autotoc_md11}{}\doxysubsection{The ops struct}\label{md_pages_rom_tutorial1_autotoc_md11}
 In order for pressio to handle the linear mapping, it needs to know how to operate on $\phi$. To this end, in the code above, you need to pass to the {\ttfamily Linear\+Decoder} constructor an object to handle that computation. To compute the mapping, pressio will call the {\ttfamily product} method. 

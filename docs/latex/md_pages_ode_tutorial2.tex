@@ -91,7 +91,7 @@ This tutorial shows how to do {\itshape explicit time integration} in pressio wi
 \DoxyCodeLine{  scalar\_t dt = 0.1;}
 \DoxyCodeLine{  ::pressio::ode::advanceNSteps(stepperObj, y, 0.0, dt, 1ul);}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// note that for this system and settings, the solution printed should be 2,4,6}}
+\DoxyCodeLine{  \textcolor{comment}{// check solution against expected}}
 \DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
 \DoxyCodeLine{            << (*yptr)[0] << \textcolor{stringliteral}{"{} "{}} << (*yptr)[1] << \textcolor{stringliteral}{"{} "{}} << (*yptr)[2] << \textcolor{stringliteral}{"{}] "{}}}
 \DoxyCodeLine{        << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}

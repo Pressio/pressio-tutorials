@@ -57,10 +57,10 @@
 #include "pressio_svd.hpp"
 #include "pressio_solvers.hpp"
 
-#include "optimizers/src/optimizers_enums.hpp"
-#include "optimizers/src/optimizers_params.hpp"
+#include "optimizers/optimizers_enums.hpp"
+#include "optimizers/optimizers_params.hpp"
 #ifdef PRESSIO_ENABLE_TPL_TRILINOS
-#include "optimizers/src/optimizers_unconstrained.hpp"
+#include "optimizers/optimizers_unconstrained.hpp"
 #endif
 
 #endif

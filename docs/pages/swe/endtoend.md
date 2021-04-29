@@ -121,7 +121,7 @@ To run the LSPG ROM with hyper-reduction, we can do:
 ```bash
 cd $SWE2D_DIR/online_phase/lspg_hyperReducedRom
 cp ../../offline_phase/*.txt .
-./run_lspg -k 10 -N 64 --gravity 7.5 -p 0.125 -f 0.2
+./run_lspg_with_hyperreduction -k 10 -N 64 --gravity 7.5 -p 0.125 -f 0.2
 python3 viewSolutionAndMakePlots.py
 ```
 If successful, the following plot will be generated.

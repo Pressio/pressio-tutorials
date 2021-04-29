@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
   scalar_t dt = 0.1;
   ::pressio::ode::advanceNSteps(stepperObj, y, 0.0, dt, 1ul);
 
-  // note that for this system and settings, the solution printed should be 2,4,6
+  // check solution against expected
   std::cout << "Computed solution: ["
             << (*yptr)[0] << " " << (*yptr)[1] << " " << (*yptr)[2] << "] "
 	    << "Expected solution: [2,4,6] "

@@ -51,24 +51,25 @@
 
 #include "pressio_mpl.hpp"
 
-#include "utils/src/utils_crtp_helper.hpp"
-#include "utils/src/utils_static_constants.hpp"
-#include "utils/src/utils_empty.hpp"
-#include "utils/src/utils_instance_or_reference_wrapper.hpp"
-#include "utils/src/utils_read_ascii_matrix_std_vec_vec.hpp"
-#include "utils/src/utils_set_stream_precision.hpp"
+#include "utils/utils_crtp_helper.hpp"
+#include "utils/utils_static_constants.hpp"
+#include "utils/utils_empty.hpp"
+#include "utils/utils_make_unique.hpp"
+#include "utils/utils_instance_or_reference_wrapper.hpp"
+#include "utils/utils_read_ascii_matrix_std_vec_vec.hpp"
+#include "utils/utils_set_stream_precision.hpp"
 
 #ifdef PRESSIO_ENABLE_TEUCHOS_TIMERS
-#include "utils/src/utils_teuchos_performance_monitor.hpp"
+#include "utils/utils_teuchos_performance_monitor.hpp"
 #endif
 
-#include "utils/src/io/utils_colorize_print.hpp"
-#include "utils/src/io/utils_print_helper.hpp"
+#include "utils/io/utils_colorize_print.hpp"
+#include "utils/io/utils_print_helper.hpp"
 
 /* headers needed for logging */
 
 // fmt is needed
-#include "utils/src/logger/fmt/fmt.hpp"
+#include "utils/logger/fmt/fmt.hpp"
 
 #define PRESSIO_LOG_LEVEL_TRACE		0
 #define PRESSIO_LOG_LEVEL_DEBUG		1
@@ -84,7 +85,7 @@
 #define PRESSIO_LOG_ACTIVE_MIN_LEVEL	PRESSIO_LOG_LEVEL_OFF
 #endif
 
-#include "utils/src/logger/utils_logger_enums.hpp"
-#include "utils/src/logger/utils_logger.hpp"
+#include "utils/logger/utils_logger_enums.hpp"
+#include "utils/logger/utils_logger.hpp"
 
 #endif

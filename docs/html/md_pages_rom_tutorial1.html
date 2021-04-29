@@ -325,11 +325,10 @@ $y_{rom}$
   <span class="n">decoder</span><span class="p">.</span><span class="n">applyMapping</span><span class="p">(</span><span class="n">yRom</span><span class="p">,</span> <span class="n">yFom</span><span class="p">);</span>
 
   <span class="c1">// *** check solution ***</span>
-  <span class="c1">// yFom should be = [4. 4. ..., 4.]</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">yFom</span><span class="p">.</span><span class="n">extent</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;i= &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
           <span class="o">&lt;&lt;</span> <span class="s">&quot;, yFom(i) = &quot;</span>  <span class="o">&lt;&lt;</span> <span class="n">yFom</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-          <span class="o">&lt;&lt;</span> <span class="s">&quot;, expected = &quot;</span> <span class="o">&lt;&lt;</span> <span class="mf">4.</span>
+          <span class="o">&lt;&lt;</span> <span class="s">&quot;, expected = &quot;</span> <span class="o">&lt;&lt;</span> <span class="mf">6.</span>
           <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
 
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -416,12 +415,14 @@ $\phi$
   <span class="n">decoder</span><span class="p">.</span><span class="n">applyMapping</span><span class="p">(</span><span class="n">yRom</span><span class="p">,</span> <span class="n">yFom</span><span class="p">);</span>
 
   <span class="c1">// *** check solution ***</span>
-  <span class="c1">// yFom should be = [4. 4. .... 4.]</span>
   <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">6</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
     <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;i= &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
           <span class="o">&lt;&lt;</span> <span class="s">&quot;, yFom(i) = &quot;</span>  <span class="o">&lt;&lt;</span> <span class="n">yFom</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-          <span class="o">&lt;&lt;</span> <span class="s">&quot;, expected = &quot;</span> <span class="o">&lt;&lt;</span> <span class="mf">4.</span>
-          <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span></pre><section id="autotoc_md11"><h3><a href="#autotoc_md11">The ops struct</a></h3><p>In order for pressio to handle the linear mapping, it needs to know how to operate on <svg class="m-math" style="width: 0.722em; height: 1.107em;" viewBox="0 -8.302191 6.928102 10.626798">
+          <span class="o">&lt;&lt;</span> <span class="s">&quot;, expected = &quot;</span> <span class="o">&lt;&lt;</span> <span class="mf">6.</span>
+          <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></pre><section id="autotoc_md11"><h3><a href="#autotoc_md11">The ops struct</a></h3><p>In order for pressio to handle the linear mapping, it needs to know how to operate on <svg class="m-math" style="width: 0.722em; height: 1.107em;" viewBox="0 -8.302191 6.928102 10.626798">
 <title>
 $\phi$
 </title>

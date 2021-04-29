@@ -49,9 +49,9 @@
 #ifndef PRESSIO_MPL_HPP_
 #define PRESSIO_MPL_HPP_
 
-#include "./mpl/src/mpl_ConfigDefs.hpp"
+#include "./mpl/mpl_ConfigDefs.hpp"
 
-#include "./mpl/src/mpl_non_variadic.hpp"
-#include "./mpl/src/mpl_variadic.hpp"
+#include "./mpl/mpl_non_variadic.hpp"
+#include "./mpl/mpl_variadic.hpp"
 
 #endif

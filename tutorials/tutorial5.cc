@@ -129,11 +129,10 @@ int main(int argc, char *argv[])
   decoder.applyMapping(yRom, yFom);
 
   // *** check solution ***
-  // yFom should be = [4. 4. .... 4.]
   for (auto i=0; i<6; ++i)
     std::cout << "i= " << i
 	      << ", yFom(i) = "  << yFom(i)
-	      << ", expected = " << 4.
+	      << ", expected = " << 6.
 	      << "\n";
 
   return 0;

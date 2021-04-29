@@ -81,7 +81,7 @@ We immediately note that our <emphasis>ROM is slower than the FOM!</emphasis> Th
 <para>To run a hypre-reduced LSPG ROM, we use the executable obtained from the <ulink url="./md_pages_swe_hrlspg.html">hyper-reduced LSPG driver</ulink> In summary, this executable loads the basis on the <emphasis>stencil mesh</emphasis>, loads in information about the <emphasis>sample mesh</emphasis> and <emphasis>stencil mesh</emphasis>, and then constructs and runs an LSPG ROM employing the collocation hyper-reduction technique.</para>
 <para>To run the LSPG ROM with hyper-reduction, we can do: <programlisting filename=".bash"><codeline><highlight class="normal">cd<sp/>$SWE2D_DIR/online_phase/lspg_hyperReducedRom</highlight></codeline>
 <codeline><highlight class="normal">cp<sp/>../../offline_phase/*.txt<sp/>.</highlight></codeline>
-<codeline><highlight class="normal">./run_lspg<sp/>-k<sp/>10<sp/>-N<sp/>64<sp/>--gravity<sp/>7.5<sp/>-p<sp/>0.125<sp/>-f<sp/>0.2</highlight></codeline>
+<codeline><highlight class="normal">./run_lspg_with_hyperreduction<sp/>-k<sp/>10<sp/>-N<sp/>64<sp/>--gravity<sp/>7.5<sp/>-p<sp/>0.125<sp/>-f<sp/>0.2</highlight></codeline>
 <codeline><highlight class="normal">python3<sp/>viewSolutionAndMakePlots.py</highlight></codeline>
 </programlisting></para>
 <para>If successful, the following plot will be generated. <image type="html" name="swe_result_lspgHyper.png" width="75%"></image>

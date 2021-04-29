@@ -68,7 +68,7 @@ The full tutorial can be found [here](https://github.com/Pressio/pressio-tutoria
 ```cpp
 @codesnippet
 ../../../tutorials/tutorial4.cc
-51:104
+51:103
 ```
 
 
@@ -91,7 +91,7 @@ The full tutorial can be found [here](https://github.com/Pressio/pressio-tutoria
 ```cpp
 @codesnippet
 ../../../tutorials/tutorial5.cc
-75:137
+75:139
 ```
 
 ### The ops struct

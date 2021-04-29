@@ -66,30 +66,30 @@
 #include "pressio_solvers.hpp"
 
 // common things
-#include "ode/src/pressio_ode_common.hpp"
+#include "ode/pressio_ode_common.hpp"
 
 // specific to implicit
-#include "ode/src/implicit/ode_implicit_constants.hpp"
-#include "ode/src/implicit/constraints/ode_implicit_state.hpp"
-#include "ode/src/implicit/constraints/ode_implicit_residual.hpp"
-#include "ode/src/implicit/constraints/ode_implicit_jacobian.hpp"
-#include "ode/src/implicit/constraints/ode_legitimate_solver_for_implicit_stepper.hpp"
-#include "ode/src/implicit/constraints/ode_user_defined_ops_for_implicit_bdf2.hpp"
-#include "ode/src/implicit/constraints/ode_user_defined_ops_for_implicit_euler.hpp"
-#include "ode/src/implicit/constraints/ode_user_defined_ops_for_implicit_ode.hpp"
-#include "ode/src/implicit/constraints/ode_implicitly_steppable.hpp"
-#include "ode/src/implicit/constraints/ode_implicitly_steppable_with_guesser.hpp"
-#include "ode/src/implicit/constraints/ode_auxiliary_stepper_for_bdf2.hpp"
+#include "ode/implicit/ode_implicit_constants.hpp"
+#include "ode/implicit/constraints/ode_implicit_state.hpp"
+#include "ode/implicit/constraints/ode_implicit_residual.hpp"
+#include "ode/implicit/constraints/ode_implicit_jacobian.hpp"
+#include "ode/implicit/constraints/ode_legitimate_solver_for_implicit_stepper.hpp"
+#include "ode/implicit/constraints/ode_user_defined_ops_for_implicit_bdf2.hpp"
+#include "ode/implicit/constraints/ode_user_defined_ops_for_implicit_euler.hpp"
+#include "ode/implicit/constraints/ode_user_defined_ops_for_implicit_ode.hpp"
+#include "ode/implicit/constraints/ode_implicitly_steppable.hpp"
+#include "ode/implicit/constraints/ode_implicitly_steppable_with_guesser.hpp"
+#include "ode/implicit/constraints/ode_auxiliary_stepper_for_bdf2.hpp"
 
-#include "ode/src/implicit/ode_stencil_states_manager.hpp"
-#include "ode/src/implicit/ode_stencil_velocities_manager.hpp"
-#include "ode/src/implicit/constraints/ode_implicit_residual_policy.hpp"
-#include "ode/src/implicit/constraints/ode_implicit_jacobian_policy.hpp"
+#include "ode/implicit/ode_stencil_states_manager.hpp"
+#include "ode/implicit/ode_stencil_velocities_manager.hpp"
+#include "ode/implicit/constraints/ode_implicit_residual_policy.hpp"
+#include "ode/implicit/constraints/ode_implicit_jacobian_policy.hpp"
 
-#include "ode/src/implicit/ode_implicit_stepper.hpp"
+#include "ode/implicit/ode_implicit_stepper.hpp"
 
-#include "ode/src/integrators/ode_advance_n_steps_implicit_arbitrary_step_size.hpp"
-#include "ode/src/integrators/ode_advance_n_steps_implicit_constant_step_size.hpp"
-#include "ode/src/integrators/ode_advance_to_target_time_implicit_arbitrary_step_size.hpp"
+#include "ode/integrators/ode_advance_n_steps_implicit_arbitrary_step_size.hpp"
+#include "ode/integrators/ode_advance_n_steps_implicit_constant_step_size.hpp"
+#include "ode/integrators/ode_advance_to_target_time_implicit_arbitrary_step_size.hpp"
 
 #endif
