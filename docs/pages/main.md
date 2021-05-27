@@ -15,6 +15,7 @@ git clone git@github.com:Pressio/pressio-tutorials.git
 export CXX=<path-to-your-CXX-compiler>
 cd pressio-tutorials && mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j4
 ```
 The executables for all tutorials are built inside the build subdirectory.
 

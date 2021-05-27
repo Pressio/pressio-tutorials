@@ -15,6 +15,7 @@
 <codeline><highlight class="normal">export<sp/>CXX=&lt;path-to-your-CXX-compiler&gt;</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>pressio-tutorials<sp/>&amp;&amp;<sp/>mkdir<sp/>build<sp/>&amp;&amp;<sp/>cd<sp/>build</highlight></codeline>
 <codeline><highlight class="normal">cmake<sp/>-DCMAKE_BUILD_TYPE=Release<sp/>..</highlight></codeline>
+<codeline><highlight class="normal">make<sp/>-j4</highlight></codeline>
 </programlisting></para>
 <para>The executables for all tutorials are built inside the build subdirectory.</para>
 </sect1>
