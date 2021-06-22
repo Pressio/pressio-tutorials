@@ -1,16 +1,18 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.20" xml:lang="en-US">
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
   <compound refid="main_8md" kind="file"><name>main.md</name>
   </compound>
   <compound refid="swe_2main_8md" kind="file"><name>main.md</name>
   </compound>
-  <compound refid="ode_2tutorial1_8md" kind="file"><name>tutorial1.md</name>
-  </compound>
-  <compound refid="rom_2tutorial1_8md" kind="file"><name>tutorial1.md</name>
+  <compound refid="tutorial1_8md" kind="file"><name>tutorial1.md</name>
   </compound>
   <compound refid="ode_2tutorial2_8md" kind="file"><name>tutorial2.md</name>
   </compound>
   <compound refid="rom_2tutorial2_8md" kind="file"><name>tutorial2.md</name>
+  </compound>
+  <compound refid="tutorial__lindec_8md" kind="file"><name>tutorial_lindec.md</name>
+  </compound>
+  <compound refid="tutorial__lindec__at_8md" kind="file"><name>tutorial_lindec_at.md</name>
   </compound>
   <compound refid="endtoend_8md" kind="file"><name>endtoend.md</name>
   </compound>
@@ -24,9 +26,11 @@
   </compound>
   <compound refid="md_pages_ode_tutorial2" kind="page"><name>md_pages_ode_tutorial2</name>
   </compound>
-  <compound refid="md_pages_rom_tutorial1" kind="page"><name>md_pages_rom_tutorial1</name>
-  </compound>
   <compound refid="md_pages_rom_tutorial2" kind="page"><name>md_pages_rom_tutorial2</name>
+  </compound>
+  <compound refid="md_pages_rom_tutorial_lindec" kind="page"><name>md_pages_rom_tutorial_lindec</name>
+  </compound>
+  <compound refid="md_pages_rom_tutorial_lindec_at" kind="page"><name>md_pages_rom_tutorial_lindec_at</name>
   </compound>
   <compound refid="md_pages_swe_endtoend" kind="page"><name>md_pages_swe_endtoend</name>
   </compound>

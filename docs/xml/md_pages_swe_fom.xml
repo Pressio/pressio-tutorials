@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.20" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="md_pages_swe_fom" kind="page">
     <compoundname>md_pages_swe_fom</compoundname>
     <title>FOM Driver</title>
@@ -110,5 +110,6 @@ First, we include the relevant headers. <programlisting filename=".cpp"><codelin
 </programlisting></para>
 <para>This completes our description of writing the FOM coupler. </para>
     </detaileddescription>
+    <location file="pages/swe/fom.md"/>
   </compounddef>
 </doxygen>

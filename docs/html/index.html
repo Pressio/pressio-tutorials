@@ -27,14 +27,15 @@
             <li>
               <a>ODE</a>
               <ol>
-                <li><a href="md_pages_ode_tutorial1.html">Explicit Time Integration</a></li>
-                <li><a href="md_pages_ode_tutorial2.html">Explicit Time Integration (Custom Types)</a></li>
+                <li><a href="md_pages_ode_tutorial1.html">Explicit Time Integration (Known Types)</a></li>
+                <li><a href="md_pages_ode_tutorial2.html">Explicit Time Integration (Arbitrary Types)</a></li>
               </ol>
             </li>
             <li>
               <a>ROM</a>
               <ol>
-                <li><a href="md_pages_rom_tutorial1.html">Linear Decoder</a></li>
+                <li><a href="md_pages_rom_tutorial_lindec.html">Linear Decoder (Known Types)</a></li>
+                <li><a href="md_pages_rom_tutorial_lindec_at.html">Linear Decoder (Arbitrary Types)</a></li>
                 <li><a href="md_pages_rom_tutorial2.html">Default Galerkin explicit</a></li>
               </ol>
             </li>
@@ -65,12 +66,11 @@
         <h1>
           Pressio C++ Tutorials
         </h1>
-<p><a name="md_pages_main"></a> <em>Leading-edge projection-based reduced order models (pROMs) for dynamical systems in science and engineering.</em></p><p>This the documentation of the C++ tutorials. The full project website is <a href="https://pressio.github.io/">here</a>.</p><section id="autotoc_md1"><h2><a href="#autotoc_md1">Get Started</a></h2><p>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support:</p><pre class="m-code">git clone git@github.com:Pressio/pressio-tutorials.git
-
+<p><a name="md_pages_main"></a> <em>Leading-edge projection-based reduced order models (pROMs) for dynamical systems in science and engineering.</em></p><p>This website presents the <a href="https://github.com/Pressio/pressio-tutorials">C++ tutorials</a>, which use the <a href="https://pressio.github.io/pressio/html/index.html">pressio C++ core library</a>.<br /></p><section id="autotoc_md1"><h2><a href="#autotoc_md1">Get Started</a></h2><p>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support:</p><pre class="m-code">git clone --recursive git@github.com:Pressio/pressio-tutorials.git
 <span class="nb">export</span> <span class="nv">CXX</span><span class="o">=</span>&lt;path-to-your-CXX-compiler&gt;
 <span class="nb">cd</span> pressio-tutorials <span class="o">&amp;&amp;</span> mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
 cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release ..
-make -j4</pre><p>The executables for all tutorials are built inside the build subdirectory.</p></section><section id="autotoc_md2"><h2><a href="#autotoc_md2">License and Citation</a></h2><p>The license (BSD-3) is available <a href="https://pressio.github.io/various/license/">here</a>.</p><p>We are working on publishing this: you can find our arXiv preprint at: <a href="https://arxiv.org/abs/2003.07798">https:/<wbr />/<wbr />arxiv.org/<wbr />abs/<wbr />2003.07798</a></p></section><section id="autotoc_md3"><h2><a href="#autotoc_md3">Questions?</a></h2><p>Find us on Slack: <a href="https://pressioteam.slack.com">https:/<wbr />/<wbr />pressioteam.slack.com</a> or open an issue on <a href="https://github.com/Pressio/pressio-tutorials">github</a>.</p></section>
+make -j4</pre><p>The executables for all tutorials are built inside the build subdirectory.</p></section><section id="autotoc_md2"><h2><a href="#autotoc_md2">License and Citation</a></h2><p>The BSD-3 license is available <a href="https://pressio.github.io/various/license/">here</a>.</p><p>We are working on publishing this. Our arXiv preprint at: <a href="https://arxiv.org/abs/2003.07798">https:/<wbr />/<wbr />arxiv.org/<wbr />abs/<wbr />2003.07798</a></p></section><section id="autotoc_md3"><h2><a href="#autotoc_md3">Questions?</a></h2><p>Find us on Slack: <a href="https://pressioteam.slack.com">https:/<wbr />/<wbr />pressioteam.slack.com</a> or open an issue on <a href="https://github.com/Pressio/pressio-tutorials">github</a>.</p></section>
       </div>
     </div>
   </div>
@@ -115,7 +115,7 @@ make -j4</pre><p>The executables for all tutorials are built inside the build su
   <div class="m-container">
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
-        <p>Pressio|C++ Tutorials. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.20 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+        <p>Pressio|C++ Tutorials. Created with <a href="https://doxygen.org/">Doxygen</a> 1.9.1 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
       </div>
     </div>
   </div>

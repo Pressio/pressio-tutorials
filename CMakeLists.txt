@@ -9,9 +9,8 @@ include_directories(
 
 set(TUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
 
-add_executable(tutorial1 ${TUTDIR}/tutorial1.cc)
-add_executable(tutorial2 ${TUTDIR}/tutorial2.cc)
-add_executable(tutorial3 ${TUTDIR}/tutorial3.cc)
-add_executable(tutorial4 ${TUTDIR}/tutorial4.cc)
-add_executable(tutorial5 ${TUTDIR}/tutorial5.cc)
+add_executable(tut_ode_1 ${TUTDIR}/tut_ode_1.cc)
+add_executable(tut_ode_2 ${TUTDIR}/tut_ode_2.cc)
+add_executable(tut_rom_1 ${TUTDIR}/tut_rom_1.cc)
+add_executable(tut_rom_2 ${TUTDIR}/tut_rom_2.cc)
 add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)

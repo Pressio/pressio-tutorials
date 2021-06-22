@@ -1,100 +1,85 @@
 
 
 \begin{DoxyParagraph}{}
-This tutorial shows how to do explicit time integration in pressio.
+This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs that uses data types natively supported in pressio. By natively supported, we mean data types that pressio knows how to manipulate and perform computation on, and therefore the user does not need to provide any auxiliary information. Here, we use Eigen data types as an example, but the same code can be used for other natively supported types.
 \end{DoxyParagraph}
+\hypertarget{md_pages_ode_tutorial1_autotoc_md5}{}\doxysection{Problem}\label{md_pages_ode_tutorial1_autotoc_md5}
+We want to integrate in time the following system of ODEs\+: \[ \frac{d \mathbf{y}}{d t} = 10 \mathbf{y} \] where $\mathbf{y} \in R^3$ is the state and $t$ is time.
 
+We first write a class representing our target system of ODEs as follows\+: 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
-\DoxyCodeLine{\{}
-\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial 2\(\backslash\)n"{}};}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{/*}}
-\DoxyCodeLine{\textcolor{comment}{    We illustrate here how to leverage the package pressio/ode to do}}
-\DoxyCodeLine{\textcolor{comment}{    explicit time-\/integration for a system of ODEs with Eigen data types,}}
-\DoxyCodeLine{\textcolor{comment}{    which is supported by pressio.}}
-\DoxyCodeLine{\textcolor{comment}{}}
-\DoxyCodeLine{\textcolor{comment}{    Suppose that you need to use some pressio/ode package for doing explicit time}}
-\DoxyCodeLine{\textcolor{comment}{    integration of a system of ODEs which is implemented as in MyApp above.}}
-\DoxyCodeLine{\textcolor{comment}{}}
-\DoxyCodeLine{\textcolor{comment}{    For the sake of explanation, MyApp at the top of this page is a class}}
-\DoxyCodeLine{\textcolor{comment}{    that defines the target system of ODEs and meets}}
-\DoxyCodeLine{\textcolor{comment}{    the API needed by pressio to run explicit time integration, i.e.:}}
-\DoxyCodeLine{\textcolor{comment}{    (a) it has typedefs that pressio detects for scalar, state and velicity}}
-\DoxyCodeLine{\textcolor{comment}{    (b) it has two overleads for the velocity() method (one void and one non-\/void)}}
-\DoxyCodeLine{\textcolor{comment}{}}
-\DoxyCodeLine{\textcolor{comment}{    As long as the user-\/defined class/app or whatever name you want to call has an}}
-\DoxyCodeLine{\textcolor{comment}{    API as the one in MyApp, then it can be readily used with pressio.}}
-\DoxyCodeLine{\textcolor{comment}{    Note that if you try to run an explicit time integration with}}
-\DoxyCodeLine{\textcolor{comment}{    a user-\/defined system that does not satisfy the target API,}}
-\DoxyCodeLine{\textcolor{comment}{    pressio throws a compile-\/time error.}}
-\DoxyCodeLine{\textcolor{comment}{}}
-\DoxyCodeLine{\textcolor{comment}{    for this tutorial, let us run Forward Euler on the system defined by MyApp.}}
-\DoxyCodeLine{\textcolor{comment}{  */}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** define some types ***}}
-\DoxyCodeLine{  \textcolor{keyword}{using} app\_t       = MyApp;}
-\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t    = \textcolor{keyword}{typename} app\_t::scalar\_type;}
-\DoxyCodeLine{  \textcolor{keyword}{using} native\_state\_t  = \textcolor{keyword}{typename} app\_t::state\_type;}
-\DoxyCodeLine{  \textcolor{keyword}{using} native\_veloc\_t  = \textcolor{keyword}{typename} app\_t::velocity\_type;}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** create the app object ***}}
-\DoxyCodeLine{  app\_t appObj;}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** define pressio wrapper types for the state ***}}
-\DoxyCodeLine{  \textcolor{comment}{// in this case, pressio behind the scenes detects what type you}}
-\DoxyCodeLine{  \textcolor{comment}{// are passing as template argument and since it is not (for now) supported,}}
-\DoxyCodeLine{  \textcolor{comment}{// pressio still wraps the object but does not know how to do anythin else.}}
-\DoxyCodeLine{  \textcolor{keyword}{using} state\_t = ::pressio::containers::Vector<native\_state\_t>;}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** create the initial state object ***}}
-\DoxyCodeLine{  state\_t y(3);}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** fill the initial state vector ***}}
-\DoxyCodeLine{  \textcolor{comment}{// any pressio wrapper provides the data() method to get a pointer to the wrapped object}}
-\DoxyCodeLine{  \textcolor{keyword}{auto} yptr = y.data();}
-\DoxyCodeLine{  \textcolor{comment}{// i can now use regular std vector [] operator to fill in}}
-\DoxyCodeLine{  (*yptr)[0] = 1.; (*yptr)[1] = 2.; (*yptr)[2] = 3.;}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** create the pressio stepper ***}}
-\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag = ::pressio::ode::explicitmethods::Euler;}
-\DoxyCodeLine{  \textcolor{keyword}{using} stepper\_t = ::pressio::ode::ExplicitStepper<ode\_tag, state\_t, app\_t>;}
-\DoxyCodeLine{  stepper\_t stepperObj(y, appObj);}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// *** integrated in time ***}}
-\DoxyCodeLine{  scalar\_t dt = 0.1;}
-\DoxyCodeLine{  ::pressio::ode::advanceNSteps(stepperObj, y, 0.0, dt, 1ul);}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{comment}{// check solution against expected}}
-\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
-\DoxyCodeLine{            << (*yptr)[0] << \textcolor{stringliteral}{"{} "{}} << (*yptr)[1] << \textcolor{stringliteral}{"{} "{}} << (*yptr)[2] << \textcolor{stringliteral}{"{}] "{}}}
-\DoxyCodeLine{        << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}
-\DoxyCodeLine{        << std::endl;}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
-\DoxyCodeLine{\}}
-\end{DoxyCode}
-
-
-And the system class is\+: 
-\begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{struct }MyApp\{}
-\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type   = double;}
-\DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = Eigen::VectorXd;}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} scalar\_t>}
+\DoxyCodeLine{\textcolor{keyword}{struct }MySystem\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type   = scalar\_t;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = Eigen::Matrix<scalar\_t,-\/1,1>;}
 \DoxyCodeLine{  \textcolor{keyword}{using} velocity\_type = state\_type;}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{public}:}
 \DoxyCodeLine{  \textcolor{keywordtype}{void} velocity(\textcolor{keyword}{const} state\_type \& y,}
-\DoxyCodeLine{        scalar\_type t,}
-\DoxyCodeLine{        velocity\_type \& R)\textcolor{keyword}{ const}\{}
-\DoxyCodeLine{    R(0) = 10. * y(0);}
-\DoxyCodeLine{    R(1) = 10. * y(1);}
-\DoxyCodeLine{    R(2) = 10. * y(2);}
+\DoxyCodeLine{                \textcolor{keyword}{const} scalar\_type t,}
+\DoxyCodeLine{                velocity\_type \& rhs)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    constexpr scalar\_type ten\{10\};}
+\DoxyCodeLine{    rhs(0) = ten * y(0);}
+\DoxyCodeLine{    rhs(1) = ten * y(1);}
+\DoxyCodeLine{    rhs(2) = ten * y(2);}
 \DoxyCodeLine{  \};}
 \DoxyCodeLine{}
 \DoxyCodeLine{  velocity\_type createVelocity()\textcolor{keyword}{ const}\{}
 \DoxyCodeLine{    \textcolor{keywordflow}{return} velocity\_type(3);}
 \DoxyCodeLine{  \};}
 \DoxyCodeLine{\};}
+
 \end{DoxyCode}
- 
+ Note that the data type used for the state is an Eigen vector. The problem class must meet the API needed by pressio to run explicit time integration\+:
+\begin{DoxyItemize}
+\item it must contain type aliases for scalar, state and velocity (these aliases are detected by pressio)
+\item it must contain two overleads of the velocity method (one void and one non-\/void) Note that if you try to use a problem class that does not satisfy the target API, pressio throws a compile-\/time error.
+\end{DoxyItemize}\hypertarget{md_pages_ode_tutorial1_autotoc_md6}{}\doxysection{Main function}\label{md_pages_ode_tutorial1_autotoc_md6}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// create the system/app object}}
+\DoxyCodeLine{  \textcolor{keyword}{using} app\_t = MySystem<scalar\_type>;}
+\DoxyCodeLine{  app\_t appObj;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// create and initialize the state}}
+\DoxyCodeLine{  \textcolor{keyword}{using} native\_state\_t = \textcolor{keyword}{typename} app\_t::state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_t        = pressio::containers::Vector<native\_state\_t>;}
+\DoxyCodeLine{  state\_t y(3);}
+\DoxyCodeLine{  y(0) = 1.; y(1) = 2.; y(2) = 3.;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// instantiate the stepper}}
+\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag   = pressio::ode::explicitmethods::Euler;}
+\DoxyCodeLine{  \textcolor{keyword}{using} stepper\_t = pressio::ode::ExplicitStepper<ode\_tag, state\_t, app\_t>;}
+\DoxyCodeLine{  stepper\_t stepperObj(y, appObj);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// integrate in time}}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type startTime = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pressio::ode::types::step\_t numSteps = 1;}
+\DoxyCodeLine{  pressio::ode::advanceNSteps(stepperObj, y, startTime, dt, numSteps);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// check solution}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
+\DoxyCodeLine{            << y(0) << \textcolor{stringliteral}{"{} "{}} << y(1) << \textcolor{stringliteral}{"{} "{}} << y(2) << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{            << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}
+\DoxyCodeLine{            << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+We remark the following\+:
+\begin{DoxyItemize}
+\item The native state is wrapped in a {\ttfamily pressio\+::\+Vector}. Behind the scenes, pressio detects what type you are passing and since Eigen types are supported, pressio knows how to operate on them;
+\item For simplicity, we are using forward Euler, but other explicit schemes are supported.
+\end{DoxyItemize}\hypertarget{md_pages_ode_tutorial1_autotoc_md7}{}\doxysection{Full Code}\label{md_pages_ode_tutorial1_autotoc_md7}
+The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/tut_ode_1.cc}{\texttt{ here}}. 

@@ -1,7 +1,7 @@
 
 
 \begin{DoxyParagraph}{}
-This page walks through the code to solve the F\+OM of the S\+WE using Pressio\textquotesingle{}s time marching schemes. ~\newline
+This page walks through the code to solve the FOM of the SWE using Pressio\textquotesingle{}s time marching schemes. ~\newline
  The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/swe2d_tutorial/tutorials/swe2d/main_fom.cc}{\texttt{ here}}.
 \end{DoxyParagraph}
 First, we include the relevant headers. 
@@ -9,6 +9,7 @@ First, we include the relevant headers.
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio\_ode\_implicit.hpp"{}}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio\_apps.hpp"{}}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}CLI11.hpp"{}}}
+
 \end{DoxyCode}
 
 
@@ -47,6 +48,7 @@ The main function starts by processing the command line arguments\+: this allows
 \DoxyCodeLine{}
 \DoxyCodeLine{  CLI11\_PARSE(app, argc, argv);}
 \DoxyCodeLine{  printInputArgs(gravity, pulse, forcing);}
+
 \end{DoxyCode}
 
 
@@ -59,6 +61,7 @@ Then, we create some convenient types aliases. Here, we start by defining our ap
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{comment}{// create FOM object/problem: contains grid, how to compute operators, etc}}
 \DoxyCodeLine{app\_t appObj(N);}
+
 \end{DoxyCode}
 
 
@@ -71,6 +74,7 @@ Next, we construct a Crank Nicolson time stepper that we will use to march the p
 \DoxyCodeLine{\textcolor{keyword}{using} ode\_tag = pressio::ode::implicitmethods::CrankNicolson;}
 \DoxyCodeLine{\textcolor{keyword}{using} stepper\_t = pressio::ode::ImplicitStepper<}
 \DoxyCodeLine{  ode\_tag, ode\_state\_t, ode\_residual\_t, ode\_jacobian\_t, app\_t>;}
+
 \end{DoxyCode}
 
 
@@ -80,10 +84,11 @@ Next, we create the linear solver that is used within the nonlinear one. Here, w
 \DoxyCodeLine{\textcolor{keyword}{using} solver\_tag = pressio::solvers::linear::iterative::Bicgstab;}
 \DoxyCodeLine{\textcolor{keyword}{using} lin\_solver\_t = pressio::solvers::linear::Solver<solver\_tag, ode\_jacobian\_t>;}
 \DoxyCodeLine{lin\_solver\_t linSolverObj;}
+
 \end{DoxyCode}
 
 
-Finally, we define the time grid, loop over the parameter instances, and solve the F\+OM. 
+Finally, we define the time grid, loop over the parameter instances, and solve the FOM. 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{  \textcolor{comment}{// solve for each parameter}}
 \DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keyword}{auto} Nsteps = \textcolor{keyword}{static\_cast<}::pressio::ode::types::step\_t\textcolor{keyword}{>}(finalTime/dt);}
@@ -123,7 +128,8 @@ Finally, we define the time grid, loop over the parameter instances, and solve t
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
 \DoxyCodeLine{\}}
+
 \end{DoxyCode}
 
 
-This completes our description of writing the F\+OM coupler. 
+This completes our description of writing the FOM coupler. 
