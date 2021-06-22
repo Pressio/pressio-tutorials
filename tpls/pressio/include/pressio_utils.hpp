@@ -87,5 +87,6 @@
 
 #include "utils/logger/utils_logger_enums.hpp"
 #include "utils/logger/utils_logger.hpp"
+#include <array>
 
 #endif
