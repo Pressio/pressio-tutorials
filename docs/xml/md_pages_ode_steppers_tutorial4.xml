@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="md_pages_ode_steppers_tutorial4" kind="page">
+    <compoundname>md_pages_ode_steppers_tutorial4</compoundname>
+    <title>Implicit Time Integration for Custom Types</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
+<para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the pressio/ode component to do implicit time integration for a system of ODEs that uses custom data types.</para>
+</simplesect>
+</para>
+<sect1 id="md_pages_ode_steppers_tutorial4_1autotoc_md23">
+<title>Problem</title>
+<para>... </para>
+</sect1>
+    </detaileddescription>
+    <location file="pages/ode_steppers/tutorial4.md"/>
+  </compounddef>
+</doxygen>

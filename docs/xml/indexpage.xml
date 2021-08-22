@@ -6,7 +6,7 @@
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para><anchor id="index_1md_pages_main"/> <emphasis>Leading-edge projection-based reduced order models (pROMs) for dynamical systems in science and engineering.</emphasis></para>
+<para><anchor id="index_1md_pages_main"/> <emphasis>Leading-edge reduced order models (ROMs) for dynamical systems in science and engineering.</emphasis></para>
 <para>This website presents the <ulink url="https://github.com/Pressio/pressio-tutorials">C++ tutorials</ulink>, which use the <ulink url="https://pressio.github.io/pressio/html/index.html">pressio C++ core library</ulink>.<linebreak/>
 </para>
 <sect1 id="index_1autotoc_md1">

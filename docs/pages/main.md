@@ -1,7 +1,6 @@
 # Pressio C++ Tutorials
 
-*Leading-edge projection-based reduced order models (\proms) for
-dynamical systems in science and engineering.*
+*Leading-edge reduced order models (ROMs) for dynamical systems in science and engineering.*
 
 This website presents the [C++ tutorials](https://github.com/Pressio/pressio-tutorials),
 which use the [pressio C++ core library](https://pressio.github.io/pressio/html/index.html).<br>

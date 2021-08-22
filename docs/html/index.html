@@ -24,32 +24,29 @@
       <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
         <div class="m-row">
           <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="md_pages_utils_logger.html">logger</a></li>
             <li>
-              <a>ODE</a>
+              <a>solvers_nonlinear</a>
               <ol>
-                <li><a href="md_pages_ode_tutorial1.html">Explicit Time Integration (Known Types)</a></li>
-                <li><a href="md_pages_ode_tutorial2.html">Explicit Time Integration (Arbitrary Types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_0.html">General options </a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_1.html">Newton-Raphson (known types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_2.html">Newton-Raphson (custom types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_3.html">Gauss-Newton normal equations (known types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_4.html">Gauss-Newton normal equations (custom types)</a></li>
               </ol>
             </li>
+            <li><a href="md_pages_ode_advancers_advancers.html">ode_advancers</a></li>
             <li>
-              <a>ROM</a>
+              <a>ode_steppers</a>
               <ol>
-                <li><a href="md_pages_rom_tutorial_lindec.html">Linear Decoder (Known Types)</a></li>
-                <li><a href="md_pages_rom_tutorial_lindec_at.html">Linear Decoder (Arbitrary Types)</a></li>
-                <li><a href="md_pages_rom_tutorial2.html">Default Galerkin explicit</a></li>
-              </ol>
-            </li>
-            <li>
-              <a href="md_pages_swe_main.html">Shallow Water Eq.</a>
-              <ol>
-                <li><a href="md_pages_swe_fom.html">FOM Driver</a></li>
-                <li><a href="md_pages_swe_lspg.html">LSPG Driver</a></li>
-                <li><a href="md_pages_swe_hrlspg.html">Hyper-reduced LSPG Driver</a></li>
-                <li><a href="md_pages_swe_endtoend.html">End-to-end Usecase</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial1.html">Explicit Time Integration (known types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial2.html">Explicit Time Integration (custom types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial3.html">Implicit Time Integration (known types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial4.html">Implicit Time Integration (custom types)</a></li>
               </ol>
             </li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="4">
+          <ol class="m-col-t-6 m-col-m-none" start="5">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -66,7 +63,7 @@
         <h1>
           Pressio C++ Tutorials
         </h1>
-<p><a name="md_pages_main"></a> <em>Leading-edge projection-based reduced order models (pROMs) for dynamical systems in science and engineering.</em></p><p>This website presents the <a href="https://github.com/Pressio/pressio-tutorials">C++ tutorials</a>, which use the <a href="https://pressio.github.io/pressio/html/index.html">pressio C++ core library</a>.<br /></p><section id="autotoc_md1"><h2><a href="#autotoc_md1">Get Started</a></h2><p>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support:</p><pre class="m-code">git clone --recursive git@github.com:Pressio/pressio-tutorials.git
+<p><a name="md_pages_main"></a> <em>Leading-edge reduced order models (ROMs) for dynamical systems in science and engineering.</em></p><p>This website presents the <a href="https://github.com/Pressio/pressio-tutorials">C++ tutorials</a>, which use the <a href="https://pressio.github.io/pressio/html/index.html">pressio C++ core library</a>.<br /></p><section id="autotoc_md1"><h2><a href="#autotoc_md1">Get Started</a></h2><p>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support:</p><pre class="m-code">git clone --recursive git@github.com:Pressio/pressio-tutorials.git
 <span class="nb">export</span> <span class="nv">CXX</span><span class="o">=</span>&lt;path-to-your-CXX-compiler&gt;
 <span class="nb">cd</span> pressio-tutorials <span class="o">&amp;&amp;</span> mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
 cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release ..

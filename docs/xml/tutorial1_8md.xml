@@ -6,6 +6,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="pages/ode/tutorial1.md"/>
+    <location file="pages/ode_steppers/tutorial1.md"/>
   </compounddef>
 </doxygen>

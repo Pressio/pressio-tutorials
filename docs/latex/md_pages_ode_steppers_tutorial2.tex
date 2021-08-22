@@ -1,0 +1,124 @@
+
+
+\begin{DoxyParagraph}{}
+This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs based on custom types, i.\+e. data types that pressio does not know how to operate on.
+\end{DoxyParagraph}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md15}{}\doxysection{Custom Vector Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md15}
+Suppose that you have an application that uses a custom vector class as follows\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }MyCustomVector}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  MyCustomVector(std::size\_t sizeIn)}
+\DoxyCodeLine{    : m\_data(sizeIn)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::size\_t size()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} m\_data.size();}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  value\_type \& operator[](std::size\_t index)\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} m\_data[index];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{const} value\_type \& operator[](std::size\_t index)\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} m\_data[index];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{  std::vector<value\_type> m\_data;}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+ Our custom vector class above is very simple but the key point is that the {\ttfamily My\+Custom\+Vector} type is totally arbitrary and unknown to Pressio. You can replace {\ttfamily My\+Custom\+Vector} with any type that fits your needs.\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md16}{}\doxysection{Problem Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md16}
+Here, we want to integrate in time the same system of ODEs shown in tutorial1, but now our problem is implemented using the {\ttfamily My\+Custom\+Vector} class as follows\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type   = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = MyCustomVector;}
+\DoxyCodeLine{  \textcolor{keyword}{using} velocity\_type = state\_type;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} velocity(\textcolor{keyword}{const} state\_type \& y,}
+\DoxyCodeLine{                scalar\_type t,}
+\DoxyCodeLine{                velocity\_type \& rhs)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    constexpr scalar\_type ten\{10\};}
+\DoxyCodeLine{    rhs[0] = ten * y[0];}
+\DoxyCodeLine{    rhs[1] = ten * y[1];}
+\DoxyCodeLine{    rhs[2] = ten * y[2];}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  velocity\_type createVelocity()\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} velocity\_type(3);}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md17}{}\doxysection{Specialize trait and ops}\label{md_pages_ode_steppers_tutorial2_autotoc_md17}
+Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<> \textcolor{keyword}{struct }Traits<MyCustomVector>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = \textcolor{keyword}{typename} MyCustomVector::value\_type;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{namespace }ops\{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} deep\_copy(MyCustomVector \& dest, \textcolor{keyword}{const} MyCustomVector \& from)\{}
+\DoxyCodeLine{  dest = from;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{MyCustomVector clone(\textcolor{keyword}{const} MyCustomVector \& src)\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} MyCustomVector(src.size());}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(MyCustomVector \& v,        \textcolor{keyword}{const} \textcolor{keywordtype}{double} a,}
+\DoxyCodeLine{            \textcolor{keyword}{const} MyCustomVector \& v1, \textcolor{keyword}{const} \textcolor{keywordtype}{double} b)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.size(); ++i)\{}
+\DoxyCodeLine{    v[i] = a*v[i] + b*v1[i];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\}\} \textcolor{comment}{//end namespace pressio::ops}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md18}{}\doxysection{Main}\label{md_pages_ode_steppers_tutorial2_autotoc_md18}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// create the system/app object}}
+\DoxyCodeLine{  \textcolor{keyword}{using} app\_t = MySystem;}
+\DoxyCodeLine{  app\_t appObj;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// create and initialize the state}}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_t = \textcolor{keyword}{typename} app\_t::state\_type;}
+\DoxyCodeLine{  state\_t y(3);}
+\DoxyCodeLine{  y[0] = 1.; y[1] = 2.; y[2] = 3.;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// instantiate the stepper}}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} stepperObj = pode::create\_forward\_euler\_stepper(y, appObj);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// integrate in time}}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pressio::ode::step\_count\_type numSteps = 1;}
+\DoxyCodeLine{  ::pressio::ode::advance\_n\_steps(stepperObj, y, 0.0, dt, numSteps);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// check solution}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
+\DoxyCodeLine{            << y[0] << \textcolor{stringliteral}{"{} "{}} << y[1] << \textcolor{stringliteral}{"{} "{}} << y[2] << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{        << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}
+\DoxyCodeLine{        << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md19}{}\doxysection{Full Code}\label{md_pages_ode_steppers_tutorial2_autotoc_md19}
+The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_2.cc}{\texttt{ here}}. 
