@@ -39,7 +39,7 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keywordtype}{void} fill(\textcolor{keywordtype}{double} value)\{}
-\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [](\textcolor{keywordtype}{double} \& v)\{ v= 0.; \});}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [=](\textcolor{keywordtype}{double} \& v)\{ v=value; \});}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{private}:}

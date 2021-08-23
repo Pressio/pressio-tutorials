@@ -3,7 +3,7 @@
 \begin{DoxyParagraph}{}
 This tutorial demonstrates how to use the Newton-\/\+Raphson solver from pressio/solvers\+\_\+nonlinear using custom data types.
 \end{DoxyParagraph}
-\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md31}{}\doxysection{Custom data types}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md31}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md33}{}\doxysection{Custom data types}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md33}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <array>}}
@@ -30,7 +30,7 @@ This tutorial demonstrates how to use the Newton-\/\+Raphson solver from pressio
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
-\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md32}{}\doxysection{Problem class}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md32}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md34}{}\doxysection{Problem class}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md34}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
@@ -60,7 +60,7 @@ This tutorial demonstrates how to use the Newton-\/\+Raphson solver from pressio
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
-\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md33}{}\doxysection{Specialize trait and ops}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md33}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md35}{}\doxysection{Specialize trait and ops}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md35}
 Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows\+:
 
 
@@ -99,7 +99,7 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{\}\}\textcolor{comment}{//end namespace pressio::ops}}
 
 \end{DoxyCode}
-\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md34}{}\doxysection{Custom Linear solver}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md34}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md36}{}\doxysection{Custom Linear solver}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md36}
 In this example, we use a custom linear solver.
 
 
@@ -121,7 +121,7 @@ In this example, we use a custom linear solver.
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
-\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md35}{}\doxysection{Main}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md35}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md37}{}\doxysection{Main}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md37}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keywordtype}{int} main()}
@@ -154,5 +154,5 @@ In this example, we use a custom linear solver.
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}
-\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md36}{}\doxysection{Full Code}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md36}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md38}{}\doxysection{Full Code}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md38}
 The full code is available TODO. 

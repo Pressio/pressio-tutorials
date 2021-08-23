@@ -80,7 +80,7 @@ struct MyCustomMatrix
   const double & operator()(int i, int j) const { return d_[num_cols_*i+j]; }
 
   void fill(double value){
-    std::for_each(d_.begin(), d_.end(), [](double & v){ v= 0.; });
+    std::for_each(d_.begin(), d_.end(), [=](double & v){ v=value; });
   }
 
 private:

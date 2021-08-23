@@ -38,6 +38,14 @@ add_executable(
   nonlinsolvers_gn_t2
   ${TUTDIR}/nonlinsolvers_gn_2.cc)
 
+add_executable(
+  rom_linear_decoder_t1
+  ${TUTDIR}/rom_linear_decoder_eigen.cc)
+
+add_executable(
+  rom_linear_decoder_t2
+  ${TUTDIR}/rom_linear_decoder_arbitrary_types.cc)
+
 
 #add_executable(tut_rom_1 ${TUTDIR}/tut_rom_1.cc)
 #add_executable(tut_rom_2 ${TUTDIR}/tut_rom_2.cc)

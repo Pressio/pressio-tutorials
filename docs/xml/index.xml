@@ -12,6 +12,10 @@
   </compound>
   <compound refid="tutorial4_8md" kind="file"><name>tutorial4.md</name>
   </compound>
+  <compound refid="tutorial__lin__dec_8md" kind="file"><name>tutorial_lin_dec.md</name>
+  </compound>
+  <compound refid="tutorial__lin__dec__custom__types_8md" kind="file"><name>tutorial_lin_dec_custom_types.md</name>
+  </compound>
   <compound refid="tutorial__0_8md" kind="file"><name>tutorial_0.md</name>
   </compound>
   <compound refid="tutorial__1_8md" kind="file"><name>tutorial_1.md</name>
@@ -34,6 +38,10 @@
   </compound>
   <compound refid="md_pages_ode_steppers_tutorial4" kind="page"><name>md_pages_ode_steppers_tutorial4</name>
   </compound>
+  <compound refid="md_pages_rom_tutorial_lin_dec" kind="page"><name>md_pages_rom_tutorial_lin_dec</name>
+  </compound>
+  <compound refid="md_pages_rom_tutorial_lin_dec_custom_types" kind="page"><name>md_pages_rom_tutorial_lin_dec_custom_types</name>
+  </compound>
   <compound refid="md_pages_solvers_nonlinear_tutorial_0" kind="page"><name>md_pages_solvers_nonlinear_tutorial_0</name>
   </compound>
   <compound refid="md_pages_solvers_nonlinear_tutorial_1" kind="page"><name>md_pages_solvers_nonlinear_tutorial_1</name>
@@ -51,6 +59,8 @@
   <compound refid="dir_a4cece713e8656c02f8745b7b86d0101" kind="dir"><name>pages/ode_steppers</name>
   </compound>
   <compound refid="dir_208d2690607c4e3d3fabfa1d18673d36" kind="dir"><name>pages</name>
+  </compound>
+  <compound refid="dir_6a89a6e57a3601fc15116e5484f781e5" kind="dir"><name>pages/rom</name>
   </compound>
   <compound refid="dir_4cccaec18f48de5ad93eff32399233b5" kind="dir"><name>pages/solvers_nonlinear</name>
   </compound>

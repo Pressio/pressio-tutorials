@@ -45,8 +45,15 @@
                 <li><a href="md_pages_ode_steppers_tutorial4.html">Implicit Time Integration (custom types)</a></li>
               </ol>
             </li>
+            <li>
+              <a>rom</a>
+              <ol>
+                <li><a href="md_pages_rom_tutorial_lin_dec.html">Linear Decoder (known types)</a></li>
+                <li><a href="md_pages_rom_tutorial_lin_dec_custom_types.html">Linear Decoder (custom types)</a></li>
+              </ol>
+            </li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="5">
+          <ol class="m-col-t-6 m-col-m-none" start="6">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -97,7 +104,7 @@
   <span class="k">const</span> <span class="kt">double</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">num_cols_</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">];</span> <span class="p">}</span>
 
   <span class="kt">void</span> <span class="n">fill</span><span class="p">(</span><span class="kt">double</span> <span class="n">value</span><span class="p">){</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">d_</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">d_</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[](</span><span class="kt">double</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">v</span><span class="o">=</span> <span class="mf">0.</span><span class="p">;</span> <span class="p">});</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">d_</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">d_</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="kt">double</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">v</span><span class="o">=</span><span class="n">value</span><span class="p">;</span> <span class="p">});</span>
   <span class="p">}</span>
 
 <span class="k">private</span><span class="o">:</span>

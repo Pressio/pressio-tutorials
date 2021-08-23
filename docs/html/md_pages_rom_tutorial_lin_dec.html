@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Implicit Time Integration for Known Types | Pressio|C++ Tutorials</title>
+  <title>Linear Decoder for Known Types | Pressio|C++ Tutorials</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
@@ -68,9 +68,37 @@
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <h1>
-          Implicit Time Integration for Known Types
+          Linear Decoder for Known Types
         </h1>
-<aside class="m-block m-info"><p>This tutorial demonstrates how to use the pressio/ode component to do implicit time integration for a system of ODEs that uses data types natively supported in pressio.</p></aside><section id="autotoc_md21"><h2><a href="#autotoc_md21">Problem</a></h2><p>...</p></section>
+<aside class="m-block m-info"><p>This tutorial demonstrates how to create and use a linear decoder object for data types natively supported in pressio. By natively supported, we mean data types that pressio knows how to manipulate and perform computation on. Here, we use Eigen data types as an example, but it works similarly for other natively supported types.</p></aside><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/type_traits.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pressio/ops.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pressio/rom_decoder.hpp&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Running tutorial</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+  <span class="k">using</span> <span class="n">fom_state_t</span>   <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">decoder_jac_t</span>   <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">;</span>
+
+  <span class="n">decoder_jac_t</span> <span class="n">A</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span> 
+  <span class="n">A</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">1.</span><span class="p">);</span>
+
+  <span class="k">auto</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">create_time_invariant_linear_decoder</span><span class="o">&lt;</span><span class="n">fom_state_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>
+
+  <span class="c1">// construct reduced state</span>
+  <span class="k">using</span> <span class="n">rom_state_t</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">;</span>
+  <span class="n">rom_state_t</span> <span class="n">yRom</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
+  <span class="n">yRom</span><span class="p">.</span><span class="n">setConstant</span><span class="p">(</span><span class="mf">2.</span><span class="p">);</span>
+
+  <span class="c1">// apply mapping</span>
+  <span class="n">fom_state_t</span> <span class="n">yFom</span><span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">rows</span><span class="p">());</span>
+  <span class="n">decoder</span><span class="p">.</span><span class="n">applyMapping</span><span class="p">(</span><span class="n">yRom</span><span class="p">,</span> <span class="n">yFom</span><span class="p">);</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">yFom</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">yFom</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; expected: &quot;</span> <span class="o">&lt;&lt;</span> <span class="mf">6.</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre>
       </div>
     </div>
   </div>

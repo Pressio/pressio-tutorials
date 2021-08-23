@@ -25,12 +25,11 @@ LINKS_NAVBAR1 = [
      ("<a href=\"md_pages_ode_steppers_tutorial4.html\">Implicit Time Integration (custom types)</a>", )
    ]),
 
-  # ("<a>ROM</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
-  #  [
-  #    ("<a href=\"md_pages_rom_tutorial_lindec.html\">Linear Decoder (Known Types)</a>", ),
-  #    ("<a href=\"md_pages_rom_tutorial_lindec_at.html\">Linear Decoder (Arbitrary Types)</a>", ),
-  #    ("<a href=\"md_pages_rom_tutorial2.html\">Default Galerkin explicit</a>", )
-  #  ]),
+  ("<a>rom</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+   [
+     ("<a href=\"md_pages_rom_tutorial_lin_dec.html\">Linear Decoder (known types)</a>", ),
+     ("<a href=\"md_pages_rom_tutorial_lin_dec_custom_types.html\">Linear Decoder (custom types)</a>", ),
+   ]),
 
   # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
   #  [

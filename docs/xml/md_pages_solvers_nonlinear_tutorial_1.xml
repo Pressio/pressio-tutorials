@@ -10,14 +10,14 @@
 <para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the Newton-Raphson solver from <computeroutput>pressio/solvers_nonlinear</computeroutput> using data types natively supported in pressio. Here, we use Eigen data types, but a similar code can be used for other natively supported types.</para>
 </simplesect>
 </para>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md26">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md28">
 <title>Include</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&quot;pressio/solvers_linear.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pressio/solvers_nonlinear.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md27">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md29">
 <title>Problem class</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">struct<sp/></highlight><highlight class="normal">MySystem</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -50,7 +50,7 @@
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md28">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md30">
 <title>Main</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main()</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -87,7 +87,7 @@
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md29">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_1_1autotoc_md31">
 <title>Full Code</title>
 <para>The full code is available TODO. </para>
 </sect1>
