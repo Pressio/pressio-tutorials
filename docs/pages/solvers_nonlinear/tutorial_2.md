@@ -12,8 +12,8 @@ using custom data types.
 
 ```cpp
 @codesnippet
-../../../tutorials/nonlinsolvers_newtonraphson_2.cc
-49:70
+../../../tutorials/custom_data_types.hpp
+7:52
 ```
 
 ## Problem class
@@ -21,7 +21,7 @@ using custom data types.
 ```cpp
 @codesnippet
 ../../../tutorials/nonlinsolvers_newtonraphson_2.cc
-107:131
+97:121
 ```
 
 ## Specialize trait and ops
@@ -32,7 +32,7 @@ This is done via specialization as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/nonlinsolvers_newtonraphson_2.cc
-72:103
+52:93
 ```
 
 ## Custom Linear solver
@@ -41,7 +41,7 @@ In this example, we use a custom linear solver.
 ```cpp
 @codesnippet
 ../../../tutorials/nonlinsolvers_newtonraphson_2.cc
-133:147
+123:140
 ```
 
 ## Main
@@ -49,7 +49,7 @@ In this example, we use a custom linear solver.
 ```cpp
 @codesnippet
 ../../../tutorials/nonlinsolvers_newtonraphson_2.cc
-149:176
+142:170
 ```
 
 ## Full Code

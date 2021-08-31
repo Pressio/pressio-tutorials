@@ -116,7 +116,6 @@ int main()
   auto gnSolver = pnonls::create_gauss_newton(problem, x, linSolver);
   gnSolver.setTolerance(1e-5);
   gnSolver.solve(problem, x);
-  std::cout << std::setprecision(14) << x << std::endl;
 
   // check solution
   std::cout << "Computed solution: \n "

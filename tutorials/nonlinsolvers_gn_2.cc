@@ -48,53 +48,15 @@
 
 #include <array>
 #include <Eigen/Core>
-
-#include "pressio/type_traits.hpp"
+#include "custom_data_types.hpp"
 #include "pressio/ops.hpp"
-
-struct MyCustomVector
-{
-  MyCustomVector(std::size_t ext) : d_(ext){}
-
-  double & operator()(int i){ return d_[i]; }
-  const double & operator()(int i)const { return d_[i]; }
-
-  std::size_t extent(int k)const { return (k==0) ? d_.size() : 0; }
-
-  void fill(double value){
-    std::for_each(d_.begin(), d_.end(), [](double & v){ v= 0.; });
-  }
-
-private:
-  std::vector<double> d_ = {};
-};
-
-struct MyCustomMatrix
-{
-  MyCustomMatrix(std::size_t nr, std::size_t nc)
-    : num_rows_(nr), num_cols_(nc), d_(nr*nc){}
-
-  std::size_t extent(int k)const { return (k==0) ? num_rows_ : num_cols_; }
-
-  double & operator()(int i, int j){ return d_[num_cols_*i+j]; }
-  const double & operator()(int i, int j) const { return d_[num_cols_*i+j]; }
-
-  void fill(double value){
-    std::for_each(d_.begin(), d_.end(), [=](double & v){ v=value; });
-  }
-
-private:
-  std::size_t num_rows_ = {};
-  std::size_t num_cols_ = {};
-  std::vector<double> d_ = {};
-};
 
 struct MyRosenbrockSystem
 {
   using scalar_type   = double;
   using state_type    = Eigen::VectorXd;
-  using residual_type = MyCustomVector;
-  using jacobian_type = MyCustomMatrix;
+  using residual_type = CustomVector<scalar_type>;
+  using jacobian_type = CustomMatrix<scalar_type>;
 
   residual_type createResidual() const{ return residual_type(6);   }
   jacobian_type createJacobian() const{ return jacobian_type(6, 4);}
@@ -133,34 +95,42 @@ struct MyRosenbrockSystem
 };
 
 namespace pressio{
-template<> struct Traits<MyCustomVector>{
-  using scalar_type = double;
+template<class T> struct Traits<CustomVector<T>>{
+  using scalar_type = T;
 };
 
-template<> struct Traits<MyCustomMatrix>{
-  using scalar_type = double;
+template<class T> struct Traits<CustomMatrix<T>>{
+  using scalar_type = T;
 };
 
 namespace ops{
-MyCustomVector clone(const MyCustomVector & src){ return src; }
-MyCustomMatrix clone(const MyCustomMatrix & src){ return src; }
+template<class T>
+CustomVector<T> clone(const CustomVector<T> & src){ return src; }
 
-void set_zero(MyCustomVector & o){ o.fill(0); }
-void set_zero(MyCustomMatrix & o){ o.fill(0); }
+template<class T>
+CustomMatrix<T> clone(const CustomMatrix<T> & src){ return src; }
 
-double norm2(const MyCustomVector & v){
-  double norm{0};
+template<class T>
+void set_zero(CustomVector<T> & o){ o.fill(0); }
+
+template<class T>
+void set_zero(CustomMatrix<T> & o){ o.fill(0); }
+
+template<class T>
+T norm2(const CustomVector<T> & v)
+{
+  T norm{0};
   for (std::size_t i=0; i<v.extent(0); ++i){
     norm += v(i)*v(i);
   }
   return std::sqrt(norm);
 }
 
-template<class HessianType>
+template<class HessianType, class T>
 void product(pressio::transpose, pressio::nontranspose,
-       const double alpha,
-       const MyCustomMatrix & A,
-       const double beta,
+       const T alpha,
+       const CustomMatrix<T> & A,
+       const T beta,
        HessianType & H)
 {
   for (std::size_t i=0; i<A.extent(1); ++i){
@@ -168,18 +138,18 @@ void product(pressio::transpose, pressio::nontranspose,
     {
       H(i,j) *= beta;
       for (std::size_t k=0; k<A.extent(0); ++k){
-  H(i,j) += alpha * A(k,i) * A(k,j);
+        H(i,j) += alpha * A(k,i) * A(k,j);
       }
     }
   }
 }
 
-template<class GradientType>
+template<class GradientType, class T>
 void product(pressio::transpose,
-       const double alpha,
-       const MyCustomMatrix & A,
-       const MyCustomVector & b,
-       const double beta,
+       const T alpha,
+       const CustomMatrix<T> & A,
+       const CustomVector<T> & b,
+       const T beta,
        GradientType & g)
 {
   for (std::size_t i=0; i<g.rows(); ++i){
@@ -190,24 +160,26 @@ void product(pressio::transpose,
   }
 }
 
-template<class HessianType>
+template<class HessianType, class T>
 HessianType product(pressio::transpose, pressio::nontranspose,
-       double alpha,
-       const MyCustomMatrix & A)
+                    T alpha,
+                    const CustomMatrix<T> & A)
 {
   HessianType H(A.extent(1), A.extent(1));
-  product(pressio::transpose(), pressio::nontranspose(), alpha, A, 0, H);
+  product(pressio::transpose(), pressio::nontranspose(), alpha, A, (T)0, H);
   return H;
 }
 
-void update(MyCustomVector & v, double a, const MyCustomVector & v1, double b)
+template<class T>
+void update(CustomVector<T> & v, T a, const CustomVector<T> & v1, T b)
 {
   for (std::size_t i=0; i<v.extent(0); ++i){
     v(i) = v(i)*a + b*v1(i);
   }
 }
 
-void scale(MyCustomVector & v, double factor){
+template<class T>
+void scale(CustomVector<T> & v, T factor){
   for (std::size_t i=0; i<v.extent(0); ++i){
     v(i) = v(i)*factor;
   }
@@ -241,7 +213,7 @@ int main()
   auto gnSolver = pnonls::create_gauss_newton(problem, x, linSolver);
   gnSolver.setTolerance(1e-5);
   gnSolver.solve(problem, x);
-  std::cout << std::setprecision(14) << x << std::endl;
+
   // check solution
   std::cout << "Computed solution: \n "
             << "[" << x(0) << " " << x(1) << " " << x(2) << " " << x(3) << " " << "] \n"

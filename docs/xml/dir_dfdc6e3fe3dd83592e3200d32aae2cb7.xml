@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
-  <compounddef id="tutorial2_8md" kind="file" language="Markdown">
-    <compoundname>tutorial2.md</compoundname>
+  <compounddef id="dir_dfdc6e3fe3dd83592e3200d32aae2cb7" kind="dir">
+    <compoundname>pages/ode</compoundname>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="pages/ode_steppers/tutorial2.md"/>
+    <location file="pages/ode/"/>
   </compounddef>
 </doxygen>

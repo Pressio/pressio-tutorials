@@ -4,13 +4,13 @@
   </compound>
   <compound refid="advancers_8md" kind="file"><name>advancers.md</name>
   </compound>
-  <compound refid="tutorial1_8md" kind="file"><name>tutorial1.md</name>
+  <compound refid="steppers__tutorial1_8md" kind="file"><name>steppers_tutorial1.md</name>
   </compound>
-  <compound refid="tutorial2_8md" kind="file"><name>tutorial2.md</name>
+  <compound refid="steppers__tutorial2_8md" kind="file"><name>steppers_tutorial2.md</name>
   </compound>
-  <compound refid="tutorial3_8md" kind="file"><name>tutorial3.md</name>
+  <compound refid="steppers__tutorial3_8md" kind="file"><name>steppers_tutorial3.md</name>
   </compound>
-  <compound refid="tutorial4_8md" kind="file"><name>tutorial4.md</name>
+  <compound refid="steppers__tutorial4_8md" kind="file"><name>steppers_tutorial4.md</name>
   </compound>
   <compound refid="tutorial__lin__dec_8md" kind="file"><name>tutorial_lin_dec.md</name>
   </compound>
@@ -28,7 +28,7 @@
   </compound>
   <compound refid="logger_8md" kind="file"><name>logger.md</name>
   </compound>
-  <compound refid="md_pages_ode_advancers_advancers" kind="page"><name>md_pages_ode_advancers_advancers</name>
+  <compound refid="md_pages_ode_advancers" kind="page"><name>md_pages_ode_advancers</name>
   </compound>
   <compound refid="md_pages_ode_steppers_tutorial1" kind="page"><name>md_pages_ode_steppers_tutorial1</name>
   </compound>
@@ -54,9 +54,7 @@
   </compound>
   <compound refid="md_pages_utils_logger" kind="page"><name>md_pages_utils_logger</name>
   </compound>
-  <compound refid="dir_f40e4558b9a68efac0c38c46ddf27b0e" kind="dir"><name>pages/ode_advancers</name>
-  </compound>
-  <compound refid="dir_a4cece713e8656c02f8745b7b86d0101" kind="dir"><name>pages/ode_steppers</name>
+  <compound refid="dir_dfdc6e3fe3dd83592e3200d32aae2cb7" kind="dir"><name>pages/ode</name>
   </compound>
   <compound refid="dir_208d2690607c4e3d3fabfa1d18673d36" kind="dir"><name>pages</name>
   </compound>

@@ -46,75 +46,77 @@
 //@HEADER
 */
 
-#include "custom_data_types.hpp"
+#include "pressio/type_traits.hpp"
 #include "pressio/ops.hpp"
+#include "pressio/rom_galerkin.hpp"
 
-namespace pressio{ 
-
-template<class ScalarType> 
-struct Traits<CustomVector<ScalarType>>{
-  using scalar_type = ScalarType;
-};
-
-template<class ScalarType> 
-struct Traits<CustomMatrix<ScalarType>>{
-  using scalar_type = ScalarType;
-};
-
-namespace ops{
-
-// z = beta*z + alpha * A * x
-// where x is subscritable as x(i)
-template<class x_t, class ScalarType>
-void product(pressio::nontranspose,
-       ScalarType alpha,
-       const CustomMatrix<ScalarType> & A,
-       const x_t & x,
-       ScalarType beta,
-       CustomVector<ScalarType> & z)
+struct TrivialFomOnlyVelocityEigen
 {
-  // obviously not efficient, just for demonstration
-  for (std::size_t i=0; i<A.extent(0); ++i)
+  using scalar_type	      = double;
+  using state_type	      = Eigen::VectorXd;
+  using velocity_type     = state_type;
+  int N_ = {};
+
+  TrivialFomOnlyVelocityEigen(int N): N_(N){}
+
+  velocity_type createVelocity() const{ return velocity_type(N_); }
+
+  void velocity(const state_type & u, const scalar_type time, velocity_type & f) const
   {
-    z(i) = beta*z(i);
-    for (std::size_t j=0; j<A.extent(1); ++j){
-      z(i) += alpha*A(i,j)*x(j);
+    for (auto i=0; i<f.rows(); ++i){
+	   f(i) = u(i) + time;
     }
   }
-}
+};
 
-}}//end namespace pressio::ops
-
-#include "pressio/rom_decoder.hpp"
+struct Observer
+{
+  void operator()(int32_t step, double time, Eigen::VectorXd state)
+  {
+  	std::cout << "Observer called: \n" 
+  	<< " step: " << step 
+  	<< "\n"
+  	<< " state = "; 
+  	for (int i=0; i<state.size(); ++i){ 
+  		std::cout << state(i) << ", ";
+  	}
+  	std::cout << "\n";
+  }
+};
 
 int main(int argc, char *argv[])
 {
-  std::cout << "Running tutorial\n";
-  using scalar_t	    = double;
-  using fom_state_t	  = CustomVector<scalar_t>;
-  using decoder_jac_t	= CustomMatrix<scalar_t>;
+  pressio::log::initialize(pressio::logto::terminal);
 
-  // create matrix and fill with ones
-  decoder_jac_t A(10, 3);
-  A.fill(1.);
+  using fom_t	= TrivialFomOnlyVelocityEigen;
+  using scalar_t    = typename fom_t::scalar_type;
+  using fom_state_t	= typename fom_t::state_type;
 
-  // decoder
-  auto decoder = pressio::rom::create_time_invariant_linear_decoder<fom_state_t>(A);
+  constexpr int N = 10;
+  fom_t fomSystem(N);
+  fom_state_t fomReferenceState(N);
+  fomReferenceState.setZero();
 
-  // construct reduced state
-  // typically, pressio reduced states for ROMs use Eigen or Kokkos (if enabled)
-  using rom_state_t = Eigen::VectorXd;
-  rom_state_t yRom(A.extent(1));
-  yRom.setConstant(2.);
+  using phi_t = Eigen::MatrixXd;
+  phi_t phi(N, 3);
+  phi.col(0).setConstant(0.);
+  phi.col(1).setConstant(1.);
+  phi.col(2).setConstant(2.);
+  auto decoder = pressio::rom::create_time_invariant_linear_decoder<fom_state_t>(phi);
 
-  // apply mapping
-  fom_state_t yFom(A.extent(0));
-  decoder.applyMapping(yRom, yFom);
+  Eigen::VectorXd romState(3);
+  romState[0]=0.;
+  romState[1]=1.;
+  romState[2]=2.;
 
-  // check solution
-  for (auto i=0; i<yFom.extent(0); ++i){
-    std::cout << yFom(i) << " expected: " << 6. << "\n";
-  }
+  using ode_tag = pressio::ode::ForwardEuler;
+  auto problem = pressio::rom::galerkin::create_default_problem<ode_tag>(fomSystem, decoder, romState, fomReferenceState);
 
-  return 0;
+  const scalar_t dt = 1.; 
+  const int num_steps = 3;
+  Observer obs;
+  pressio::ode::advance_n_steps_and_observe(
+  	problem.stepper(), romState, 0., dt, num_steps, obs);
+
+  pressio::log::finalize();
 }

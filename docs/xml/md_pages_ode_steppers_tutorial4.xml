@@ -15,6 +15,6 @@
 <para>... </para>
 </sect1>
     </detaileddescription>
-    <location file="pages/ode_steppers/tutorial4.md"/>
+    <location file="pages/ode/steppers_tutorial4.md"/>
   </compounddef>
 </doxygen>

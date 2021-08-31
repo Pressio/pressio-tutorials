@@ -35,10 +35,10 @@
                 <li><a href="md_pages_solvers_nonlinear_tutorial_4.html">Gauss-Newton normal equations (custom types)</a></li>
               </ol>
             </li>
-            <li><a href="md_pages_ode_advancers_advancers.html">ode_advancers</a></li>
             <li>
-              <a>ode_steppers</a>
+              <a>ode</a>
               <ol>
+                <li><a href="md_pages_ode_advancers.html">Advancers</a></li>
                 <li><a href="md_pages_ode_steppers_tutorial1.html">Explicit Time Integration (known types)</a></li>
                 <li><a href="md_pages_ode_steppers_tutorial2.html">Explicit Time Integration (custom types)</a></li>
                 <li><a href="md_pages_ode_steppers_tutorial3.html">Implicit Time Integration (known types)</a></li>
@@ -53,7 +53,7 @@
               </ol>
             </li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="6">
+          <ol class="m-col-t-6 m-col-m-none" start="5">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -70,36 +70,60 @@
         <h1>
           Newton-Raphson with Custom Types
         </h1>
-<aside class="m-block m-info"><p>This tutorial demonstrates how to use the Newton-Raphson solver from pressio/solvers_nonlinear using custom data types.</p></aside><section id="autotoc_md33"><h2><a href="#autotoc_md33">Custom data types</a></h2><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&lt;array&gt;</span><span class="cp"></span>
+<aside class="m-block m-info"><p>This tutorial demonstrates how to use the Newton-Raphson solver from pressio/solvers_nonlinear using custom data types.</p></aside><section id="autotoc_md33"><h2><a href="#autotoc_md33">Custom data types</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">CustomVector</span>
+<span class="p">{</span>
+  <span class="k">using</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">ScalarType</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">size_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">;</span>
 
-<span class="k">struct</span> <span class="nc">MyCustomVector</span><span class="p">{</span>
-  <span class="kt">double</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">){</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
-  <span class="k">const</span> <span class="kt">double</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span><span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
+  <span class="n">CustomVector</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">ext</span><span class="p">)</span> <span class="o">:</span> <span class="n">d_</span><span class="p">(</span><span class="n">ext</span><span class="p">){}</span>
 
-  <span class="kt">void</span> <span class="n">fill</span><span class="p">(</span><span class="kt">double</span> <span class="n">value</span><span class="p">){</span> <span class="n">d_</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+  <span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">){</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
+  <span class="k">const</span> <span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span><span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
+  <span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">){</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
+  <span class="k">const</span> <span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span><span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="p">}</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">extent</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="p">)</span><span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="n">k</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">d_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="kt">void</span> <span class="n">fill</span><span class="p">(</span><span class="n">ScalarType</span> <span class="n">value</span><span class="p">){</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">d_</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">d_</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[](</span><span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">v</span><span class="o">=</span> <span class="mf">0.</span><span class="p">;</span> <span class="p">});</span>
+  <span class="p">}</span>
 
 <span class="k">private</span><span class="o">:</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">d_</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="n">d_</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="nc">MyCustomMatrix</span><span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">CustomMatrix</span>
+<span class="p">{</span>
+  <span class="k">using</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">ScalarType</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">size_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">;</span>
 
-  <span class="kt">double</span> <span class="o">&amp;</span> <span class="nf">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">){</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">];</span> <span class="p">}</span>
-  <span class="k">const</span> <span class="kt">double</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">];</span> <span class="p">}</span>
+  <span class="n">CustomMatrix</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">nr</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">nc</span><span class="p">)</span>
+    <span class="o">:</span> <span class="n">num_rows_</span><span class="p">(</span><span class="n">nr</span><span class="p">),</span> <span class="n">num_cols_</span><span class="p">(</span><span class="n">nc</span><span class="p">),</span> <span class="n">d_</span><span class="p">(</span><span class="n">nr</span><span class="o">*</span><span class="n">nc</span><span class="p">){}</span>
 
-  <span class="kt">void</span> <span class="n">fill</span><span class="p">(</span><span class="kt">double</span> <span class="n">value</span><span class="p">){</span> <span class="n">d_</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+  <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">extent</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="p">)</span><span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="p">(</span><span class="n">k</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nl">num_rows_</span> <span class="p">:</span> <span class="n">num_cols_</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">){</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">num_cols_</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">];</span> <span class="p">}</span>
+  <span class="k">const</span> <span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="k">operator</span><span class="p">()(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">d_</span><span class="p">[</span><span class="n">num_cols_</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">];</span> <span class="p">}</span>
+
+  <span class="kt">void</span> <span class="n">fill</span><span class="p">(</span><span class="n">ScalarType</span> <span class="n">value</span><span class="p">){</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">d_</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">d_</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="n">ScalarType</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">v</span><span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="p">});</span>
+  <span class="p">}</span>
 
 <span class="k">private</span><span class="o">:</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span> <span class="mi">4</span><span class="o">&gt;</span> <span class="n">d_</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">num_rows_</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">num_cols_</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="n">d_</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="p">};</span></pre></section><section id="autotoc_md34"><h2><a href="#autotoc_md34">Problem class</a></h2><pre class="m-code"><span class="k">struct</span> <span class="nc">MySystem</span>
 <span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
-  <span class="k">using</span> <span class="n">state_type</span> <span class="o">=</span> <span class="n">MyCustomVector</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">state_type</span> <span class="o">=</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">;</span>
   <span class="k">using</span> <span class="n">residual_type</span> <span class="o">=</span> <span class="n">state_type</span><span class="p">;</span>
-  <span class="k">using</span> <span class="n">jacobian_type</span> <span class="o">=</span> <span class="n">MyCustomMatrix</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">jacobian_type</span> <span class="o">=</span> <span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="n">residual_type</span> <span class="nf">createResidual</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
-  <span class="n">jacobian_type</span> <span class="nf">createJacobian</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
+  <span class="n">residual_type</span> <span class="nf">createResidual</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">residual_type</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span> <span class="p">}</span>
+  <span class="n">jacobian_type</span> <span class="nf">createJacobian</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">jacobian_type</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">};</span> <span class="p">}</span>
 
   <span class="kt">void</span> <span class="nf">residual</span><span class="p">(</span><span class="k">const</span> <span class="n">state_type</span><span class="o">&amp;</span> <span class="n">x</span><span class="p">,</span>
                 <span class="n">residual_type</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="k">const</span>
@@ -115,41 +139,54 @@
     <span class="n">J</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mf">-1.0</span><span class="p">;</span>
     <span class="n">J</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mf">3.0</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
   <span class="p">}</span>
-<span class="p">};</span></pre></section><section id="autotoc_md35"><h2><a href="#autotoc_md35">Specialize trait and ops</a></h2><p>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows:</p><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/type_traits.hpp&quot;</span><span class="cp"></span>
-
-<span class="k">namespace</span> <span class="n">pressio</span><span class="p">{</span>
-<span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">MyCustomVector</span><span class="o">&gt;</span><span class="p">{</span>
+<span class="p">};</span></pre></section><section id="autotoc_md35"><h2><a href="#autotoc_md35">Specialize trait and ops</a></h2><p>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows:</p><pre class="m-code"><span class="k">namespace</span> <span class="n">pressio</span><span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">size_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">MyCustomMatrix</span><span class="o">&gt;</span><span class="p">{</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">size_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">namespace</span> <span class="n">ops</span><span class="p">{</span>
-<span class="n">MyCustomVector</span> <span class="nf">clone</span><span class="p">(</span><span class="k">const</span> <span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">src</span><span class="p">){</span> <span class="k">return</span> <span class="n">src</span><span class="p">;</span> <span class="p">}</span>
-<span class="n">MyCustomMatrix</span> <span class="nf">clone</span><span class="p">(</span><span class="k">const</span> <span class="n">MyCustomMatrix</span> <span class="o">&amp;</span> <span class="n">src</span><span class="p">){</span> <span class="k">return</span> <span class="n">src</span><span class="p">;</span> <span class="p">}</span>
-<span class="kt">void</span> <span class="nf">set_zero</span><span class="p">(</span><span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">o</span><span class="p">){</span> <span class="n">o</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="p">}</span>
-<span class="kt">void</span> <span class="nf">set_zero</span><span class="p">(</span><span class="n">MyCustomMatrix</span> <span class="o">&amp;</span> <span class="n">o</span><span class="p">){</span> <span class="n">o</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="p">}</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> 
+<span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">(</span><span class="k">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">src</span><span class="p">){</span> <span class="k">return</span> <span class="n">src</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="kt">double</span> <span class="nf">norm2</span><span class="p">(</span><span class="k">const</span> <span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">(</span><span class="k">const</span> <span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">src</span><span class="p">){</span> <span class="k">return</span> <span class="n">src</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">set_zero</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">o</span><span class="p">){</span> <span class="n">o</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">set_zero</span><span class="p">(</span><span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">o</span><span class="p">){</span> <span class="n">o</span><span class="p">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="n">norm2</span><span class="p">(</span><span class="k">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span>
   <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">update</span><span class="p">(</span><span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span> <span class="kt">double</span> <span class="n">a</span><span class="p">,</span>
-        <span class="k">const</span> <span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">){</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">update</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span> <span class="kt">double</span> <span class="n">a</span><span class="p">,</span>
+        <span class="k">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="kt">double</span> <span class="n">b</span><span class="p">){</span>
   <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">v1</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
   <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">v1</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">scale</span><span class="p">(</span><span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span> <span class="kt">double</span> <span class="n">factor</span><span class="p">){</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">scale</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span> <span class="kt">double</span> <span class="n">factor</span><span class="p">){</span>
   <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span><span class="p">;</span>
   <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="p">}}</span><span class="c1">//end namespace pressio::ops</span></pre></section><section id="autotoc_md36"><h2><a href="#autotoc_md36">Custom Linear solver</a></h2><p>In this example, we use a custom linear solver.</p><pre class="m-code"><span class="k">struct</span> <span class="nc">LinearSolver</span><span class="p">{</span>
-  <span class="k">using</span> <span class="n">matrix_type</span> <span class="o">=</span> <span class="n">MyCustomMatrix</span><span class="p">;</span>
+<span class="p">}}</span><span class="c1">//end namespace pressio::ops</span></pre></section><section id="autotoc_md36"><h2><a href="#autotoc_md36">Custom Linear solver</a></h2><p>In this example, we use a custom linear solver.</p><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">LinearSolver</span><span class="p">{</span>
+  <span class="k">using</span> <span class="n">matrix_type</span> <span class="o">=</span> <span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">;</span>
 
-  <span class="kt">void</span> <span class="nf">solve</span><span class="p">(</span><span class="k">const</span> <span class="n">matrix_type</span> <span class="o">&amp;</span> <span class="n">M</span><span class="p">,</span> <span class="k">const</span> <span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">MyCustomVector</span> <span class="o">&amp;</span> <span class="n">x</span><span class="p">)</span>
+  <span class="kt">void</span> <span class="nf">solve</span><span class="p">(</span><span class="k">const</span> <span class="n">matrix_type</span> <span class="o">&amp;</span> <span class="n">M</span><span class="p">,</span> 
+             <span class="k">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">rhs</span><span class="p">,</span> 
+             <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">x</span><span class="p">)</span>
   <span class="p">{</span>
     <span class="k">const</span> <span class="k">auto</span> <span class="n">a</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
     <span class="k">const</span> <span class="k">auto</span> <span class="n">b</span> <span class="o">=</span> <span class="n">M</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
@@ -170,12 +207,13 @@
 
   <span class="k">using</span> <span class="n">problem_t</span>  <span class="o">=</span> <span class="n">MySystem</span><span class="p">;</span>
   <span class="k">using</span> <span class="n">state_t</span>    <span class="o">=</span> <span class="n">problem_t</span><span class="o">::</span><span class="n">state_type</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">scalar_t</span>   <span class="o">=</span> <span class="n">problem_t</span><span class="o">::</span><span class="n">scalar_type</span><span class="p">;</span>
   <span class="n">problem_t</span> <span class="n">sys</span><span class="p">;</span>
-  <span class="n">state_t</span> <span class="n">y</span><span class="p">;</span>
+  <span class="n">state_t</span> <span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
   <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">;</span>
   <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">-0.1</span><span class="p">;</span>
 
-  <span class="n">LinearSolver</span> <span class="n">linearSolverObj</span><span class="p">;</span>
+  <span class="n">LinearSolver</span><span class="o">&lt;</span><span class="n">scalar_t</span><span class="o">&gt;</span> <span class="n">linearSolverObj</span><span class="p">;</span>
   <span class="k">auto</span> <span class="n">nonLinSolver</span> <span class="o">=</span> <span class="n">pnonls</span><span class="o">::</span><span class="n">create_newton_raphson</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">linearSolverObj</span><span class="p">);</span>
   <span class="n">nonLinSolver</span><span class="p">.</span><span class="n">solve</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
 

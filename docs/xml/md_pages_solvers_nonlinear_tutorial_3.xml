@@ -81,7 +81,6 @@
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>gnSolver<sp/>=<sp/>pnonls::create_gauss_newton(problem,<sp/>x,<sp/>linSolver);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>gnSolver.setTolerance(1e-5);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>gnSolver.solve(problem,<sp/>x);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::setprecision(14)<sp/>&lt;&lt;<sp/>x<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>check<sp/>solution</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Computed<sp/>solution:<sp/>\n<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>

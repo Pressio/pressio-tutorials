@@ -42,7 +42,7 @@ We first write a class representing our target system of ODEs as follows\+:
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
 \DoxyCodeLine{\{}
-\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial\(\backslash\)n"{}};}
+\DoxyCodeLine{  pressio::log::initialize(pressio::logto::terminal);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
 \DoxyCodeLine{}
@@ -71,6 +71,7 @@ We first write a class representing our target system of ODEs as follows\+:
 \DoxyCodeLine{            << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}
 \DoxyCodeLine{            << std::endl;}
 \DoxyCodeLine{}
+\DoxyCodeLine{  pressio::log::finalize();}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
 \DoxyCodeLine{\}}
 

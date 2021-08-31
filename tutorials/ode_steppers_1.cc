@@ -74,7 +74,7 @@ public:
 
 int main(int argc, char *argv[])
 {
-  std::cout << "Running tutorial\n";
+  pressio::log::initialize(pressio::logto::terminal);
 
   using scalar_type = double;
 
@@ -103,5 +103,6 @@ int main(int argc, char *argv[])
             << "Expected solution: [2,4,6] "
             << std::endl;
 
+  pressio::log::finalize();
   return 0;
 }

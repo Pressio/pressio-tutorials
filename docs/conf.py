@@ -15,10 +15,11 @@ LINKS_NAVBAR1 = [
      ("<a href=\"md_pages_solvers_nonlinear_tutorial_4.html\">Gauss-Newton normal equations (custom types)</a>", )
    ]),
 
-  ("<a href=\"md_pages_ode_advancers_advancers.html\">ode_advancers</a>", []),
+  # ("<a href=\"md_pages_ode_advancers_advancers.html\">ode_advancers</a>", []),
 
-  ("<a>ode_steppers</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+  ("<a>ode</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
+     ("<a href=\"md_pages_ode_advancers.html\">Advancers</a>", ),
      ("<a href=\"md_pages_ode_steppers_tutorial1.html\">Explicit Time Integration (known types)</a>", ),
      ("<a href=\"md_pages_ode_steppers_tutorial2.html\">Explicit Time Integration (custom types)</a>", ),
      ("<a href=\"md_pages_ode_steppers_tutorial3.html\">Implicit Time Integration (known types)</a>", ),
@@ -28,7 +29,9 @@ LINKS_NAVBAR1 = [
   ("<a>rom</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
      ("<a href=\"md_pages_rom_tutorial_lin_dec.html\">Linear Decoder (known types)</a>", ),
-     ("<a href=\"md_pages_rom_tutorial_lin_dec_custom_types.html\">Linear Decoder (custom types)</a>", ),
+     ("<a href=\"md_pages_rom_tutorial_lin_dec_custom_types.html\">Linear Decoder (custom types)</a>", )
+     # ("<a href=\"md_pages_rom_galerkin_default.html\">Default Galerkin (known types)</a>", ),
+     # ("<a href=\"md_pages_rom_galerkin_default_custom_types.html\">Default Galerkin (custom types)</a>", ),
    ]),
 
   # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",

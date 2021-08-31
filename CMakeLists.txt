@@ -14,39 +14,53 @@ add_executable(
   utils_logger
   ${TUTDIR}/utils_logger.cc)
 
+#=================================
+# ODE
+#=================================
 add_executable(
-  ode_steppers_t1
+  ode_steppers_known_types
   ${TUTDIR}/ode_steppers_1.cc)
 
 add_executable(
-  ode_steppers_t2
+  ode_steppers_custom_types
   ${TUTDIR}/ode_steppers_2.cc)
 
+#=================================
+# nonlinear solvers
+#=================================
 add_executable(
-  nonlinsolvers_newtonraphson_t1
+  nonlinsolvers_newtonraphson_known_types
   ${TUTDIR}/nonlinsolvers_newtonraphson_1.cc)
 
 add_executable(
-  nonlinsolvers_newtonraphson_t2
+  nonlinsolvers_newtonraphson_custom_types
   ${TUTDIR}/nonlinsolvers_newtonraphson_2.cc)
 
 add_executable(
-  nonlinsolvers_gn_t1
+  nonlinsolvers_gn_known_types
   ${TUTDIR}/nonlinsolvers_gn_1.cc)
 
 add_executable(
-  nonlinsolvers_gn_t2
+  nonlinsolvers_gn_custom_types
   ${TUTDIR}/nonlinsolvers_gn_2.cc)
 
+#=================================
+# rom
+#=================================
 add_executable(
-  rom_linear_decoder_t1
+  rom_linear_decoder_known_types
   ${TUTDIR}/rom_linear_decoder_eigen.cc)
 
 add_executable(
-  rom_linear_decoder_t2
+  rom_linear_decoder_custom_types
   ${TUTDIR}/rom_linear_decoder_arbitrary_types.cc)
 
+# #---- galerkin -----
+# add_executable(
+#   rom_default_explicit_galerkin_t1
+#   ${TUTDIR}/rom_default_explicit_galerkin_eigen.cc)
+# add_executable(
+#   rom_default_explicit_galerkin_t2
+#   ${TUTDIR}/rom_default_explicit_galerkin_custom_types.cc)
 
-#add_executable(tut_rom_1 ${TUTDIR}/tut_rom_1.cc)
-#add_executable(tut_rom_2 ${TUTDIR}/tut_rom_2.cc)
 #add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)

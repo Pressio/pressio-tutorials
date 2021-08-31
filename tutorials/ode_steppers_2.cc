@@ -47,51 +47,30 @@
 */
 
 #include <vector>
-#include "pressio/type_traits.hpp"
-
-struct MyCustomVector
-{
-  using value_type = double;
-  using size_type = std::size_t;
-
-  MyCustomVector(std::size_t sizeIn)
-    : m_data(sizeIn){}
-
-  std::size_t size() const{
-    return m_data.size();
-  }
-
-  value_type & operator[](std::size_t index){
-    return m_data[index];
-  }
-
-  const value_type & operator[](std::size_t index) const{
-    return m_data[index];
-  }
-
-private:
-  std::vector<value_type> m_data;
-};
+#include "custom_data_types.hpp"
 
 namespace pressio{
 
-template<> struct Traits<MyCustomVector>{
-  using scalar_type = typename MyCustomVector::value_type;
+template<class T> struct Traits<CustomVector<T>>{
+  using scalar_type = typename CustomVector<T>::value_type;
 };
 
 namespace ops{
-void deep_copy(MyCustomVector & dest, const MyCustomVector & from){
+template<class T>
+void deep_copy(CustomVector<T> & dest, const CustomVector<T> & from){
   dest = from;
 }
 
-MyCustomVector clone(const MyCustomVector & src){
-  return MyCustomVector(src.size());
+template<class T>
+CustomVector<T> clone(const CustomVector<T> & src){
+  return CustomVector<T>(src.extent(0));
 };
 
-void update(MyCustomVector & v,        const double a,
-            const MyCustomVector & v1, const double b)
+template<class T>
+void update(CustomVector<T> & v,        const double a,
+            const CustomVector<T> & v1, const double b)
 {
-  for (size_t i=0; i<v.size(); ++i){
+  for (size_t i=0; i<v.extent(0); ++i){
     v[i] = a*v[i] + b*v1[i];
   }
 }
@@ -103,7 +82,7 @@ void update(MyCustomVector & v,        const double a,
 struct MySystem
 {
   using scalar_type   = double;
-  using state_type    = MyCustomVector;
+  using state_type    = CustomVector<scalar_type>;
   using velocity_type = state_type;
 
 public:
@@ -124,7 +103,7 @@ public:
 
 int main(int argc, char *argv[])
 {
-  std::cout << "Running tutorial\n";
+  pressio::log::initialize(pressio::logto::terminal);
 
   // create the system/app object
   using app_t = MySystem;
@@ -150,5 +129,6 @@ int main(int argc, char *argv[])
 	    << "Expected solution: [2,4,6] "
 	    << std::endl;
 
+  pressio::log::finalize();
   return 0;
 }

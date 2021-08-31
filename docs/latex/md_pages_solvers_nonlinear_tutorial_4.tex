@@ -7,53 +7,15 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <array>}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <Eigen/Core>}}
-\DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/type\_traits.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}custom\_data\_types.hpp"{}}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/ops.hpp"{}}}
-\DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{struct }MyCustomVector}
-\DoxyCodeLine{\{}
-\DoxyCodeLine{  MyCustomVector(std::size\_t ext) : d\_(ext)\{\}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
-\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? d\_.size() : 0; \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(\textcolor{keywordtype}{double} value)\{}
-\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [](\textcolor{keywordtype}{double} \& v)\{ v= 0.; \});}
-\DoxyCodeLine{  \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{private}:}
-\DoxyCodeLine{  std::vector<double> d\_ = \{\};}
-\DoxyCodeLine{\};}
-\DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{struct }MyCustomMatrix}
-\DoxyCodeLine{\{}
-\DoxyCodeLine{  MyCustomMatrix(std::size\_t nr, std::size\_t nc)}
-\DoxyCodeLine{    : num\_rows\_(nr), num\_cols\_(nc), d\_(nr*nc)\{\}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? num\_rows\_ : num\_cols\_; \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
-\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(\textcolor{keywordtype}{double} value)\{}
-\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [=](\textcolor{keywordtype}{double} \& v)\{ v=value; \});}
-\DoxyCodeLine{  \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{private}:}
-\DoxyCodeLine{  std::size\_t num\_rows\_ = \{\};}
-\DoxyCodeLine{  std::size\_t num\_cols\_ = \{\};}
-\DoxyCodeLine{  std::vector<double> d\_ = \{\};}
-\DoxyCodeLine{\};}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{struct }MyRosenbrockSystem}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type   = double;}
 \DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = Eigen::VectorXd;}
-\DoxyCodeLine{  \textcolor{keyword}{using} residual\_type = MyCustomVector;}
-\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = MyCustomMatrix;}
+\DoxyCodeLine{  \textcolor{keyword}{using} residual\_type = CustomVector<scalar\_type>;}
+\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = CustomMatrix<scalar\_type>;}
 \DoxyCodeLine{}
 \DoxyCodeLine{  residual\_type createResidual()\textcolor{keyword}{ const}\{ \textcolor{keywordflow}{return} residual\_type(6);   \}}
 \DoxyCodeLine{  jacobian\_type createJacobian()\textcolor{keyword}{ const}\{ \textcolor{keywordflow}{return} jacobian\_type(6, 4);\}}
@@ -92,34 +54,42 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
-\DoxyCodeLine{\textcolor{keyword}{template}<> \textcolor{keyword}{struct }Traits<MyCustomVector>\{}
-\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomVector<T>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = T;}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{template}<> \textcolor{keyword}{struct }Traits<MyCustomMatrix>\{}
-\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomMatrix<T>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = T;}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{namespace }ops\{}
-\DoxyCodeLine{MyCustomVector clone(\textcolor{keyword}{const} MyCustomVector \& src)\{ \textcolor{keywordflow}{return} src; \}}
-\DoxyCodeLine{MyCustomMatrix clone(\textcolor{keyword}{const} MyCustomMatrix \& src)\{ \textcolor{keywordflow}{return} src; \}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{CustomVector<T> clone(\textcolor{keyword}{const} CustomVector<T> \& src)\{ \textcolor{keywordflow}{return} src; \}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(MyCustomVector \& o)\{ o.fill(0); \}}
-\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(MyCustomMatrix \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{CustomMatrix<T> clone(\textcolor{keyword}{const} CustomMatrix<T> \& src)\{ \textcolor{keywordflow}{return} src; \}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{double} norm2(\textcolor{keyword}{const} MyCustomVector \& v)\{}
-\DoxyCodeLine{  \textcolor{keywordtype}{double} norm\{0\};}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomVector<T> \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomMatrix<T> \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{T norm2(\textcolor{keyword}{const} CustomVector<T> \& v)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  T norm\{0\};}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<v.extent(0); ++i)\{}
 \DoxyCodeLine{    norm += v(i)*v(i);}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} std::sqrt(norm);}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} HessianType>}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} HessianType, \textcolor{keyword}{class} T>}
 \DoxyCodeLine{\textcolor{keywordtype}{void} product(pressio::transpose, pressio::nontranspose,}
-\DoxyCodeLine{       \textcolor{keyword}{const} \textcolor{keywordtype}{double} alpha,}
-\DoxyCodeLine{       \textcolor{keyword}{const} MyCustomMatrix \& A,}
-\DoxyCodeLine{       \textcolor{keyword}{const} \textcolor{keywordtype}{double} beta,}
+\DoxyCodeLine{       \textcolor{keyword}{const} T alpha,}
+\DoxyCodeLine{       \textcolor{keyword}{const} CustomMatrix<T> \& A,}
+\DoxyCodeLine{       \textcolor{keyword}{const} T beta,}
 \DoxyCodeLine{       HessianType \& H)}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<A.extent(1); ++i)\{}
@@ -127,18 +97,18 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \DoxyCodeLine{    \{}
 \DoxyCodeLine{      H(i,j) *= beta;}
 \DoxyCodeLine{      \textcolor{keywordflow}{for} (std::size\_t k=0; k<A.extent(0); ++k)\{}
-\DoxyCodeLine{  H(i,j) += alpha * A(k,i) * A(k,j);}
+\DoxyCodeLine{        H(i,j) += alpha * A(k,i) * A(k,j);}
 \DoxyCodeLine{      \}}
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} GradientType>}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} GradientType, \textcolor{keyword}{class} T>}
 \DoxyCodeLine{\textcolor{keywordtype}{void} product(pressio::transpose,}
-\DoxyCodeLine{       \textcolor{keyword}{const} \textcolor{keywordtype}{double} alpha,}
-\DoxyCodeLine{       \textcolor{keyword}{const} MyCustomMatrix \& A,}
-\DoxyCodeLine{       \textcolor{keyword}{const} MyCustomVector \& b,}
-\DoxyCodeLine{       \textcolor{keyword}{const} \textcolor{keywordtype}{double} beta,}
+\DoxyCodeLine{       \textcolor{keyword}{const} T alpha,}
+\DoxyCodeLine{       \textcolor{keyword}{const} CustomMatrix<T> \& A,}
+\DoxyCodeLine{       \textcolor{keyword}{const} CustomVector<T> \& b,}
+\DoxyCodeLine{       \textcolor{keyword}{const} T beta,}
 \DoxyCodeLine{       GradientType \& g)}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<g.rows(); ++i)\{}
@@ -149,24 +119,26 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} HessianType>}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} HessianType, \textcolor{keyword}{class} T>}
 \DoxyCodeLine{HessianType product(pressio::transpose, pressio::nontranspose,}
-\DoxyCodeLine{       \textcolor{keywordtype}{double} alpha,}
-\DoxyCodeLine{       \textcolor{keyword}{const} MyCustomMatrix \& A)}
+\DoxyCodeLine{                    T alpha,}
+\DoxyCodeLine{                    \textcolor{keyword}{const} CustomMatrix<T> \& A)}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  HessianType H(A.extent(1), A.extent(1));}
-\DoxyCodeLine{  product(pressio::transpose(), pressio::nontranspose(), alpha, A, 0, H);}
+\DoxyCodeLine{  product(pressio::transpose(), pressio::nontranspose(), alpha, A, (T)0, H);}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} H;}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} update(MyCustomVector \& v, \textcolor{keywordtype}{double} a, \textcolor{keyword}{const} MyCustomVector \& v1, \textcolor{keywordtype}{double} b)}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<T> \& v, T a, \textcolor{keyword}{const} CustomVector<T> \& v1, T b)}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<v.extent(0); ++i)\{}
 \DoxyCodeLine{    v(i) = v(i)*a + b*v1(i);}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} scale(MyCustomVector \& v, \textcolor{keywordtype}{double} factor)\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} scale(CustomVector<T> \& v, T factor)\{}
 \DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<v.extent(0); ++i)\{}
 \DoxyCodeLine{    v(i) = v(i)*factor;}
 \DoxyCodeLine{  \}}
@@ -200,7 +172,7 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \DoxyCodeLine{  \textcolor{keyword}{auto} gnSolver = pnonls::create\_gauss\_newton(problem, x, linSolver);}
 \DoxyCodeLine{  gnSolver.setTolerance(1e-\/5);}
 \DoxyCodeLine{  gnSolver.solve(problem, x);}
-\DoxyCodeLine{  std::cout << std::setprecision(14) << x << std::endl;}
+\DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// check solution}}
 \DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: \(\backslash\)n "{}}}
 \DoxyCodeLine{            << \textcolor{stringliteral}{"{}["{}} << x(0) << \textcolor{stringliteral}{"{} "{}} << x(1) << \textcolor{stringliteral}{"{} "{}} << x(2) << \textcolor{stringliteral}{"{} "{}} << x(3) << \textcolor{stringliteral}{"{} "{}} << \textcolor{stringliteral}{"{}] \(\backslash\)n"{}}}

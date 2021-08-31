@@ -76,7 +76,6 @@ This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+N
 \DoxyCodeLine{  \textcolor{keyword}{auto} gnSolver = pnonls::create\_gauss\_newton(problem, x, linSolver);}
 \DoxyCodeLine{  gnSolver.setTolerance(1e-\/5);}
 \DoxyCodeLine{  gnSolver.solve(problem, x);}
-\DoxyCodeLine{  std::cout << std::setprecision(14) << x << std::endl;}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// check solution}}
 \DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: \(\backslash\)n "{}}}

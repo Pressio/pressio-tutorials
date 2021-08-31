@@ -35,10 +35,10 @@
                 <li><a href="md_pages_solvers_nonlinear_tutorial_4.html">Gauss-Newton normal equations (custom types)</a></li>
               </ol>
             </li>
-            <li><a href="md_pages_ode_advancers_advancers.html">ode_advancers</a></li>
             <li>
-              <a>ode_steppers</a>
+              <a>ode</a>
               <ol>
+                <li><a href="md_pages_ode_advancers.html">Advancers</a></li>
                 <li><a href="md_pages_ode_steppers_tutorial1.html">Explicit Time Integration (known types)</a></li>
                 <li><a href="md_pages_ode_steppers_tutorial2.html">Explicit Time Integration (custom types)</a></li>
                 <li><a href="md_pages_ode_steppers_tutorial3.html">Implicit Time Integration (known types)</a></li>
@@ -53,7 +53,7 @@
               </ol>
             </li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="6">
+          <ol class="m-col-t-6 m-col-m-none" start="5">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -134,7 +134,6 @@
   <span class="k">auto</span> <span class="n">gnSolver</span> <span class="o">=</span> <span class="n">pnonls</span><span class="o">::</span><span class="n">create_gauss_newton</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">linSolver</span><span class="p">);</span>
   <span class="n">gnSolver</span><span class="p">.</span><span class="n">setTolerance</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">);</span>
   <span class="n">gnSolver</span><span class="p">.</span><span class="n">solve</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setprecision</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 
   <span class="c1">// check solution</span>
   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Computed solution: </span><span class="se">\n</span><span class="s"> &quot;</span>

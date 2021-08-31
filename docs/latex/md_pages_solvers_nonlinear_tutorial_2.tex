@@ -6,27 +6,51 @@ This tutorial demonstrates how to use the Newton-\/\+Raphson solver from pressio
 \hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md33}{}\doxysection{Custom data types}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md33}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{preprocessor}{\#include <array>}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomVector}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{struct }MyCustomVector\{}
-\DoxyCodeLine{  \textcolor{keywordtype}{double} \& operator[](\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
-\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} \& operator[](\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  CustomVector(std::size\_t ext) : d\_(ext)\{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(\textcolor{keywordtype}{double} value)\{ d\_.fill(value); \}}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  ScalarType \& operator[](\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator[](\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? d\_.size() : 0; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [](ScalarType \& v)\{ v= 0.; \});}
+\DoxyCodeLine{  \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{private}:}
-\DoxyCodeLine{  std::array<double, 2> d\_ = \{\};}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{struct }MyCustomMatrix\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomMatrix}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\{ \textcolor{keywordflow}{return} d\_[2*i+j]; \}}
-\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} d\_[2*i+j]; \}}
+\DoxyCodeLine{  CustomMatrix(std::size\_t nr, std::size\_t nc)}
+\DoxyCodeLine{    : num\_rows\_(nr), num\_cols\_(nc), d\_(nr*nc)\{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(\textcolor{keywordtype}{double} value)\{ d\_.fill(value); \}}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? num\_rows\_ : num\_cols\_; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [=](ScalarType \& v)\{ v= value; \});}
+\DoxyCodeLine{  \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{private}:}
-\DoxyCodeLine{  std::array<double, 4> d\_ = \{\};}
+\DoxyCodeLine{  std::size\_t num\_rows\_ = \{\};}
+\DoxyCodeLine{  std::size\_t num\_cols\_ = \{\};}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
@@ -36,12 +60,12 @@ This tutorial demonstrates how to use the Newton-\/\+Raphson solver from pressio
 \DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
-\DoxyCodeLine{  \textcolor{keyword}{using} state\_type = MyCustomVector;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type = CustomVector<scalar\_type>;}
 \DoxyCodeLine{  \textcolor{keyword}{using} residual\_type = state\_type;}
-\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = MyCustomMatrix;}
+\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = CustomMatrix<scalar\_type>;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  residual\_type createResidual()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \{\}; \}}
-\DoxyCodeLine{  jacobian\_type createJacobian()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \{\}; \}}
+\DoxyCodeLine{  residual\_type createResidual()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} residual\_type\{2\}; \}}
+\DoxyCodeLine{  jacobian\_type createJacobian()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} jacobian\_type\{2,2\}; \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keywordtype}{void} residual(\textcolor{keyword}{const} state\_type\& x,}
 \DoxyCodeLine{                residual\_type\& res)\textcolor{keyword}{ const}}
@@ -65,34 +89,44 @@ Because we are working with custom data types, we need to provide the necessary 
 
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/type\_traits.hpp"{}}}
-\DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
-\DoxyCodeLine{\textcolor{keyword}{template}<> \textcolor{keyword}{struct }Traits<MyCustomVector>\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomVector<T>>\{}
 \DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{template}<> \textcolor{keyword}{struct }Traits<MyCustomMatrix>\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomMatrix<T>>\{}
 \DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{namespace }ops\{}
-\DoxyCodeLine{MyCustomVector clone(\textcolor{keyword}{const} MyCustomVector \& src)\{ \textcolor{keywordflow}{return} src; \}}
-\DoxyCodeLine{MyCustomMatrix clone(\textcolor{keyword}{const} MyCustomMatrix \& src)\{ \textcolor{keywordflow}{return} src; \}}
-\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(MyCustomVector \& o)\{ o.fill(0); \}}
-\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(MyCustomMatrix \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> }
+\DoxyCodeLine{CustomVector<T> clone(\textcolor{keyword}{const} CustomVector<T> \& src)\{ \textcolor{keywordflow}{return} src; \}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{double} norm2(\textcolor{keyword}{const} MyCustomVector \& v)\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{CustomMatrix<T> clone(\textcolor{keyword}{const} CustomMatrix<T> \& src)\{ \textcolor{keywordflow}{return} src; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomVector<T> \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomMatrix<T> \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{T norm2(\textcolor{keyword}{const} CustomVector<T> \& v)\{}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} std::sqrt(v[0]*v[0] + v[1]*v[1]);}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} update(MyCustomVector \& v, \textcolor{keywordtype}{double} a,}
-\DoxyCodeLine{        \textcolor{keyword}{const} MyCustomVector \& v1, \textcolor{keywordtype}{double} b)\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<T> \& v, \textcolor{keywordtype}{double} a,}
+\DoxyCodeLine{        \textcolor{keyword}{const} CustomVector<T> \& v1, \textcolor{keywordtype}{double} b)\{}
 \DoxyCodeLine{  v[0] = v[0]*a + b*v1[0];}
 \DoxyCodeLine{  v[1] = v[1]*a + b*v1[1];}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} scale(MyCustomVector \& v, \textcolor{keywordtype}{double} factor)\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} scale(CustomVector<T> \& v, \textcolor{keywordtype}{double} factor)\{}
 \DoxyCodeLine{  v[0] = v[0]*factor;}
 \DoxyCodeLine{  v[1] = v[1]*factor;}
 \DoxyCodeLine{\}}
@@ -104,10 +138,13 @@ In this example, we use a custom linear solver.
 
 
 \begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
 \DoxyCodeLine{\textcolor{keyword}{struct }LinearSolver\{}
-\DoxyCodeLine{  \textcolor{keyword}{using} matrix\_type = MyCustomMatrix;}
+\DoxyCodeLine{  \textcolor{keyword}{using} matrix\_type = CustomMatrix<ScalarType>;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keywordtype}{void} solve(\textcolor{keyword}{const} matrix\_type \& M, \textcolor{keyword}{const} MyCustomVector \& rhs, MyCustomVector \& x)}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} solve(\textcolor{keyword}{const} matrix\_type \& M, }
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomVector<ScalarType> \& rhs, }
+\DoxyCodeLine{             CustomVector<ScalarType> \& x)}
 \DoxyCodeLine{  \{}
 \DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} a = M(0,0);}
 \DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} b = M(0,1);}
@@ -134,12 +171,13 @@ In this example, we use a custom linear solver.
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keyword}{using} problem\_t  = MySystem;}
 \DoxyCodeLine{  \textcolor{keyword}{using} state\_t    = problem\_t::state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t   = problem\_t::scalar\_type;}
 \DoxyCodeLine{  problem\_t sys;}
-\DoxyCodeLine{  state\_t y;}
+\DoxyCodeLine{  state\_t y(2);}
 \DoxyCodeLine{  y[0] = 0.001;}
 \DoxyCodeLine{  y[1] = -\/0.1;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  LinearSolver linearSolverObj;}
+\DoxyCodeLine{  LinearSolver<scalar\_t> linearSolverObj;}
 \DoxyCodeLine{  \textcolor{keyword}{auto} nonLinSolver = pnonls::create\_newton\_raphson(sys, y, linearSolverObj);}
 \DoxyCodeLine{  nonLinSolver.solve(sys, y);}
 \DoxyCodeLine{}

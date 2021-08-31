@@ -11,22 +11,24 @@ i.e. data types that pressio does not know how to operate on.
 ## Custom Vector Class
 
 Suppose that you have an application that uses a custom vector class as follows:
+
 ```cpp
 @codesnippet
-../../../tutorials/ode_steppers_2.cc
-52:74
+../../../tutorials/custom_data_types.hpp
+7:28
 ```
-Our custom vector class above is very simple but the key point is that
-the `MyCustomVector` type is totally arbitrary and unknown to Pressio.
-You can replace `MyCustomVector` with any type that fits your needs.
+
+This custom vector class is very simple but the key point is that
+the `CustomVector` is unknown to Pressio.
+You can replace `CustomVector` with any type that fits your needs.
 
 ## Problem Class
-Here, we want to integrate in time the same system of ODEs shown in tutorial1, but now our
-problem is implemented using the `MyCustomVector` class as follows:
+Here, we want to integrate in time the same system of ODEs shown in tutorial1,
+but with the problem implemented using the `CustomVector` class as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_2.cc
-103:123
+82:102
 ```
 
 ## Specialize trait and ops
@@ -36,7 +38,7 @@ This is done via specialization as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_2.cc
-76::98
+52:77
 ```
 
 ## Main
@@ -44,7 +46,7 @@ This is done via specialization as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_2.cc
-125:155
+104:134
 ```
 
 ## Full Code

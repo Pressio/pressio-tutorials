@@ -4,40 +4,43 @@
 This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs based on custom types, i.\+e. data types that pressio does not know how to operate on.
 \end{DoxyParagraph}
 \hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md15}{}\doxysection{Custom Vector Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md15}
-Suppose that you have an application that uses a custom vector class as follows\+: 
+Suppose that you have an application that uses a custom vector class as follows\+:
+
+
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{struct }MyCustomVector}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomVector}
 \DoxyCodeLine{\{}
-\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
 \DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  MyCustomVector(std::size\_t sizeIn)}
-\DoxyCodeLine{    : m\_data(sizeIn)\{\}}
+\DoxyCodeLine{  CustomVector(std::size\_t ext) : d\_(ext)\{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{  std::size\_t size()\textcolor{keyword}{ const}\{}
-\DoxyCodeLine{    \textcolor{keywordflow}{return} m\_data.size();}
-\DoxyCodeLine{  \}}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  ScalarType \& operator[](\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator[](\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
 \DoxyCodeLine{}
-\DoxyCodeLine{  value\_type \& operator[](std::size\_t index)\{}
-\DoxyCodeLine{    \textcolor{keywordflow}{return} m\_data[index];}
-\DoxyCodeLine{  \}}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? d\_.size() : 0; \}}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keyword}{const} value\_type \& operator[](std::size\_t index)\textcolor{keyword}{ const}\{}
-\DoxyCodeLine{    \textcolor{keywordflow}{return} m\_data[index];}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [](ScalarType \& v)\{ v= 0.; \});}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{private}:}
-\DoxyCodeLine{  std::vector<value\_type> m\_data;}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
- Our custom vector class above is very simple but the key point is that the {\ttfamily My\+Custom\+Vector} type is totally arbitrary and unknown to Pressio. You can replace {\ttfamily My\+Custom\+Vector} with any type that fits your needs.\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md16}{}\doxysection{Problem Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md16}
-Here, we want to integrate in time the same system of ODEs shown in tutorial1, but now our problem is implemented using the {\ttfamily My\+Custom\+Vector} class as follows\+: 
+
+
+This custom vector class is very simple but the key point is that the {\ttfamily Custom\+Vector} is unknown to Pressio. You can replace {\ttfamily Custom\+Vector} with any type that fits your needs.\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md16}{}\doxysection{Problem Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md16}
+Here, we want to integrate in time the same system of ODEs shown in tutorial1, but with the problem implemented using the {\ttfamily Custom\+Vector} class as follows\+: 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
 \DoxyCodeLine{\{}
 \DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type   = double;}
-\DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = MyCustomVector;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type    = CustomVector<scalar\_type>;}
 \DoxyCodeLine{  \textcolor{keyword}{using} velocity\_type = state\_type;}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{public}:}
@@ -62,23 +65,26 @@ Because we are working with custom data types, we need to provide the necessary 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{template}<> \textcolor{keyword}{struct }Traits<MyCustomVector>\{}
-\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = \textcolor{keyword}{typename} MyCustomVector::value\_type;}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomVector<T>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = \textcolor{keyword}{typename} CustomVector<T>::value\_type;}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{namespace }ops\{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} deep\_copy(MyCustomVector \& dest, \textcolor{keyword}{const} MyCustomVector \& from)\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} deep\_copy(CustomVector<T> \& dest, \textcolor{keyword}{const} CustomVector<T> \& from)\{}
 \DoxyCodeLine{  dest = from;}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{MyCustomVector clone(\textcolor{keyword}{const} MyCustomVector \& src)\{}
-\DoxyCodeLine{  \textcolor{keywordflow}{return} MyCustomVector(src.size());}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{CustomVector<T> clone(\textcolor{keyword}{const} CustomVector<T> \& src)\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} CustomVector<T>(src.extent(0));}
 \DoxyCodeLine{\};}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void} update(MyCustomVector \& v,        \textcolor{keyword}{const} \textcolor{keywordtype}{double} a,}
-\DoxyCodeLine{            \textcolor{keyword}{const} MyCustomVector \& v1, \textcolor{keyword}{const} \textcolor{keywordtype}{double} b)}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<T> \& v,        \textcolor{keyword}{const} \textcolor{keywordtype}{double} a,}
+\DoxyCodeLine{            \textcolor{keyword}{const} CustomVector<T> \& v1, \textcolor{keyword}{const} \textcolor{keywordtype}{double} b)}
 \DoxyCodeLine{\{}
-\DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.size(); ++i)\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.extent(0); ++i)\{}
 \DoxyCodeLine{    v[i] = a*v[i] + b*v1[i];}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{\}}
@@ -90,7 +96,7 @@ Because we are working with custom data types, we need to provide the necessary 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
 \DoxyCodeLine{\{}
-\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial\(\backslash\)n"{}};}
+\DoxyCodeLine{  pressio::log::initialize(pressio::logto::terminal);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// create the system/app object}}
 \DoxyCodeLine{  \textcolor{keyword}{using} app\_t = MySystem;}
@@ -116,6 +122,7 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{        << \textcolor{stringliteral}{"{}Expected solution: [2,4,6] "{}}}
 \DoxyCodeLine{        << std::endl;}
 \DoxyCodeLine{}
+\DoxyCodeLine{  pressio::log::finalize();}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
 \DoxyCodeLine{\}}
 

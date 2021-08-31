@@ -47,56 +47,46 @@
 */
 
 #include <array>
-
-struct MyCustomVector{
-  double & operator[](int i){ return d_[i]; }
-  const double & operator[](int i)const { return d_[i]; }
-
-  void fill(double value){ d_.fill(value); }
-
-private:
-  std::array<double, 2> d_ = {};
-};
-
-struct MyCustomMatrix{
-
-  double & operator()(int i, int j){ return d_[2*i+j]; }
-  const double & operator()(int i, int j) const { return d_[2*i+j]; }
-
-  void fill(double value){ d_.fill(value); }
-
-private:
-  std::array<double, 4> d_ = {};
-};
-
-#include "pressio/type_traits.hpp"
+#include "custom_data_types.hpp"
 
 namespace pressio{
-template<> struct Traits<MyCustomVector>{
+template<class T> struct Traits<CustomVector<T>>{
   using scalar_type = double;
+  using size_type = std::size_t;
 };
 
-template<> struct Traits<MyCustomMatrix>{
+template<class T> struct Traits<CustomMatrix<T>>{
   using scalar_type = double;
+  using size_type = std::size_t;
 };
 
 namespace ops{
-MyCustomVector clone(const MyCustomVector & src){ return src; }
-MyCustomMatrix clone(const MyCustomMatrix & src){ return src; }
-void set_zero(MyCustomVector & o){ o.fill(0); }
-void set_zero(MyCustomMatrix & o){ o.fill(0); }
+template<class T> 
+CustomVector<T> clone(const CustomVector<T> & src){ return src; }
 
-double norm2(const MyCustomVector & v){
+template<class T>
+CustomMatrix<T> clone(const CustomMatrix<T> & src){ return src; }
+
+template<class T>
+void set_zero(CustomVector<T> & o){ o.fill(0); }
+
+template<class T>
+void set_zero(CustomMatrix<T> & o){ o.fill(0); }
+
+template<class T>
+T norm2(const CustomVector<T> & v){
   return std::sqrt(v[0]*v[0] + v[1]*v[1]);
 }
 
-void update(MyCustomVector & v, double a,
-	    const MyCustomVector & v1, double b){
+template<class T>
+void update(CustomVector<T> & v, double a,
+	    const CustomVector<T> & v1, double b){
   v[0] = v[0]*a + b*v1[0];
   v[1] = v[1]*a + b*v1[1];
 }
 
-void scale(MyCustomVector & v, double factor){
+template<class T>
+void scale(CustomVector<T> & v, double factor){
   v[0] = v[0]*factor;
   v[1] = v[1]*factor;
 }
@@ -107,12 +97,12 @@ void scale(MyCustomVector & v, double factor){
 struct MySystem
 {
   using scalar_type = double;
-  using state_type = MyCustomVector;
+  using state_type = CustomVector<scalar_type>;
   using residual_type = state_type;
-  using jacobian_type = MyCustomMatrix;
+  using jacobian_type = CustomMatrix<scalar_type>;
 
-  residual_type createResidual() const { return {}; }
-  jacobian_type createJacobian() const { return {}; }
+  residual_type createResidual() const { return residual_type{2}; }
+  jacobian_type createJacobian() const { return jacobian_type{2,2}; }
 
   void residual(const state_type& x,
                 residual_type& res) const
@@ -130,10 +120,13 @@ struct MySystem
   }
 };
 
+template<class ScalarType>
 struct LinearSolver{
-  using matrix_type = MyCustomMatrix;
+  using matrix_type = CustomMatrix<ScalarType>;
 
-  void solve(const matrix_type & M, const MyCustomVector & rhs, MyCustomVector & x)
+  void solve(const matrix_type & M, 
+             const CustomVector<ScalarType> & rhs, 
+             CustomVector<ScalarType> & x)
   {
     const auto a = M(0,0);
     const auto b = M(0,1);
@@ -156,12 +149,13 @@ int main()
 
   using problem_t  = MySystem;
   using state_t    = problem_t::state_type;
+  using scalar_t   = problem_t::scalar_type;
   problem_t sys;
-  state_t y;
+  state_t y(2);
   y[0] = 0.001;
   y[1] = -0.1;
 
-  LinearSolver linearSolverObj;
+  LinearSolver<scalar_t> linearSolverObj;
   auto nonLinSolver = pnonls::create_newton_raphson(sys, y, linearSolverObj);
   nonLinSolver.solve(sys, y);
 
