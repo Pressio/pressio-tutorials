@@ -9,9 +9,35 @@
 <para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
 <para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to create and use a linear decoder object for data types natively supported in pressio. By natively supported, we mean data types that pressio knows how to manipulate and perform computation on. Here, we use Eigen data types as an example, but it works similarly for other natively supported types.</para>
 </simplesect>
-<programlisting filename=".cpp"><codeline><highlight class="normal">@codesnippet</highlight></codeline>
-<codeline><highlight class="normal">../../../tutorials/rom_linear_decoder_eigen.cc</highlight></codeline>
-<codeline><highlight class="normal">49:78</highlight></codeline>
+<programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&quot;pressio/type_traits.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pressio/ops.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pressio/rom_decoder.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*argv[])</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Running<sp/>tutorial\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>fom_state_t<sp/><sp/><sp/>=<sp/>Eigen::VectorXd;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>decoder_jac_t<sp/><sp/><sp/>=<sp/>Eigen::MatrixXd;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>decoder_jac_t<sp/>A(10,<sp/>3);<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>A.fill(1.);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>decoder<sp/>=<sp/>pressio::rom::create_time_invariant_linear_decoder&lt;fom_state_t&gt;(A);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>construct<sp/>reduced<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>rom_state_t<sp/>=<sp/>Eigen::VectorXd;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>rom_state_t<sp/>yRom(A.cols());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>yRom.setConstant(2.);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>apply<sp/>mapping</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>fom_state_t<sp/>yFom(A.rows());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>decoder.applyMapping(yRom,<sp/>yFom);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;yFom.size();<sp/>++i){</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>yFom(i)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>expected:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>6.<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
 </programlisting> </para>
     </detaileddescription>
     <location file="pages/rom/tutorial_lin_dec.md"/>

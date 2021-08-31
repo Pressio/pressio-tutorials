@@ -26,12 +26,14 @@ LINKS_NAVBAR1 = [
      ("<a href=\"md_pages_ode_steppers_tutorial4.html\">Implicit Time Integration (custom types)</a>", )
    ]),
 
-  ("<a>rom</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+  ("<a>pROMs</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
      ("<a href=\"md_pages_rom_tutorial_lin_dec.html\">Linear Decoder (known types)</a>", ),
-     ("<a href=\"md_pages_rom_tutorial_lin_dec_custom_types.html\">Linear Decoder (custom types)</a>", )
-     # ("<a href=\"md_pages_rom_galerkin_default.html\">Default Galerkin (known types)</a>", ),
-     # ("<a href=\"md_pages_rom_galerkin_default_custom_types.html\">Default Galerkin (custom types)</a>", ),
+     ("<a href=\"md_pages_rom_tutorial_lin_dec_custom_types.html\">Linear Decoder (custom types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_explicit.html\">Default Explicit Galerkin (known types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_explicit_custom_types.html\">Default Explicit Galerkin (custom types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_implicit.html\">Default Implicit Galerkin (known types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_implicit_custom_types.html\">Default Implicit Galerkin (custom types)</a>", )
    ]),
 
   # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",

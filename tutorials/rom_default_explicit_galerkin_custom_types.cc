@@ -47,47 +47,7 @@
 */
 
 #include "pressio/type_traits.hpp"
-#include "pressio/ops.hpp"
-
-template<class ScalarType>
-struct MyCustomVector
-{
-  MyCustomVector(std::size_t ext) : d_(ext){}
-
-  ScalarType & operator()(int i){ return d_[i]; }
-  const ScalarType & operator()(int i)const { return d_[i]; }
-
-  std::size_t extent(int k)const { return (k==0) ? d_.size() : 0; }
-
-  void fill(ScalarType value){
-    std::for_each(d_.begin(), d_.end(), [](ScalarType & v){ v= 0.; });
-  }
-
-private:
-  std::vector<ScalarType> d_ = {};
-};
-
-template<class ScalarType>
-struct MyCustomMatrix
-{
-  MyCustomMatrix(std::size_t nr, std::size_t nc)
-    : num_rows_(nr), num_cols_(nc), d_(nr*nc){}
-
-  std::size_t extent(int k)const { return (k==0) ? num_rows_ : num_cols_; }
-
-  ScalarType & operator()(int i, int j){ return d_[num_cols_*i+j]; }
-  const ScalarType & operator()(int i, int j) const { return d_[num_cols_*i+j]; }
-
-  void fill(ScalarType value){
-    std::for_each(d_.begin(), d_.end(), [=](ScalarType & v){ v= value; });
-  }
-
-private:
-  std::size_t num_rows_ = {};
-  std::size_t num_cols_ = {};
-  std::vector<ScalarType> d_ = {};
-};
-
+#include "custom_data_types.hpp"
 
 struct TrivialFomOnlyVelocityCustomTypes
 {
@@ -107,15 +67,15 @@ struct TrivialFomOnlyVelocityCustomTypes
   }
 };
 
-namespace pressio{ 
+namespace pressio{
 
-template<class ScalarType> 
+template<class ScalarType>
 struct Traits<MyCustomVector<ScalarType>>{
   using scalar_type = ScalarType;
   using size_type = std::size_t;
 };
 
-template<class ScalarType> 
+template<class ScalarType>
 struct Traits<MyCustomMatrix<ScalarType>>{
   using scalar_type = ScalarType;
   using size_type = std::size_t;
@@ -123,49 +83,49 @@ struct Traits<MyCustomMatrix<ScalarType>>{
 
 namespace ops{
 
-template<class ScalarType> 
+template<class ScalarType>
 std::size_t extent(MyCustomVector<ScalarType> & object, int i){
     return object.extent(i);
 }
 
-template<class ScalarType> 
+template<class ScalarType>
 std::size_t extent(MyCustomMatrix<ScalarType> & object, int i){
     return object.extent(i);
 }
 
-template<class ScalarType> 
+template<class ScalarType>
 void set_zero(MyCustomVector<ScalarType> & object){
   object.fill(0);
 }
 
-template<class ScalarType> 
+template<class ScalarType>
 void set_zero(MyCustomMatrix<ScalarType> & object){
   object.fill(0);
 }
 
-template<class ScalarType> 
-void deep_copy(MyCustomVector<ScalarType> & dest, 
+template<class ScalarType>
+void deep_copy(MyCustomVector<ScalarType> & dest,
                const MyCustomVector<ScalarType> & src){
   dest = src;
 }
 
-template<class ScalarType> 
-void deep_copy(MyCustomMatrix<ScalarType> & dest, 
+template<class ScalarType>
+void deep_copy(MyCustomMatrix<ScalarType> & dest,
                const MyCustomMatrix<ScalarType> & src){
   dest = src;
 }
 
-template<class ScalarType> 
+template<class ScalarType>
 MyCustomVector<ScalarType> clone(const MyCustomVector<ScalarType> & src){
   return MyCustomVector<ScalarType>(src.extent(0));
 }
 
-template<class ScalarType> 
+template<class ScalarType>
 MyCustomMatrix<ScalarType> clone(const MyCustomMatrix<ScalarType> & src){
   return MyCustomMatrix<ScalarType>(src.extent(0), src.extent(1));
 }
 
-template<class ScalarType> 
+template<class ScalarType>
 void update(MyCustomVector<ScalarType> & v,        const ScalarType a,
             const MyCustomVector<ScalarType> & v1, const ScalarType b)
 {
@@ -240,34 +200,15 @@ void product(pressio::transpose,
 
 #include "pressio/rom_galerkin.hpp"
 
-struct TrivialFomOnlyVelocityEigen
-{
-  using scalar_type	      = double;
-  using state_type	      = Eigen::VectorXd;
-  using velocity_type     = state_type;
-  int N_ = {};
-
-  TrivialFomOnlyVelocityEigen(int N): N_(N){}
-
-  velocity_type createVelocity() const{ return velocity_type(N_); }
-
-  void velocity(const state_type & u, const scalar_type time, velocity_type & f) const
-  {
-    for (auto i=0; i<f.rows(); ++i){
-	   f(i) = u(i) + time;
-    }
-  }
-};
-
 struct Observer
 {
   void operator()(int32_t step, double time, Eigen::VectorXd state)
   {
-  	std::cout << "Observer called: \n" 
-  	<< " step: " << step 
+  	std::cout << "Observer called: \n"
+  	<< " step: " << step
   	<< "\n"
-  	<< " state = "; 
-  	for (int i=0; i<state.size(); ++i){ 
+  	<< " state = ";
+  	for (int i=0; i<state.size(); ++i){
   		std::cout << state(i) << ", ";
   	}
   	std::cout << "\n";
@@ -305,7 +246,7 @@ int main(int argc, char *argv[])
   using ode_tag = pressio::ode::ForwardEuler;
   auto problem = pressio::rom::galerkin::create_default_problem<ode_tag>(fomSystem, decoder, romState, fomReferenceState);
 
-  const scalar_t dt = 1.; 
+  const scalar_t dt = 1.;
   const int num_steps = 3;
   Observer obs;
   pressio::ode::advance_n_steps_and_observe(

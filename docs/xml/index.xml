@@ -12,6 +12,14 @@
   </compound>
   <compound refid="steppers__tutorial4_8md" kind="file"><name>steppers_tutorial4.md</name>
   </compound>
+  <compound refid="galerkin__default__explicit_8md" kind="file"><name>galerkin_default_explicit.md</name>
+  </compound>
+  <compound refid="galerkin__default__explicit__custom__types_8md" kind="file"><name>galerkin_default_explicit_custom_types.md</name>
+  </compound>
+  <compound refid="galerkin__default__implicit_8md" kind="file"><name>galerkin_default_implicit.md</name>
+  </compound>
+  <compound refid="galerkin__default__implicit__custom__types_8md" kind="file"><name>galerkin_default_implicit_custom_types.md</name>
+  </compound>
   <compound refid="tutorial__lin__dec_8md" kind="file"><name>tutorial_lin_dec.md</name>
   </compound>
   <compound refid="tutorial__lin__dec__custom__types_8md" kind="file"><name>tutorial_lin_dec_custom_types.md</name>
@@ -37,6 +45,14 @@
   <compound refid="md_pages_ode_steppers_tutorial3" kind="page"><name>md_pages_ode_steppers_tutorial3</name>
   </compound>
   <compound refid="md_pages_ode_steppers_tutorial4" kind="page"><name>md_pages_ode_steppers_tutorial4</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_explicit" kind="page"><name>md_pages_rom_galerkin_default_explicit</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_explicit_custom_types" kind="page"><name>md_pages_rom_galerkin_default_explicit_custom_types</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_implicit" kind="page"><name>md_pages_rom_galerkin_default_implicit</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_implicit_custom_types" kind="page"><name>md_pages_rom_galerkin_default_implicit_custom_types</name>
   </compound>
   <compound refid="md_pages_rom_tutorial_lin_dec" kind="page"><name>md_pages_rom_tutorial_lin_dec</name>
   </compound>

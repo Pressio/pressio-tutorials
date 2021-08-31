@@ -5,9 +5,35 @@ This tutorial demonstrates how to create and use a linear decoder object for dat
 \end{DoxyParagraph}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{@codesnippet}
-\DoxyCodeLine{../../../tutorials/rom\_linear\_decoder\_eigen.cc}
-\DoxyCodeLine{49:78}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/type\_traits.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/ops.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/rom\_decoder.hpp"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Running tutorial\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} fom\_state\_t   = Eigen::VectorXd;}
+\DoxyCodeLine{  \textcolor{keyword}{using} decoder\_jac\_t   = Eigen::MatrixXd;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  decoder\_jac\_t A(10, 3); }
+\DoxyCodeLine{  A.fill(1.);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{auto} decoder = pressio::rom::create\_time\_invariant\_linear\_decoder<fom\_state\_t>(A);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// construct reduced state}}
+\DoxyCodeLine{  \textcolor{keyword}{using} rom\_state\_t = Eigen::VectorXd;}
+\DoxyCodeLine{  rom\_state\_t yRom(A.cols());}
+\DoxyCodeLine{  yRom.setConstant(2.);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// apply mapping}}
+\DoxyCodeLine{  fom\_state\_t yFom(A.rows());}
+\DoxyCodeLine{  decoder.applyMapping(yRom, yFom);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i=0; i<yFom.size(); ++i)\{}
+\DoxyCodeLine{    std::cout << yFom(i) << \textcolor{stringliteral}{"{} expected: "{}} << 6. << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
 
 \end{DoxyCode}
  
