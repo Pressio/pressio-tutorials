@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="md_pages_rom_galerkin_default_explicit" kind="page">
+    <compoundname>md_pages_rom_galerkin_default_explicit</compoundname>
+    <title>Default Galerkin with Explicit Time Integration for Known Types</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
+<para><simplesect kind="par"><title></title><para>This tutorial demonstrates</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal">sdfdf</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="pages/rom/galerkin_default_explicit.md"/>
+  </compounddef>
+</doxygen>
