@@ -48,11 +48,12 @@
 
 #include "pressio/type_traits.hpp"
 #include "custom_data_types.hpp"
+#include "pressio/ops.hpp"
 
 struct TrivialFomOnlyVelocityCustomTypes
 {
   using scalar_type    = double;
-  using state_type     = MyCustomVector<scalar_type>;
+  using state_type     = CustomVector<scalar_type>;
   using velocity_type  = state_type;
   int N_ = {};
 
@@ -70,13 +71,13 @@ struct TrivialFomOnlyVelocityCustomTypes
 namespace pressio{
 
 template<class ScalarType>
-struct Traits<MyCustomVector<ScalarType>>{
+struct Traits<CustomVector<ScalarType>>{
   using scalar_type = ScalarType;
   using size_type = std::size_t;
 };
 
 template<class ScalarType>
-struct Traits<MyCustomMatrix<ScalarType>>{
+struct Traits<CustomMatrix<ScalarType>>{
   using scalar_type = ScalarType;
   using size_type = std::size_t;
 };
@@ -84,50 +85,50 @@ struct Traits<MyCustomMatrix<ScalarType>>{
 namespace ops{
 
 template<class ScalarType>
-std::size_t extent(MyCustomVector<ScalarType> & object, int i){
+std::size_t extent(CustomVector<ScalarType> & object, int i){
     return object.extent(i);
 }
 
 template<class ScalarType>
-std::size_t extent(MyCustomMatrix<ScalarType> & object, int i){
+std::size_t extent(CustomMatrix<ScalarType> & object, int i){
     return object.extent(i);
 }
 
 template<class ScalarType>
-void set_zero(MyCustomVector<ScalarType> & object){
+void set_zero(CustomVector<ScalarType> & object){
   object.fill(0);
 }
 
 template<class ScalarType>
-void set_zero(MyCustomMatrix<ScalarType> & object){
+void set_zero(CustomMatrix<ScalarType> & object){
   object.fill(0);
 }
 
 template<class ScalarType>
-void deep_copy(MyCustomVector<ScalarType> & dest,
-               const MyCustomVector<ScalarType> & src){
+void deep_copy(CustomVector<ScalarType> & dest,
+               const CustomVector<ScalarType> & src){
   dest = src;
 }
 
 template<class ScalarType>
-void deep_copy(MyCustomMatrix<ScalarType> & dest,
-               const MyCustomMatrix<ScalarType> & src){
+void deep_copy(CustomMatrix<ScalarType> & dest,
+               const CustomMatrix<ScalarType> & src){
   dest = src;
 }
 
 template<class ScalarType>
-MyCustomVector<ScalarType> clone(const MyCustomVector<ScalarType> & src){
-  return MyCustomVector<ScalarType>(src.extent(0));
+CustomVector<ScalarType> clone(const CustomVector<ScalarType> & src){
+  return CustomVector<ScalarType>(src.extent(0));
 }
 
 template<class ScalarType>
-MyCustomMatrix<ScalarType> clone(const MyCustomMatrix<ScalarType> & src){
-  return MyCustomMatrix<ScalarType>(src.extent(0), src.extent(1));
+CustomMatrix<ScalarType> clone(const CustomMatrix<ScalarType> & src){
+  return CustomMatrix<ScalarType>(src.extent(0), src.extent(1));
 }
 
 template<class ScalarType>
-void update(MyCustomVector<ScalarType> & v,        const ScalarType a,
-            const MyCustomVector<ScalarType> & v1, const ScalarType b)
+void update(CustomVector<ScalarType> & v,        const ScalarType a,
+            const CustomVector<ScalarType> & v1, const ScalarType b)
 {
   for (std::size_t i=0; i< v.extent(0); ++i){
     v(i) = a*v(i) + b*v1(i);
@@ -139,10 +140,10 @@ void update(MyCustomVector<ScalarType> & v,        const ScalarType a,
 template<class x_t, class ScalarType>
 void product(pressio::nontranspose,
              ScalarType alpha,
-             const MyCustomMatrix<ScalarType> & A,
+             const CustomMatrix<ScalarType> & A,
              const x_t & x,
              ScalarType beta,
-             MyCustomVector<ScalarType> & z)
+             CustomVector<ScalarType> & z)
 {
   // obviously not efficient, just for demonstration
   for (std::size_t i=0; i<A.extent(0); ++i)
@@ -159,8 +160,8 @@ void product(pressio::nontranspose,
 template<class z_t, class ScalarType>
 void product(pressio::transpose,
              ScalarType alpha,
-             const MyCustomMatrix<ScalarType> & A,
-             const MyCustomVector<ScalarType> & x,
+             const CustomMatrix<ScalarType> & A,
+             const CustomVector<ScalarType> & x,
              ScalarType beta,
              z_t & z)
 {
@@ -180,8 +181,8 @@ template<class C_t, class ScalarType>
 void product(pressio::transpose,
              pressio::nontranspose,
              ScalarType alpha,
-             const MyCustomMatrix<ScalarType> & A,
-             const MyCustomMatrix<ScalarType> & B,
+             const CustomMatrix<ScalarType> & A,
+             const CustomMatrix<ScalarType> & B,
              ScalarType beta,
              C_t & C)
 {
@@ -229,12 +230,12 @@ int main(int argc, char *argv[])
   fom_state_t fomReferenceState(N);
   fomReferenceState.fill(0);
 
-  using phi_t = ::MyCustomMatrix<scalar_t>;
+  using phi_t = ::CustomMatrix<scalar_t>;
   phi_t phi(N, 3);
   for (std::size_t i=0; i<phi.extent(0); ++i){
-    phi(i,0) = 0;
-    phi(i,1) = 1;
-    phi(i,2) = 2;
+    phi(i,0) = 0.1;
+    phi(i,1) = 0.5;
+    phi(i,2) = 0.8;
   }
   auto decoder = pressio::rom::create_time_invariant_linear_decoder<fom_state_t>(phi);
 

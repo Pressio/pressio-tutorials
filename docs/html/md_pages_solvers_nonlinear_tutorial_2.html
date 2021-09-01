@@ -74,7 +74,7 @@
         <h1>
           Newton-Raphson with Custom Types
         </h1>
-<aside class="m-block m-info"><p>This tutorial demonstrates how to use the Newton-Raphson solver from pressio/solvers_nonlinear using custom data types.</p></aside><section id="autotoc_md37"><h2><a href="#autotoc_md37">Custom data types</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<aside class="m-block m-info"><p>This tutorial demonstrates how to use the Newton-Raphson solver from pressio/solvers_nonlinear using custom data types.</p></aside><section id="autotoc_md40"><h2><a href="#autotoc_md40">Custom data types</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">CustomVector</span>
 <span class="p">{</span>
   <span class="k">using</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">ScalarType</span><span class="p">;</span>
@@ -119,7 +119,7 @@
   <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">num_rows_</span> <span class="o">=</span> <span class="p">{};</span>
   <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">num_cols_</span> <span class="o">=</span> <span class="p">{};</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="n">d_</span> <span class="o">=</span> <span class="p">{};</span>
-<span class="p">};</span></pre></section><section id="autotoc_md38"><h2><a href="#autotoc_md38">Problem class</a></h2><pre class="m-code"><span class="k">struct</span> <span class="nc">MySystem</span>
+<span class="p">};</span></pre></section><section id="autotoc_md41"><h2><a href="#autotoc_md41">Problem class</a></h2><pre class="m-code"><span class="k">struct</span> <span class="nc">MySystem</span>
 <span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
   <span class="k">using</span> <span class="n">state_type</span> <span class="o">=</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">;</span>
@@ -143,7 +143,7 @@
     <span class="n">J</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mf">-1.0</span><span class="p">;</span>
     <span class="n">J</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mf">3.0</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
   <span class="p">}</span>
-<span class="p">};</span></pre></section><section id="autotoc_md39"><h2><a href="#autotoc_md39">Specialize trait and ops</a></h2><p>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows:</p><pre class="m-code"><span class="k">namespace</span> <span class="n">pressio</span><span class="p">{</span>
+<span class="p">};</span></pre></section><section id="autotoc_md42"><h2><a href="#autotoc_md42">Specialize trait and ops</a></h2><p>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows:</p><pre class="m-code"><span class="k">namespace</span> <span class="n">pressio</span><span class="p">{</span>
 <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nc">Traits</span><span class="o">&lt;</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
   <span class="k">using</span> <span class="n">size_type</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="p">;</span>
@@ -184,7 +184,7 @@
   <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span><span class="p">;</span>
   <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">factor</span><span class="p">;</span>
 <span class="p">}</span>
-<span class="p">}}</span><span class="c1">//end namespace pressio::ops</span></pre></section><section id="autotoc_md40"><h2><a href="#autotoc_md40">Custom Linear solver</a></h2><p>In this example, we use a custom linear solver.</p><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="p">}}</span><span class="c1">//end namespace pressio::ops</span></pre></section><section id="autotoc_md43"><h2><a href="#autotoc_md43">Custom Linear solver</a></h2><p>In this example, we use a custom linear solver.</p><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">LinearSolver</span><span class="p">{</span>
   <span class="k">using</span> <span class="n">matrix_type</span> <span class="o">=</span> <span class="n">CustomMatrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">;</span>
 
@@ -201,7 +201,7 @@
     <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="o">*</span><span class="n">rhs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="o">-</span> <span class="n">b</span><span class="o">*</span><span class="n">rhs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">det</span><span class="p">;</span>
     <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">rhs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">rhs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">det</span><span class="p">;</span>
   <span class="p">}</span>
-<span class="p">};</span></pre></section><section id="autotoc_md41"><h2><a href="#autotoc_md41">Main</a></h2><pre class="m-code"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">};</span></pre></section><section id="autotoc_md44"><h2><a href="#autotoc_md44">Main</a></h2><pre class="m-code"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
   <span class="k">namespace</span> <span class="n">plog</span>   <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="p">;</span>
   <span class="k">namespace</span> <span class="n">pnonls</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">nonlinearsolvers</span><span class="p">;</span>
@@ -229,7 +229,7 @@
 
   <span class="n">plog</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></pre></section><section id="autotoc_md42"><h2><a href="#autotoc_md42">Full Code</a></h2><p>The full code is available TODO.</p></section>
+<span class="p">}</span></pre></section><section id="autotoc_md45"><h2><a href="#autotoc_md45">Full Code</a></h2><p>The full code is available TODO.</p></section>
       </div>
     </div>
   </div>

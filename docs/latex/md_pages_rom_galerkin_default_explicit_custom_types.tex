@@ -3,9 +3,250 @@
 \begin{DoxyParagraph}{}
 This tutorial demonstrates how to
 \end{DoxyParagraph}
+\hypertarget{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md26}{}\doxysection{Custom Data Class}\label{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md26}
+Suppose that you have an application that uses arbitrary types. For the sake of this tutorial, let\textquotesingle{}s define these to be\+:
+
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{dfsdfsd}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomVector}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  CustomVector(std::size\_t ext) : d\_(ext)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  ScalarType \& operator[](\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator[](\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? d\_.size() : 0; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [](ScalarType \& v)\{ v= 0.; \});}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomMatrix}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  CustomMatrix(std::size\_t nr, std::size\_t nc)}
+\DoxyCodeLine{    : num\_rows\_(nr), num\_cols\_(nc), d\_(nr*nc)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? num\_rows\_ : num\_cols\_; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [=](ScalarType \& v)\{ v= value; \});}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{  std::size\_t num\_rows\_ = \{\};}
+\DoxyCodeLine{  std::size\_t num\_cols\_ = \{\};}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md27}{}\doxysection{Specialize trait and ops}\label{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md27}
+Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }Traits<CustomVector<ScalarType>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }Traits<CustomMatrix<ScalarType>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{namespace }ops\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{std::size\_t extent(CustomVector<ScalarType> \& \textcolor{keywordtype}{object}, \textcolor{keywordtype}{int} i)\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} \textcolor{keywordtype}{object}.extent(i);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{std::size\_t extent(CustomMatrix<ScalarType> \& \textcolor{keywordtype}{object}, \textcolor{keywordtype}{int} i)\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} \textcolor{keywordtype}{object}.extent(i);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomVector<ScalarType> \& \textcolor{keywordtype}{object})\{}
+\DoxyCodeLine{  \textcolor{keywordtype}{object}.fill(0);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomMatrix<ScalarType> \& \textcolor{keywordtype}{object})\{}
+\DoxyCodeLine{  \textcolor{keywordtype}{object}.fill(0);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} deep\_copy(CustomVector<ScalarType> \& dest,}
+\DoxyCodeLine{               \textcolor{keyword}{const} CustomVector<ScalarType> \& src)\{}
+\DoxyCodeLine{  dest = src;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} deep\_copy(CustomMatrix<ScalarType> \& dest,}
+\DoxyCodeLine{               \textcolor{keyword}{const} CustomMatrix<ScalarType> \& src)\{}
+\DoxyCodeLine{  dest = src;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{CustomVector<ScalarType> clone(\textcolor{keyword}{const} CustomVector<ScalarType> \& src)\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} CustomVector<ScalarType>(src.extent(0));}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{CustomMatrix<ScalarType> clone(\textcolor{keyword}{const} CustomMatrix<ScalarType> \& src)\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} CustomMatrix<ScalarType>(src.extent(0), src.extent(1));}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<ScalarType> \& v,        \textcolor{keyword}{const} ScalarType a,}
+\DoxyCodeLine{            \textcolor{keyword}{const} CustomVector<ScalarType> \& v1, \textcolor{keyword}{const} ScalarType b)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i< v.extent(0); ++i)\{}
+\DoxyCodeLine{    v(i) = a*v(i) + b*v1(i);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// z = beta*z + alpha * A * x}}
+\DoxyCodeLine{\textcolor{comment}{// where x is indexable as x(i)}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} x\_t, \textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} product(pressio::nontranspose,}
+\DoxyCodeLine{             ScalarType alpha,}
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomMatrix<ScalarType> \& A,}
+\DoxyCodeLine{             \textcolor{keyword}{const} x\_t \& x,}
+\DoxyCodeLine{             ScalarType beta,}
+\DoxyCodeLine{             CustomVector<ScalarType> \& z)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// obviously not efficient, just for demonstration}}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<A.extent(0); ++i)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    z(i) = beta*z(i);}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (std::size\_t j=0; j<A.extent(1); ++j)\{}
+\DoxyCodeLine{      z(i) += alpha*A(i,j)*x(j);}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// z = beta*z + alpha * A\string^T * x}}
+\DoxyCodeLine{\textcolor{comment}{// where z is indexable as z(i)}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} z\_t, \textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} product(pressio::transpose,}
+\DoxyCodeLine{             ScalarType alpha,}
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomMatrix<ScalarType> \& A,}
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomVector<ScalarType> \& x,}
+\DoxyCodeLine{             ScalarType beta,}
+\DoxyCodeLine{             z\_t \& z)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// obviously not efficient, just for demonstration}}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t k=0; k<A.extent(1); ++k)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    z(k) = beta*z(k);}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (std::size\_t i=0; i<A.extent(0); ++i)\{}
+\DoxyCodeLine{      z(k) += alpha*A(i,k)*x(i);}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// C = beta*C + alpha * A\string^T * B}}
+\DoxyCodeLine{\textcolor{comment}{// where C is indexable as C(i,j)}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} C\_t, \textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} product(pressio::transpose,}
+\DoxyCodeLine{             pressio::nontranspose,}
+\DoxyCodeLine{             ScalarType alpha,}
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomMatrix<ScalarType> \& A,}
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomMatrix<ScalarType> \& B,}
+\DoxyCodeLine{             ScalarType beta,}
+\DoxyCodeLine{             C\_t \& C)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<A.extent(1); ++i)\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (std::size\_t j=0; j<B.extent(1); ++j)}
+\DoxyCodeLine{    \{}
+\DoxyCodeLine{      C(i,j) *= beta;}
+\DoxyCodeLine{      \textcolor{keywordflow}{for} (std::size\_t k=0; k<A.extent(0); ++k)\{}
+\DoxyCodeLine{        C(i,j) += alpha*A(k,i)*B(k,j);}
+\DoxyCodeLine{      \}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md28}{}\doxysection{Main}\label{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md28}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/rom\_galerkin.hpp"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{struct }Observer}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} operator()(int32\_t step, \textcolor{keywordtype}{double} time, Eigen::VectorXd state)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Observer called: \(\backslash\)n"{}}}
+\DoxyCodeLine{    << \textcolor{stringliteral}{"{} step: "{}} << step}
+\DoxyCodeLine{    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}}
+\DoxyCodeLine{    << \textcolor{stringliteral}{"{} state = "{}};}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i=0; i<state.size(); ++i)\{}
+\DoxyCodeLine{        std::cout << state(i) << \textcolor{stringliteral}{"{}, "{}};}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  pressio::log::initialize(pressio::logto::terminal);}
+\DoxyCodeLine{  pressio::log::setVerbosity(\{pressio::log::level::debug\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} fom\_t = TrivialFomOnlyVelocityCustomTypes;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t    = \textcolor{keyword}{typename} fom\_t::scalar\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} fom\_state\_t = \textcolor{keyword}{typename} fom\_t::state\_type;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  constexpr \textcolor{keywordtype}{int} N = 10;}
+\DoxyCodeLine{  fom\_t fomSystem(N);}
+\DoxyCodeLine{  fom\_state\_t fomReferenceState(N);}
+\DoxyCodeLine{  fomReferenceState.fill(0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} phi\_t = ::CustomMatrix<scalar\_t>;}
+\DoxyCodeLine{  phi\_t phi(N, 3);}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (std::size\_t i=0; i<phi.extent(0); ++i)\{}
+\DoxyCodeLine{    phi(i,0) = 0.1;}
+\DoxyCodeLine{    phi(i,1) = 0.5;}
+\DoxyCodeLine{    phi(i,2) = 0.8;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{  \textcolor{keyword}{auto} decoder = pressio::rom::create\_time\_invariant\_linear\_decoder<fom\_state\_t>(phi);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  Eigen::VectorXd romState(3);}
+\DoxyCodeLine{  romState[0]=0.;}
+\DoxyCodeLine{  romState[1]=1.;}
+\DoxyCodeLine{  romState[2]=2.;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag = pressio::ode::ForwardEuler;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_problem<ode\_tag>(fomSystem, decoder, romState, fomReferenceState);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_t dt = 1.;}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{int} num\_steps = 3;}
+\DoxyCodeLine{  Observer obs;}
+\DoxyCodeLine{  pressio::ode::advance\_n\_steps\_and\_observe(}
+\DoxyCodeLine{      problem.stepper(), romState, 0., dt, num\_steps, obs);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  pressio::log::finalize();}
 
 \end{DoxyCode}
  

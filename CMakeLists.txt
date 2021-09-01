@@ -55,12 +55,16 @@ add_executable(
   rom_linear_decoder_custom_types
   ${TUTDIR}/rom_linear_decoder_arbitrary_types.cc)
 
-# #---- galerkin -----
-# add_executable(
-#   rom_default_explicit_galerkin_t1
-#   ${TUTDIR}/rom_default_explicit_galerkin_eigen.cc)
-# add_executable(
-#   rom_default_explicit_galerkin_t2
-#   ${TUTDIR}/rom_default_explicit_galerkin_custom_types.cc)
+#---- galerkin -----
+add_executable(
+  rom_default_explicit_galerkin_known_types
+  ${TUTDIR}/rom_default_explicit_galerkin_eigen.cc)
+add_executable(
+  rom_default_explicit_galerkin_custom_types
+  ${TUTDIR}/rom_default_explicit_galerkin_custom_types.cc)
+
+add_executable(
+  rom_default_implicit_galerkin_known_types
+  ${TUTDIR}/rom_default_implicit_galerkin_eigen.cc)
 
 #add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)

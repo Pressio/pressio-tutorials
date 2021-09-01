@@ -10,7 +10,7 @@
 <para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the Newton-Raphson solver from pressio/solvers_nonlinear using custom data types.</para>
 </simplesect>
 </para>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md37">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md40">
 <title>Custom data types</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>ScalarType&gt;</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">CustomVector</highlight></codeline>
@@ -60,7 +60,7 @@
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md38">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md41">
 <title>Problem class</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">struct<sp/></highlight><highlight class="normal">MySystem</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -89,7 +89,7 @@
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md39">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md42">
 <title>Specialize trait and ops</title>
 <para>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows:</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">pressio{</highlight></codeline>
@@ -136,7 +136,7 @@
 <codeline><highlight class="normal">}}</highlight><highlight class="comment">//end<sp/>namespace<sp/>pressio::ops</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md40">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md43">
 <title>Custom Linear solver</title>
 <para>In this example, we use a custom linear solver.</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>ScalarType&gt;</highlight></codeline>
@@ -159,7 +159,7 @@
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md41">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md44">
 <title>Main</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main()</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -192,7 +192,7 @@
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md42">
+<sect1 id="md_pages_solvers_nonlinear_tutorial_2_1autotoc_md45">
 <title>Full Code</title>
 <para>The full code is available TODO. </para>
 </sect1>

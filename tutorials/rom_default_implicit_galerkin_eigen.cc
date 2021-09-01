@@ -50,47 +50,55 @@
 #include "pressio/ops.hpp"
 #include "pressio/rom_galerkin.hpp"
 
-struct TrivialFomOnlyVelocityEigen
+struct TrivialFomVelocityAndJacobianEigen
 {
-  using scalar_type	      = double;
-  using state_type	      = Eigen::VectorXd;
+  using scalar_type       = double;
+  using state_type        = Eigen::VectorXd;
   using velocity_type     = state_type;
   int N_ = {};
 
-  TrivialFomOnlyVelocityEigen(int N): N_(N){}
+  TrivialFomVelocityAndJacobianEigen(int N): N_(N){}
 
   velocity_type createVelocity() const{ return velocity_type(N_); }
+
+  template<class OperandType>
+  OperandType createApplyJacobianResult(const OperandType & B) const
+  {
+    OperandType A(B.rows(), B.cols());
+    return A;
+  }
+
+  // computes: A = Jac B
+  template<class OperandType>
+  void applyJacobian(const state_type & state,
+                     const OperandType & B,
+                     const scalar_type & time,
+                     OperandType & A) const
+  {
+    A = B;
+    A.array() += time;
+  }
 
   void velocity(const state_type & u, const scalar_type time, velocity_type & f) const
   {
     for (auto i=0; i<f.rows(); ++i){
-	   f(i) = u(i) + time;
+     f(i) = u(i) + time;
     }
-  }
-};
-
-struct Observer
-{
-  void operator()(int32_t step, double time, Eigen::VectorXd state)
-  {
-  	std::cout << "Observer called: \n"
-  	<< " step: " << step
-  	<< "\n"
-  	<< " state = ";
-  	for (int i=0; i<state.size(); ++i){
-  		std::cout << state(i) << ", ";
-  	}
-  	std::cout << "\n";
   }
 };
 
 int main(int argc, char *argv[])
 {
   pressio::log::initialize(pressio::logto::terminal);
+  pressio::log::setVerbosity({pressio::log::level::debug});
 
-  using fom_t	= TrivialFomOnlyVelocityEigen;
+  namespace pls    = pressio::linearsolvers;
+  namespace pnonls = pressio::nonlinearsolvers;
+  namespace prom   = pressio::rom;
+
+  using fom_t = TrivialFomVelocityAndJacobianEigen;
   using scalar_t    = typename fom_t::scalar_type;
-  using fom_state_t	= typename fom_t::state_type;
+  using fom_state_t = typename fom_t::state_type;
 
   constexpr int N = 10;
   fom_t fomSystem(N);
@@ -99,25 +107,30 @@ int main(int argc, char *argv[])
 
   using phi_t = Eigen::MatrixXd;
   phi_t phi(N, 3);
-  phi.col(0).setConstant(0.1);
-  phi.col(1).setConstant(0.5);
-  phi.col(2).setConstant(0.8);
-  auto decoder = pressio::rom::create_time_invariant_linear_decoder<fom_state_t>(phi);
+  phi.col(0).setConstant(0.);
+  phi.col(1).setConstant(1.);
+  phi.col(2).setConstant(2.);
+  auto decoder = prom::create_time_invariant_linear_decoder<fom_state_t>(phi);
 
   Eigen::VectorXd romState(3);
   romState[0]=0.;
   romState[1]=1.;
   romState[2]=2.;
 
-  using ode_tag = pressio::ode::ForwardEuler;
-  auto problem = pressio::rom::galerkin::create_default_problem<ode_tag>
-    (fomSystem, decoder, romState, fomReferenceState);
+  using ode_tag = pressio::ode::BDF1;
+  auto problem = prom::galerkin::create_default_problem<ode_tag>(fomSystem, decoder, romState, fomReferenceState);
+  using problem_t = decltype(problem);
+  auto & stepperObj = problem.stepper();
 
-  const scalar_t dt = 1.;
-  const int num_steps = 3;
-  Observer obs;
-  pressio::ode::advance_n_steps_and_observe(
-  	problem.stepper(), romState, 0., dt, num_steps, obs);
+  using galerkin_jacobian_t = typename pressio::Traits<problem_t>::galerkin_jacobian_type;
+  using lin_solver_t = pls::Solver<pls::iterative::LSCG, galerkin_jacobian_t>;
+  lin_solver_t linearSolverObj;
+  auto nonLinSolver = pnonls::create_newton_raphson(stepperObj, romState, linearSolverObj);
+  nonLinSolver.setMaxIterations(1);
+
+  scalar_t dt = 2.;
+  pressio::ode::advance_n_steps(stepperObj, romState, 0.0, dt, 1, nonLinSolver);
+  std::cout << romState << std::endl;
 
   pressio::log::finalize();
 }
