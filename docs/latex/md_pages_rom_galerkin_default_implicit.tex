@@ -76,8 +76,9 @@ This tutorial demonstrates how to ...
 \DoxyCodeLine{  romState[1]=1.;}
 \DoxyCodeLine{  romState[2]=2.;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag = pressio::ode::BDF1;}
-\DoxyCodeLine{  \textcolor{keyword}{auto} problem = prom::galerkin::create\_default\_problem<ode\_tag>(fomSystem, decoder, romState, fomReferenceState);}
+\DoxyCodeLine{  constexpr \textcolor{keyword}{auto} odescheme = pressio::ode::StepScheme::BDF1;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_implicit\_problem}
+\DoxyCodeLine{    (odescheme, fomSystem, decoder, romState, fomReferenceState);}
 \DoxyCodeLine{  \textcolor{keyword}{using} problem\_t = decltype(problem);}
 \DoxyCodeLine{  \textcolor{keyword}{auto} \& stepperObj = problem.stepper();}
 \DoxyCodeLine{}

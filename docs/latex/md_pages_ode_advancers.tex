@@ -1,5 +1,51 @@
-\hypertarget{md_pages_ode_advancers_autotoc_md5}{}\doxysection{$<$tt$>$advance\+\_\+n\+\_\+times$<$/tt$>$}\label{md_pages_ode_advancers_autotoc_md5}
-...\hypertarget{md_pages_ode_advancers_autotoc_md6}{}\doxysection{$<$tt$>$advance\+\_\+n\+\_\+times\+\_\+and\+\_\+observe$<$/tt$>$}\label{md_pages_ode_advancers_autotoc_md6}
-...\hypertarget{md_pages_ode_advancers_autotoc_md7}{}\doxysection{$<$tt$>$advance\+\_\+to\+\_\+target\+\_\+time$<$/tt$>$}\label{md_pages_ode_advancers_autotoc_md7}
-...\hypertarget{md_pages_ode_advancers_autotoc_md8}{}\doxysection{$<$tt$>$advance\+\_\+to\+\_\+target\+\_\+time\+\_\+and\+\_\+observe$<$/tt$>$}\label{md_pages_ode_advancers_autotoc_md8}
+\hypertarget{md_pages_ode_advancers_autotoc_md5}{}\doxysection{advance\+\_\+n\+\_\+times}\label{md_pages_ode_advancers_autotoc_md5}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/ode\_advancers.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }SteppableClass}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} operator()(std::vector<ScalarType> \& state,}
+\DoxyCodeLine{          \textcolor{keyword}{const} ScalarType time,}
+\DoxyCodeLine{          \textcolor{keyword}{const} ScalarType dt,}
+\DoxyCodeLine{          \textcolor{keyword}{const} pressio::ode::step\_count\_type step)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{comment}{// for simplicity, let's say that taking one step}}
+\DoxyCodeLine{    \textcolor{comment}{// corresponds to adding 1 to the state}}
+\DoxyCodeLine{    state[0] += 1;}
+\DoxyCodeLine{    state[1] += 1;}
+\DoxyCodeLine{    state[2] += 1;}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  pressio::log::initialize(pressio::logto::terminal);}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  SteppableClass<scalar\_type> stepper;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::vector<scalar\_type> state = \{1,2,3\};}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type start\_time = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pode::step\_count\_type num\_steps = 10;}
+\DoxyCodeLine{  pode::advance\_n\_steps(stepper, state, start\_time, dt, num\_steps);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Final state: ["{}}}
+\DoxyCodeLine{            << state[0] << \textcolor{stringliteral}{"{} "{}} << state[1] << \textcolor{stringliteral}{"{} "{}} << state[2] << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{            << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  pressio::log::finalize();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_advancers_autotoc_md6}{}\doxysection{advance\+\_\+n\+\_\+times\+\_\+and\+\_\+observe}\label{md_pages_ode_advancers_autotoc_md6}
+...\hypertarget{md_pages_ode_advancers_autotoc_md7}{}\doxysection{advance\+\_\+to\+\_\+target\+\_\+time}\label{md_pages_ode_advancers_autotoc_md7}
+...\hypertarget{md_pages_ode_advancers_autotoc_md8}{}\doxysection{advance\+\_\+to\+\_\+target\+\_\+time\+\_\+and\+\_\+observe}\label{md_pages_ode_advancers_autotoc_md8}
 ... 

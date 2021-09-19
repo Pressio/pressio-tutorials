@@ -44,6 +44,10 @@ add_executable(
   ode_steppers_custom_types
   ${TUTDIR}/ode_steppers_2.cc)
 
+add_executable(
+  ode_advancer
+  ${TUTDIR}/ode_advancer.cc)
+
 #=================================
 # rom
 #=================================

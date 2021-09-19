@@ -41,10 +41,6 @@ LINKS_NAVBAR1 = [
   ("<a></a>", []),
   ("<a></a>", []),
 
-  #("<a>Galerkin</a>", []),
-  #("<a>LSPG</a>", []),
-  #("<a>WLS</a>", []),
-
   # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
   #  [
   #    ("<a href=\"md_pages_swe_fom.html\">FOM Driver</a>", ),
