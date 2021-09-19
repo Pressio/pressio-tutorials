@@ -24,32 +24,43 @@
       <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
         <div class="m-row">
           <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="md_pages_utils_logger.html">logger</a></li>
             <li>
-              <a>ODE</a>
+              <a>solvers nonlinear</a>
               <ol>
-                <li><a href="md_pages_ode_tutorial1.html">Explicit Time Integration (Known Types)</a></li>
-                <li><a href="md_pages_ode_tutorial2.html">Explicit Time Integration (Arbitrary Types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_0.html">General options </a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_1.html">Newton-Raphson (known types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_2.html">Newton-Raphson (custom types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_3.html">Gauss-Newton normal equations (known types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_4.html">Gauss-Newton normal equations (custom types)</a></li>
               </ol>
             </li>
             <li>
-              <a>ROM</a>
+              <a>ode</a>
               <ol>
-                <li><a href="md_pages_rom_tutorial_lindec.html">Linear Decoder (Known Types)</a></li>
-                <li><a href="md_pages_rom_tutorial_lindec_at.html">Linear Decoder (Arbitrary Types)</a></li>
-                <li><a href="md_pages_rom_tutorial2.html">Default Galerkin explicit</a></li>
+                <li><a href="md_pages_ode_advancers.html">Advancers</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial1.html">Explicit Time Integration (known types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial2.html">Explicit Time Integration (custom types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial3.html">Implicit Time Integration (known types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial4.html">Implicit Time Integration (custom types)</a></li>
               </ol>
             </li>
             <li>
-              <a href="md_pages_swe_main.html">Shallow Water Eq.</a>
+              <a>pROMs</a>
               <ol>
-                <li><a href="md_pages_swe_fom.html">FOM Driver</a></li>
-                <li><a href="md_pages_swe_lspg.html">LSPG Driver</a></li>
-                <li><a href="md_pages_swe_hrlspg.html">Hyper-reduced LSPG Driver</a></li>
-                <li><a href="md_pages_swe_endtoend.html">End-to-end Usecase</a></li>
+                <li><a href="md_pages_rom_tutorial_lin_dec.html">Linear Decoder (known types)</a></li>
+                <li><a href="md_pages_rom_tutorial_lin_dec_custom_types.html">Linear Decoder (custom types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_explicit.html">Default Explicit Galerkin (known types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_explicit_custom_types.html">Default Explicit Galerkin (custom types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_implicit.html">Default Implicit Galerkin (known types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
               </ol>
             </li>
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a></a></li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="4">
+          <ol class="m-col-t-6 m-col-m-none" start="8">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -65,16 +76,23 @@
       <div class="m-col-l-10 m-push-l-1">
         <h1>Pages</h1>
         <ul class="m-doc">
-          <li><a href="md_pages_ode_tutorial1.html" class="m-doc">Explicit Time Integration for Known Types</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_ode_tutorial2.html" class="m-doc">Explicit Time Integration for Arbitrary Types</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_rom_tutorial2.html" class="m-doc">Default Galerkin with explicit time stepping</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_rom_tutorial_lindec.html" class="m-doc">Linear Decoder for Known Types</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_rom_tutorial_lindec_at.html" class="m-doc">Linear Decoder for Arbitrary Types</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_swe_endtoend.html" class="m-doc">End-to-end Workflow: train, explore, reduce</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_swe_fom.html" class="m-doc">FOM Driver</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_swe_hrlspg.html" class="m-doc">Hyperreduced LSPG ROM Driver</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_swe_lspg.html" class="m-doc">LSPG ROM Driver</a> <span class="m-doc"></span></li>
-          <li><a href="md_pages_swe_main.html" class="m-doc">Shallow Water Equations Demo</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_ode_advancers.html" class="m-doc">How to use ode advancers</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_ode_steppers_tutorial1.html" class="m-doc">Explicit Time Integration for Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_ode_steppers_tutorial2.html" class="m-doc">Explicit Time Integration for Arbitrary Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_ode_steppers_tutorial3.html" class="m-doc">Implicit Time Integration for Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_ode_steppers_tutorial4.html" class="m-doc">Implicit Time Integration for Custom Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_rom_galerkin_default_explicit.html" class="m-doc">Default Galerkin with Explicit Time Integration for Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_rom_galerkin_default_explicit_custom_types.html" class="m-doc">Default Galerkin with Explicit Time Integration for Custom Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_rom_galerkin_default_implicit.html" class="m-doc">Default Galerkin with Implicit Time Integration for Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html" class="m-doc">Default Galerkin with Implicit Time Integration for Custom Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_rom_tutorial_lin_dec.html" class="m-doc">Linear Decoder for Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_rom_tutorial_lin_dec_custom_types.html" class="m-doc">Linear Decoder for Arbitrary Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_solvers_nonlinear_tutorial_0.html" class="m-doc">General options</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_solvers_nonlinear_tutorial_1.html" class="m-doc">Newton-Raphson with Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_solvers_nonlinear_tutorial_2.html" class="m-doc">Newton-Raphson with Custom Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_solvers_nonlinear_tutorial_3.html" class="m-doc">Gauss-Newton via Normal Equations with Known Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_solvers_nonlinear_tutorial_4.html" class="m-doc">Gauss-Newton via Normal Equations with Custom Types</a> <span class="m-doc"></span></li>
+          <li><a href="md_pages_utils_logger.html" class="m-doc">Logging Library</a> <span class="m-doc"></span></li>
         </ul>
         <script>
         function toggle(e) {
