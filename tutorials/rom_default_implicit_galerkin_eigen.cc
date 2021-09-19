@@ -117,8 +117,9 @@ int main(int argc, char *argv[])
   romState[1]=1.;
   romState[2]=2.;
 
-  using ode_tag = pressio::ode::BDF1;
-  auto problem = prom::galerkin::create_default_problem<ode_tag>(fomSystem, decoder, romState, fomReferenceState);
+  constexpr auto odescheme = pressio::ode::StepScheme::BDF1;
+  auto problem = pressio::rom::galerkin::create_default_implicit_problem
+    (odescheme, fomSystem, decoder, romState, fomReferenceState);
   using problem_t = decltype(problem);
   auto & stepperObj = problem.stepper();
 

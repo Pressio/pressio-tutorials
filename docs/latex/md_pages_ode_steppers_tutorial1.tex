@@ -12,7 +12,7 @@ We demonstate how to integrate in time the following system of ODEs\+: \[ \frac{
 
 \end{DoxyCode}
 \hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md11}{}\doxysection{Problem class}\label{md_pages_ode_steppers_tutorial1_autotoc_md11}
-We first write a class representing our target system of ODEs as follows\+: 
+
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} scalar\_t>}
 \DoxyCodeLine{\textcolor{keyword}{struct }MySystem\{}
@@ -57,7 +57,8 @@ We first write a class representing our target system of ODEs as follows\+:
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// instantiate the stepper}}
 \DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
-\DoxyCodeLine{  \textcolor{keyword}{auto} stepperObj = pode::create\_forward\_euler\_stepper(y, appObj);}
+\DoxyCodeLine{  constexpr \textcolor{keyword}{auto} scheme = pode::StepScheme::ForwardEuler;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} stepperObj = pode::create\_explicit\_stepper(scheme, y, appObj);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// integrate in time}}
 \DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}

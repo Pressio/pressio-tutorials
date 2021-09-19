@@ -15,17 +15,6 @@ add_executable(
   ${TUTDIR}/utils_logger.cc)
 
 #=================================
-# ODE
-#=================================
-add_executable(
-  ode_steppers_known_types
-  ${TUTDIR}/ode_steppers_1.cc)
-
-add_executable(
-  ode_steppers_custom_types
-  ${TUTDIR}/ode_steppers_2.cc)
-
-#=================================
 # nonlinear solvers
 #=================================
 add_executable(
@@ -45,6 +34,17 @@ add_executable(
   ${TUTDIR}/nonlinsolvers_gn_2.cc)
 
 #=================================
+# ODE
+#=================================
+add_executable(
+  ode_steppers_known_types
+  ${TUTDIR}/ode_steppers_1.cc)
+
+add_executable(
+  ode_steppers_custom_types
+  ${TUTDIR}/ode_steppers_2.cc)
+
+#=================================
 # rom
 #=================================
 add_executable(
@@ -59,6 +59,7 @@ add_executable(
 add_executable(
   rom_default_explicit_galerkin_known_types
   ${TUTDIR}/rom_default_explicit_galerkin_eigen.cc)
+
 add_executable(
   rom_default_explicit_galerkin_custom_types
   ${TUTDIR}/rom_default_explicit_galerkin_custom_types.cc)
@@ -67,4 +68,4 @@ add_executable(
   rom_default_implicit_galerkin_known_types
   ${TUTDIR}/rom_default_implicit_galerkin_eigen.cc)
 
-#add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)
+# #add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)

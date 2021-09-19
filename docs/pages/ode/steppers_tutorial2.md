@@ -25,20 +25,22 @@ You can replace `CustomVector` with any type that fits your needs.
 ## Problem Class
 Here, we want to integrate in time the same system of ODEs shown in tutorial1,
 but with the problem implemented using the `CustomVector` class as follows:
+
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_2.cc
-82:102
+104:124
 ```
 
 ## Specialize trait and ops
 Because we are working with custom data types, we need to provide
 the necessary operations to do the algebra that pressio needs.
-This is done via specialization as follows:
+This is done as follows:
+
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_2.cc
-52:77
+52:99
 ```
 
 ## Main
@@ -46,7 +48,7 @@ This is done via specialization as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_2.cc
-104:134
+126:156
 ```
 
 ## Full Code

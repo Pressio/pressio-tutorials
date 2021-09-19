@@ -19,7 +19,7 @@ We demonstate how to integrate in time the following system of ODEs: <formula id
 </sect1>
 <sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md11">
 <title>Problem class</title>
-<para>We first write a class representing our target system of ODEs as follows: <programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>scalar_t&gt;</highlight></codeline>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>scalar_t&gt;</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">MySystem{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>scalar_type<sp/><sp/><sp/>=<sp/>scalar_t;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>state_type<sp/><sp/><sp/><sp/>=<sp/>Eigen::Matrix&lt;scalar_t,-1,1&gt;;</highlight></codeline>
@@ -61,7 +61,8 @@ We demonstate how to integrate in time the following system of ODEs: <formula id
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>instantiate<sp/>the<sp/>stepper</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">pode<sp/>=<sp/>pressio::ode;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>stepperObj<sp/>=<sp/>pode::create_forward_euler_stepper(y,<sp/>appObj);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>scheme<sp/>=<sp/>pode::StepScheme::ForwardEuler;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>stepperObj<sp/>=<sp/>pode::create_explicit_stepper(scheme,<sp/>y,<sp/>appObj);</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>integrate<sp/>in<sp/>time</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>scalar_type<sp/>dt<sp/>=<sp/>0.1;</highlight></codeline>

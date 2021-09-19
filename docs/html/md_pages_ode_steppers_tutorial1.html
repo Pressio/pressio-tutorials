@@ -26,7 +26,7 @@
           <ol class="m-col-t-12 m-col-m-none">
             <li><a href="md_pages_utils_logger.html">logger</a></li>
             <li>
-              <a>solvers_nonlinear</a>
+              <a>solvers nonlinear</a>
               <ol>
                 <li><a href="md_pages_solvers_nonlinear_tutorial_0.html">General options </a></li>
                 <li><a href="md_pages_solvers_nonlinear_tutorial_1.html">Newton-Raphson (known types)</a></li>
@@ -56,8 +56,11 @@
                 <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
               </ol>
             </li>
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a></a></li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="5">
+          <ol class="m-col-t-6 m-col-m-none" start="8">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -125,7 +128,7 @@ $t$
 </g>
 </svg> is time.</p><section id="autotoc_md10"><h2><a href="#autotoc_md10">Include</a></h2><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_steppers_explicit.hpp&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span></pre></section><section id="autotoc_md11"><h2><a href="#autotoc_md11">Problem class</a></h2><p>We first write a class representing our target system of ODEs as follows:</p><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">scalar_t</span><span class="o">&gt;</span>
+<span class="cp">#include</span> <span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span></pre></section><section id="autotoc_md11"><h2><a href="#autotoc_md11">Problem class</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">scalar_t</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">MySystem</span><span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span>   <span class="o">=</span> <span class="n">scalar_t</span><span class="p">;</span>
   <span class="k">using</span> <span class="n">state_type</span>    <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_t</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
@@ -162,7 +165,8 @@ $t$
 
   <span class="c1">// instantiate the stepper</span>
   <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
-  <span class="k">auto</span> <span class="n">stepperObj</span> <span class="o">=</span> <span class="n">pode</span><span class="o">::</span><span class="n">create_forward_euler_stepper</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">appObj</span><span class="p">);</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">scheme</span> <span class="o">=</span> <span class="n">pode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">stepperObj</span> <span class="o">=</span> <span class="n">pode</span><span class="o">::</span><span class="n">create_explicit_stepper</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">appObj</span><span class="p">);</span>
 
   <span class="c1">// integrate in time</span>
   <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>

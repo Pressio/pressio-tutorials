@@ -35,7 +35,9 @@ Suppose that you have an application that uses a custom vector class as follows\
 
 
 This custom vector class is very simple but the key point is that the {\ttfamily Custom\+Vector} is unknown to Pressio. You can replace {\ttfamily Custom\+Vector} with any type that fits your needs.\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md16}{}\doxysection{Problem Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md16}
-Here, we want to integrate in time the same system of ODEs shown in tutorial1, but with the problem implemented using the {\ttfamily Custom\+Vector} class as follows\+: 
+Here, we want to integrate in time the same system of ODEs shown in tutorial1, but with the problem implemented using the {\ttfamily Custom\+Vector} class as follows\+:
+
+
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
 \DoxyCodeLine{\{}
@@ -61,7 +63,9 @@ Here, we want to integrate in time the same system of ODEs shown in tutorial1, b
 
 \end{DoxyCode}
 \hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md17}{}\doxysection{Specialize trait and ops}\label{md_pages_ode_steppers_tutorial2_autotoc_md17}
-Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows\+: 
+Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done as follows\+:
+
+
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
 \DoxyCodeLine{}
@@ -88,6 +92,28 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{    v[i] = a*v[i] + b*v1[i];}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<T> \& v,        \textcolor{keyword}{const} \textcolor{keywordtype}{double} a,}
+\DoxyCodeLine{            \textcolor{keyword}{const} CustomVector<T> \& v1, \textcolor{keyword}{const} \textcolor{keywordtype}{double} b,}
+\DoxyCodeLine{        \textcolor{keyword}{const} CustomVector<T> \& v2, \textcolor{keyword}{const} \textcolor{keywordtype}{double} c)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.extent(0); ++i)\{}
+\DoxyCodeLine{    v[i] = a*v[i] + b*v1[i] + c*v2[i];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<T> \& v,        \textcolor{keyword}{const} \textcolor{keywordtype}{double} a,}
+\DoxyCodeLine{            \textcolor{keyword}{const} CustomVector<T> \& v1, \textcolor{keyword}{const} \textcolor{keywordtype}{double} b,}
+\DoxyCodeLine{        \textcolor{keyword}{const} CustomVector<T> \& v2, \textcolor{keyword}{const} \textcolor{keywordtype}{double} c,}
+\DoxyCodeLine{        \textcolor{keyword}{const} CustomVector<T> \& v3, \textcolor{keyword}{const} \textcolor{keywordtype}{double} d,}
+\DoxyCodeLine{        \textcolor{keyword}{const} CustomVector<T> \& v4, \textcolor{keyword}{const} \textcolor{keywordtype}{double} e)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i=0; i<v.extent(0); ++i)\{}
+\DoxyCodeLine{    v[i] = a*v[i] + b*v1[i] + c*v2[i] + d*v3[i] + e*v4[i];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
 \DoxyCodeLine{\}\} \textcolor{comment}{//end namespace pressio::ops}}
 
 \end{DoxyCode}
@@ -109,7 +135,8 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// instantiate the stepper}}
 \DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
-\DoxyCodeLine{  \textcolor{keyword}{auto} stepperObj = pode::create\_forward\_euler\_stepper(y, appObj);}
+\DoxyCodeLine{  constexpr \textcolor{keyword}{auto} scheme = pode::StepScheme::ForwardEuler;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} stepperObj = pode::create\_explicit\_stepper(scheme, y, appObj);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{comment}{// integrate in time}}
 \DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} dt = 0.1;}
@@ -124,7 +151,6 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{}
 \DoxyCodeLine{  pressio::log::finalize();}
 \DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
-\DoxyCodeLine{\}}
 
 \end{DoxyCode}
 \hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md19}{}\doxysection{Full Code}\label{md_pages_ode_steppers_tutorial2_autotoc_md19}

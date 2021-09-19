@@ -26,7 +26,7 @@
           <ol class="m-col-t-12 m-col-m-none">
             <li><a href="md_pages_utils_logger.html">logger</a></li>
             <li>
-              <a>solvers_nonlinear</a>
+              <a>solvers nonlinear</a>
               <ol>
                 <li><a href="md_pages_solvers_nonlinear_tutorial_0.html">General options </a></li>
                 <li><a href="md_pages_solvers_nonlinear_tutorial_1.html">Newton-Raphson (known types)</a></li>
@@ -56,8 +56,11 @@
                 <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
               </ol>
             </li>
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a></a></li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="5">
+          <ol class="m-col-t-6 m-col-m-none" start="8">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -74,7 +77,94 @@
         <h1>
           Default Galerkin with Implicit Time Integration for Known Types
         </h1>
-<aside class="m-block m-info"><p>This tutorial demonstrates how to use the pressio/ode component</p></aside><pre class="m-code"><span class="n">sasddd</span></pre>
+<aside class="m-block m-info"><p>This tutorial demonstrates how to ...</p></aside><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/type_traits.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pressio/ops.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pressio/rom_galerkin.hpp&quot;</span><span class="cp"></span>
+
+<span class="k">struct</span> <span class="nc">TrivialFomVelocityAndJacobianEigen</span>
+<span class="p">{</span>
+  <span class="k">using</span> <span class="n">scalar_type</span>       <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">state_type</span>        <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">velocity_type</span>     <span class="o">=</span> <span class="n">state_type</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">N_</span> <span class="o">=</span> <span class="p">{};</span>
+
+  <span class="n">TrivialFomVelocityAndJacobianEigen</span><span class="p">(</span><span class="kt">int</span> <span class="n">N</span><span class="p">)</span><span class="o">:</span> <span class="n">N_</span><span class="p">(</span><span class="n">N</span><span class="p">){}</span>
+
+  <span class="n">velocity_type</span> <span class="n">createVelocity</span><span class="p">()</span> <span class="k">const</span><span class="p">{</span> <span class="k">return</span> <span class="nf">velocity_type</span><span class="p">(</span><span class="n">N_</span><span class="p">);</span> <span class="p">}</span>
+
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">OperandType</span><span class="o">&gt;</span>
+  <span class="n">OperandType</span> <span class="n">createApplyJacobianResult</span><span class="p">(</span><span class="k">const</span> <span class="n">OperandType</span> <span class="o">&amp;</span> <span class="n">B</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="n">OperandType</span> <span class="nf">A</span><span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span> <span class="n">B</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
+    <span class="k">return</span> <span class="n">A</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// computes: A = Jac B</span>
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">OperandType</span><span class="o">&gt;</span>
+  <span class="kt">void</span> <span class="n">applyJacobian</span><span class="p">(</span><span class="k">const</span> <span class="n">state_type</span> <span class="o">&amp;</span> <span class="n">state</span><span class="p">,</span>
+                     <span class="k">const</span> <span class="n">OperandType</span> <span class="o">&amp;</span> <span class="n">B</span><span class="p">,</span>
+                     <span class="k">const</span> <span class="n">scalar_type</span> <span class="o">&amp;</span> <span class="n">time</span><span class="p">,</span>
+                     <span class="n">OperandType</span> <span class="o">&amp;</span> <span class="n">A</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">B</span><span class="p">;</span>
+    <span class="n">A</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">+=</span> <span class="n">time</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kt">void</span> <span class="n">velocity</span><span class="p">(</span><span class="k">const</span> <span class="n">state_type</span> <span class="o">&amp;</span> <span class="n">u</span><span class="p">,</span> <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">time</span><span class="p">,</span> <span class="n">velocity_type</span> <span class="o">&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">f</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
+     <span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">u</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">time</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">setVerbosity</span><span class="p">({</span><span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">level</span><span class="o">::</span><span class="n">debug</span><span class="p">});</span>
+
+  <span class="k">namespace</span> <span class="n">pls</span>    <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">linearsolvers</span><span class="p">;</span>
+  <span class="k">namespace</span> <span class="n">pnonls</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">nonlinearsolvers</span><span class="p">;</span>
+  <span class="k">namespace</span> <span class="n">prom</span>   <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="p">;</span>
+
+  <span class="k">using</span> <span class="n">fom_t</span> <span class="o">=</span> <span class="n">TrivialFomVelocityAndJacobianEigen</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">scalar_t</span>    <span class="o">=</span> <span class="k">typename</span> <span class="nc">fom_t</span><span class="o">::</span><span class="n">scalar_type</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">fom_state_t</span> <span class="o">=</span> <span class="k">typename</span> <span class="nc">fom_t</span><span class="o">::</span><span class="n">state_type</span><span class="p">;</span>
+
+  <span class="k">constexpr</span> <span class="kt">int</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="n">fom_t</span> <span class="n">fomSystem</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>
+  <span class="n">fom_state_t</span> <span class="n">fomReferenceState</span><span class="p">(</span><span class="n">N</span><span class="p">);</span>
+  <span class="n">fomReferenceState</span><span class="p">.</span><span class="n">setZero</span><span class="p">();</span>
+
+  <span class="k">using</span> <span class="n">phi_t</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">;</span>
+  <span class="n">phi_t</span> <span class="n">phi</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+  <span class="n">phi</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">setConstant</span><span class="p">(</span><span class="mf">0.</span><span class="p">);</span>
+  <span class="n">phi</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">setConstant</span><span class="p">(</span><span class="mf">1.</span><span class="p">);</span>
+  <span class="n">phi</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">setConstant</span><span class="p">(</span><span class="mf">2.</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n">prom</span><span class="o">::</span><span class="n">create_time_invariant_linear_decoder</span><span class="o">&lt;</span><span class="n">fom_state_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">phi</span><span class="p">);</span>
+
+  <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">romState</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+  <span class="n">romState</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mf">0.</span><span class="p">;</span>
+  <span class="n">romState</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mf">1.</span><span class="p">;</span>
+  <span class="n">romState</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="mf">2.</span><span class="p">;</span>
+
+  <span class="k">using</span> <span class="n">ode_tag</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">BDF1</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">problem</span> <span class="o">=</span> <span class="n">prom</span><span class="o">::</span><span class="n">galerkin</span><span class="o">::</span><span class="n">create_default_problem</span><span class="o">&lt;</span><span class="n">ode_tag</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fomSystem</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="n">romState</span><span class="p">,</span> <span class="n">fomReferenceState</span><span class="p">);</span>
+  <span class="k">using</span> <span class="n">problem_t</span> <span class="o">=</span> <span class="k">decltype</span><span class="p">(</span><span class="n">problem</span><span class="p">);</span>
+  <span class="k">auto</span> <span class="o">&amp;</span> <span class="n">stepperObj</span> <span class="o">=</span> <span class="n">problem</span><span class="p">.</span><span class="n">stepper</span><span class="p">();</span>
+
+  <span class="k">using</span> <span class="n">galerkin_jacobian_t</span> <span class="o">=</span> <span class="k">typename</span> <span class="nc">pressio</span><span class="o">::</span><span class="n">Traits</span><span class="o">&lt;</span><span class="n">problem_t</span><span class="o">&gt;::</span><span class="n">galerkin_jacobian_type</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">lin_solver_t</span> <span class="o">=</span> <span class="n">pls</span><span class="o">::</span><span class="n">Solver</span><span class="o">&lt;</span><span class="n">pls</span><span class="o">::</span><span class="n">iterative</span><span class="o">::</span><span class="n">LSCG</span><span class="p">,</span> <span class="n">galerkin_jacobian_t</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="n">lin_solver_t</span> <span class="n">linearSolverObj</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">nonLinSolver</span> <span class="o">=</span> <span class="n">pnonls</span><span class="o">::</span><span class="n">create_newton_raphson</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span> <span class="n">romState</span><span class="p">,</span> <span class="n">linearSolverObj</span><span class="p">);</span>
+  <span class="n">nonLinSolver</span><span class="p">.</span><span class="n">setMaxIterations</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+  <span class="n">scalar_t</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">;</span>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span> <span class="n">romState</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nonLinSolver</span><span class="p">);</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">romState</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
+<span class="p">}</span></pre>
       </div>
     </div>
   </div>

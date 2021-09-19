@@ -7,7 +7,7 @@
     </briefdescription>
     <detaileddescription>
 <para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
-<para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the pressio/ode component to do implicit time integration for a system of ODEs that uses custom data types.</para>
+<para><simplesect kind="par"><title></title><para>Demonstrates how to use the <computeroutput>pressio/ode</computeroutput> to do implicit time integration for a system of ODEs that uses custom data types.</para>
 </simplesect>
 </para>
 <sect1 id="md_pages_ode_steppers_tutorial4_1autotoc_md23">

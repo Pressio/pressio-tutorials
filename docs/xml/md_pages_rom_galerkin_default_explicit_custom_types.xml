@@ -191,11 +191,31 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}}</highlight><highlight class="comment">//end<sp/>namespace<sp/>pressio::ops</highlight></codeline>
 </programlisting></para>
 </sect1>
 <sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md28">
 <title>Main</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&quot;pressio/rom_galerkin.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrivialFomOnlyVelocityCustomTypes</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>scalar_type<sp/><sp/><sp/><sp/>=<sp/>double;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>state_type<sp/><sp/><sp/><sp/><sp/>=<sp/>CustomVector&lt;scalar_type&gt;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>velocity_type<sp/><sp/>=<sp/>state_type;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N_<sp/>=<sp/>{};</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>TrivialFomOnlyVelocityCustomTypes(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N):<sp/>N_(N){}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>velocity_type<sp/>createVelocity()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>velocity_type(N_);<sp/>}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>velocity(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>state_type<sp/>&amp;<sp/>u,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>scalar_type<sp/>time,<sp/>velocity_type<sp/>&amp;<sp/>f)</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::size_t<sp/>i=0;<sp/>i&lt;f.extent(0);<sp/>++i){</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>f(i)<sp/>=<sp/>u(i)<sp/>+<sp/>time;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Observer</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -240,8 +260,9 @@
 <codeline><highlight class="normal"><sp/><sp/>romState[1]=1.;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>romState[2]=2.;</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>ode_tag<sp/>=<sp/>pressio::ode::ForwardEuler;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>problem<sp/>=<sp/>pressio::rom::galerkin::create_default_problem&lt;ode_tag&gt;(fomSystem,<sp/>decoder,<sp/>romState,<sp/>fomReferenceState);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>odescheme<sp/>=<sp/>pressio::ode::StepScheme::ForwardEuler;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>problem<sp/>=<sp/>pressio::rom::galerkin::create_default_explicit_problem</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>(odescheme,<sp/>fomSystem,<sp/>decoder,<sp/>romState,<sp/>fomReferenceState);</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>scalar_t<sp/>dt<sp/>=<sp/>1.;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_steps<sp/>=<sp/>3;</highlight></codeline>

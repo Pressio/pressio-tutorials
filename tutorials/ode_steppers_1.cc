@@ -89,7 +89,8 @@ int main(int argc, char *argv[])
 
   // instantiate the stepper
   namespace pode = pressio::ode;
-  auto stepperObj = pode::create_forward_euler_stepper(y, appObj);
+  constexpr auto scheme = pode::StepScheme::ForwardEuler;
+  auto stepperObj = pode::create_explicit_stepper(scheme, y, appObj);
 
   // integrate in time
   const scalar_type dt = 0.1;

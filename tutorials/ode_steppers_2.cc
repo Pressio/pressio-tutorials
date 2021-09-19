@@ -74,6 +74,28 @@ void update(CustomVector<T> & v,        const double a,
     v[i] = a*v[i] + b*v1[i];
   }
 }
+
+template<class T>
+void update(CustomVector<T> & v,        const double a,
+            const CustomVector<T> & v1, const double b,
+	    const CustomVector<T> & v2, const double c)
+{
+  for (size_t i=0; i<v.extent(0); ++i){
+    v[i] = a*v[i] + b*v1[i] + c*v2[i];
+  }
+}
+
+template<class T>
+void update(CustomVector<T> & v,        const double a,
+            const CustomVector<T> & v1, const double b,
+	    const CustomVector<T> & v2, const double c,
+	    const CustomVector<T> & v3, const double d,
+	    const CustomVector<T> & v4, const double e)
+{
+  for (size_t i=0; i<v.extent(0); ++i){
+    v[i] = a*v[i] + b*v1[i] + c*v2[i] + d*v3[i] + e*v4[i];
+  }
+}
 }} //end namespace pressio::ops
 
 #include "pressio/ode_advancers.hpp"
@@ -116,7 +138,8 @@ int main(int argc, char *argv[])
 
   // instantiate the stepper
   namespace pode = pressio::ode;
-  auto stepperObj = pode::create_forward_euler_stepper(y, appObj);
+  constexpr auto scheme = pode::StepScheme::ForwardEuler;
+  auto stepperObj = pode::create_explicit_stepper(scheme, y, appObj);
 
   // integrate in time
   const double dt = 0.1;

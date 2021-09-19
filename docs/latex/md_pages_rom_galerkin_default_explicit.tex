@@ -68,9 +68,9 @@ This tutorial demonstrates...
 \DoxyCodeLine{  romState[1]=1.;}
 \DoxyCodeLine{  romState[2]=2.;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag = pressio::ode::ForwardEuler;}
-\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_problem<ode\_tag>}
-\DoxyCodeLine{    (fomSystem, decoder, romState, fomReferenceState);}
+\DoxyCodeLine{  constexpr \textcolor{keyword}{auto} odescheme = pressio::ode::StepScheme::ForwardEuler;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_explicit\_problem}
+\DoxyCodeLine{    (odescheme, fomSystem, decoder, romState, fomReferenceState);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keyword}{const} scalar\_t dt = 1.;}
 \DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{int} num\_steps = 3;}

@@ -187,12 +187,32 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{  \}}
 \DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\}\}\textcolor{comment}{//end namespace pressio::ops}}
 
 \end{DoxyCode}
 \hypertarget{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md28}{}\doxysection{Main}\label{md_pages_rom_galerkin_default_explicit_custom_types_autotoc_md28}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/rom\_galerkin.hpp"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{struct }TrivialFomOnlyVelocityCustomTypes}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type    = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type     = CustomVector<scalar\_type>;}
+\DoxyCodeLine{  \textcolor{keyword}{using} velocity\_type  = state\_type;}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} N\_ = \{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  TrivialFomOnlyVelocityCustomTypes(\textcolor{keywordtype}{int} N): N\_(N)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  velocity\_type createVelocity()\textcolor{keyword}{ const}\{ \textcolor{keywordflow}{return} velocity\_type(N\_); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} velocity(\textcolor{keyword}{const} state\_type \& u, \textcolor{keyword}{const} scalar\_type time, velocity\_type \& f)\textcolor{keyword}{ const}\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (std::size\_t i=0; i<f.extent(0); ++i)\{}
+\DoxyCodeLine{     f(i) = u(i) + time;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{struct }Observer}
 \DoxyCodeLine{\{}
@@ -237,8 +257,9 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{  romState[1]=1.;}
 \DoxyCodeLine{  romState[2]=2.;}
 \DoxyCodeLine{}
-\DoxyCodeLine{  \textcolor{keyword}{using} ode\_tag = pressio::ode::ForwardEuler;}
-\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_problem<ode\_tag>(fomSystem, decoder, romState, fomReferenceState);}
+\DoxyCodeLine{  constexpr \textcolor{keyword}{auto} odescheme = pressio::ode::StepScheme::ForwardEuler;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_explicit\_problem}
+\DoxyCodeLine{    (odescheme, fomSystem, decoder, romState, fomReferenceState);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keyword}{const} scalar\_t dt = 1.;}
 \DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{int} num\_steps = 3;}

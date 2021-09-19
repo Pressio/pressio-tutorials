@@ -30,7 +30,7 @@ where @f$\mathbf{y} \in R^3@f$ is the state and @f$t@f$ is time.
 ```
 
 ## Problem class
-We first write a class representing our target system of ODEs as follows:
+
 ```cpp
 @codesnippet
 ../../../tutorials/ode_steppers_1.cc

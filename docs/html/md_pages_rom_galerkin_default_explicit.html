@@ -26,7 +26,7 @@
           <ol class="m-col-t-12 m-col-m-none">
             <li><a href="md_pages_utils_logger.html">logger</a></li>
             <li>
-              <a>solvers_nonlinear</a>
+              <a>solvers nonlinear</a>
               <ol>
                 <li><a href="md_pages_solvers_nonlinear_tutorial_0.html">General options </a></li>
                 <li><a href="md_pages_solvers_nonlinear_tutorial_1.html">Newton-Raphson (known types)</a></li>
@@ -56,8 +56,11 @@
                 <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
               </ol>
             </li>
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a></a></li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="5">
+          <ol class="m-col-t-6 m-col-m-none" start="8">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -137,9 +140,9 @@
   <span class="n">romState</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mf">1.</span><span class="p">;</span>
   <span class="n">romState</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="mf">2.</span><span class="p">;</span>
 
-  <span class="k">using</span> <span class="n">ode_tag</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
-  <span class="k">auto</span> <span class="n">problem</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">galerkin</span><span class="o">::</span><span class="n">create_default_problem</span><span class="o">&lt;</span><span class="n">ode_tag</span><span class="o">&gt;</span>
-    <span class="p">(</span><span class="n">fomSystem</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="n">romState</span><span class="p">,</span> <span class="n">fomReferenceState</span><span class="p">);</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">odescheme</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">problem</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">galerkin</span><span class="o">::</span><span class="n">create_default_explicit_problem</span>
+    <span class="p">(</span><span class="n">odescheme</span><span class="p">,</span> <span class="n">fomSystem</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="n">romState</span><span class="p">,</span> <span class="n">fomReferenceState</span><span class="p">);</span>
 
   <span class="k">const</span> <span class="n">scalar_t</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span>
   <span class="k">const</span> <span class="kt">int</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>

@@ -109,9 +109,9 @@ int main(int argc, char *argv[])
   romState[1]=1.;
   romState[2]=2.;
 
-  using ode_tag = pressio::ode::ForwardEuler;
-  auto problem = pressio::rom::galerkin::create_default_problem<ode_tag>
-    (fomSystem, decoder, romState, fomReferenceState);
+  constexpr auto odescheme = pressio::ode::StepScheme::ForwardEuler;
+  auto problem = pressio::rom::galerkin::create_default_explicit_problem
+    (odescheme, fomSystem, decoder, romState, fomReferenceState);
 
   const scalar_t dt = 1.;
   const int num_steps = 3;

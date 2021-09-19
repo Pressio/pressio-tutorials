@@ -72,9 +72,9 @@
 <codeline><highlight class="normal"><sp/><sp/>romState[1]=1.;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>romState[2]=2.;</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>ode_tag<sp/>=<sp/>pressio::ode::ForwardEuler;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>problem<sp/>=<sp/>pressio::rom::galerkin::create_default_problem&lt;ode_tag&gt;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>(fomSystem,<sp/>decoder,<sp/>romState,<sp/>fomReferenceState);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>odescheme<sp/>=<sp/>pressio::ode::StepScheme::ForwardEuler;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>problem<sp/>=<sp/>pressio::rom::galerkin::create_default_explicit_problem</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>(odescheme,<sp/>fomSystem,<sp/>decoder,<sp/>romState,<sp/>fomReferenceState);</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>scalar_t<sp/>dt<sp/>=<sp/>1.;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_steps<sp/>=<sp/>3;</highlight></codeline>

@@ -6,7 +6,7 @@ LINKS_NAVBAR1 = [
 
   ("<a href=\"md_pages_utils_logger.html\">logger</a>", []),
 
-  ("<a>solvers_nonlinear</a>",
+  ("<a>solvers nonlinear</a>",
    [
      ("<a href=\"md_pages_solvers_nonlinear_tutorial_0.html\">General options </a>", ),
      ("<a href=\"md_pages_solvers_nonlinear_tutorial_1.html\">Newton-Raphson (known types)</a>", ),
@@ -35,6 +35,15 @@ LINKS_NAVBAR1 = [
      ("<a href=\"md_pages_rom_galerkin_default_implicit.html\">Default Implicit Galerkin (known types)</a>", ),
      ("<a href=\"md_pages_rom_galerkin_default_implicit_custom_types.html\">Default Implicit Galerkin (custom types)</a>", )
    ]),
+
+  # these are here just to make the menu bar spaced better
+  ("<a></a>", []),
+  ("<a></a>", []),
+  ("<a></a>", []),
+
+  #("<a>Galerkin</a>", []),
+  #("<a>LSPG</a>", []),
+  #("<a>WLS</a>", []),
 
   # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
   #  [

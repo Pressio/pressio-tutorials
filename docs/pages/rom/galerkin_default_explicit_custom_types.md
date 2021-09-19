@@ -25,7 +25,7 @@ This is done via specialization as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/rom_default_explicit_galerkin_custom_types.cc
-70:199
+53:182
 ```
 
 ## Main
@@ -33,5 +33,5 @@ This is done via specialization as follows:
 ```cpp
 @codesnippet
 ../../../tutorials/rom_default_explicit_galerkin_custom_types.cc
-201:256
+184:257
 ```

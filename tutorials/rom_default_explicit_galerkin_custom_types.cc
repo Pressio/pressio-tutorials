@@ -50,24 +50,6 @@
 #include "custom_data_types.hpp"
 #include "pressio/ops.hpp"
 
-struct TrivialFomOnlyVelocityCustomTypes
-{
-  using scalar_type    = double;
-  using state_type     = CustomVector<scalar_type>;
-  using velocity_type  = state_type;
-  int N_ = {};
-
-  TrivialFomOnlyVelocityCustomTypes(int N): N_(N){}
-
-  velocity_type createVelocity() const{ return velocity_type(N_); }
-
-  void velocity(const state_type & u, const scalar_type time, velocity_type & f) const{
-    for (std::size_t i=0; i<f.extent(0); ++i){
-     f(i) = u(i) + time;
-    }
-  }
-};
-
 namespace pressio{
 
 template<class ScalarType>
@@ -201,6 +183,24 @@ void product(pressio::transpose,
 
 #include "pressio/rom_galerkin.hpp"
 
+struct TrivialFomOnlyVelocityCustomTypes
+{
+  using scalar_type    = double;
+  using state_type     = CustomVector<scalar_type>;
+  using velocity_type  = state_type;
+  int N_ = {};
+
+  TrivialFomOnlyVelocityCustomTypes(int N): N_(N){}
+
+  velocity_type createVelocity() const{ return velocity_type(N_); }
+
+  void velocity(const state_type & u, const scalar_type time, velocity_type & f) const{
+    for (std::size_t i=0; i<f.extent(0); ++i){
+     f(i) = u(i) + time;
+    }
+  }
+};
+
 struct Observer
 {
   void operator()(int32_t step, double time, Eigen::VectorXd state)
@@ -244,8 +244,9 @@ int main(int argc, char *argv[])
   romState[1]=1.;
   romState[2]=2.;
 
-  using ode_tag = pressio::ode::ForwardEuler;
-  auto problem = pressio::rom::galerkin::create_default_problem<ode_tag>(fomSystem, decoder, romState, fomReferenceState);
+  constexpr auto odescheme = pressio::ode::StepScheme::ForwardEuler;
+  auto problem = pressio::rom::galerkin::create_default_explicit_problem
+    (odescheme, fomSystem, decoder, romState, fomReferenceState);
 
   const scalar_t dt = 1.;
   const int num_steps = 3;
