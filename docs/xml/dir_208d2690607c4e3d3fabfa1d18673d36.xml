@@ -4,7 +4,8 @@
     <compoundname>pages</compoundname>
     <innerdir refid="dir_dfdc6e3fe3dd83592e3200d32aae2cb7">pages/ode</innerdir>
     <innerdir refid="dir_6a89a6e57a3601fc15116e5484f781e5">pages/rom</innerdir>
-    <innerdir refid="dir_7727e9f4b0e1be84717ab35bab219223">pages/swe</innerdir>
+    <innerdir refid="dir_4cccaec18f48de5ad93eff32399233b5">pages/solvers_nonlinear</innerdir>
+    <innerdir refid="dir_4708a13a89458f6d0cd5a4a9a3b52825">pages/utils</innerdir>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

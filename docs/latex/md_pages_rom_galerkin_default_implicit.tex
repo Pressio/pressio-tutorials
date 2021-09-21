@@ -1,0 +1,99 @@
+
+
+\begin{DoxyParagraph}{}
+This tutorial demonstrates how to ...
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/type\_traits.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/ops.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/rom\_galerkin.hpp"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{struct }TrivialFomVelocityAndJacobianEigen}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type       = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type        = Eigen::VectorXd;}
+\DoxyCodeLine{  \textcolor{keyword}{using} velocity\_type     = state\_type;}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} N\_ = \{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  TrivialFomVelocityAndJacobianEigen(\textcolor{keywordtype}{int} N): N\_(N)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  velocity\_type createVelocity()\textcolor{keyword}{ const}\{ \textcolor{keywordflow}{return} velocity\_type(N\_); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{template}<\textcolor{keyword}{class} OperandType>}
+\DoxyCodeLine{  OperandType createApplyJacobianResult(\textcolor{keyword}{const} OperandType \& B)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    OperandType A(B.rows(), B.cols());}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} A;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// computes: A = Jac B}}
+\DoxyCodeLine{  \textcolor{keyword}{template}<\textcolor{keyword}{class} OperandType>}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} applyJacobian(\textcolor{keyword}{const} state\_type \& state,}
+\DoxyCodeLine{                     \textcolor{keyword}{const} OperandType \& B,}
+\DoxyCodeLine{                     \textcolor{keyword}{const} scalar\_type \& time,}
+\DoxyCodeLine{                     OperandType \& A)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    A = B;}
+\DoxyCodeLine{    A.array() += time;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} velocity(\textcolor{keyword}{const} state\_type \& u, \textcolor{keyword}{const} scalar\_type time, velocity\_type \& f)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i=0; i<f.rows(); ++i)\{}
+\DoxyCodeLine{     f(i) = u(i) + time;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  pressio::log::initialize(pressio::logto::terminal);}
+\DoxyCodeLine{  pressio::log::setVerbosity(\{pressio::log::level::debug\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pls    = pressio::linearsolvers;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pnonls = pressio::nonlinearsolvers;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }prom   = pressio::rom;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} fom\_t = TrivialFomVelocityAndJacobianEigen;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t    = \textcolor{keyword}{typename} fom\_t::scalar\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} fom\_state\_t = \textcolor{keyword}{typename} fom\_t::state\_type;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  constexpr \textcolor{keywordtype}{int} N = 10;}
+\DoxyCodeLine{  fom\_t fomSystem(N);}
+\DoxyCodeLine{  fom\_state\_t fomReferenceState(N);}
+\DoxyCodeLine{  fomReferenceState.setZero();}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} phi\_t = Eigen::MatrixXd;}
+\DoxyCodeLine{  phi\_t phi(N, 3);}
+\DoxyCodeLine{  phi.col(0).setConstant(0.);}
+\DoxyCodeLine{  phi.col(1).setConstant(1.);}
+\DoxyCodeLine{  phi.col(2).setConstant(2.);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} decoder = prom::create\_time\_invariant\_linear\_decoder<fom\_state\_t>(phi);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  Eigen::VectorXd romState(3);}
+\DoxyCodeLine{  romState[0]=0.;}
+\DoxyCodeLine{  romState[1]=1.;}
+\DoxyCodeLine{  romState[2]=2.;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  constexpr \textcolor{keyword}{auto} odescheme = pressio::ode::StepScheme::BDF1;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_implicit\_problem}
+\DoxyCodeLine{    (odescheme, fomSystem, decoder, romState, fomReferenceState);}
+\DoxyCodeLine{  \textcolor{keyword}{using} problem\_t = decltype(problem);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} \& stepperObj = problem.stepper();}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} galerkin\_jacobian\_t = \textcolor{keyword}{typename} pressio::Traits<problem\_t>::galerkin\_jacobian\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} lin\_solver\_t = pls::Solver<pls::iterative::LSCG, galerkin\_jacobian\_t>;}
+\DoxyCodeLine{  lin\_solver\_t linearSolverObj;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} nonLinSolver = pnonls::create\_newton\_raphson(stepperObj, romState, linearSolverObj);}
+\DoxyCodeLine{  nonLinSolver.setMaxIterations(1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  scalar\_t dt = 2.;}
+\DoxyCodeLine{  pressio::ode::advance\_n\_steps(stepperObj, romState, 0.0, dt, 1, nonLinSolver);}
+\DoxyCodeLine{  std::cout << romState << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  pressio::log::finalize();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 

@@ -1,0 +1,190 @@
+Suppose that you have\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }BasicSteppableClass\{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} operator()(std::vector<ScalarType> \& state,}
+\DoxyCodeLine{                  \textcolor{keyword}{const} ScalarType time,}
+\DoxyCodeLine{                  \textcolor{keyword}{const} ScalarType dt,}
+\DoxyCodeLine{                  \textcolor{keyword}{const} pressio::ode::step\_count\_type step)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{comment}{// for simplicity, let's say that taking one step}}
+\DoxyCodeLine{    \textcolor{comment}{// corresponds to adding 1 to the state}}
+\DoxyCodeLine{    state[0] += dt;}
+\DoxyCodeLine{    state[1] += dt;}
+\DoxyCodeLine{    state[2] += dt;}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }SteppableClassThatNeedsSomethingElse\{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{template}<\textcolor{keyword}{class} SomethingElse>}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} operator()(std::vector<ScalarType> \& state,}
+\DoxyCodeLine{                  \textcolor{keyword}{const} ScalarType time,}
+\DoxyCodeLine{                  \textcolor{keyword}{const} ScalarType dt,}
+\DoxyCodeLine{                  \textcolor{keyword}{const} pressio::ode::step\_count\_type step,}
+\DoxyCodeLine{          SomethingElse \& my\_auxiliary\_object)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{comment}{// just for demonstration, we might need auxiliary object}}
+\DoxyCodeLine{    \textcolor{comment}{// to do something, but we don't know the type in advance}}
+\DoxyCodeLine{    state[0] += 1;}
+\DoxyCodeLine{    state[1] += 1;}
+\DoxyCodeLine{    state[2] += 1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    my\_auxiliary\_object.aComplicatedMethod(state);}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{struct }Foo}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} aComplicatedMethod(std::vector<ScalarType> \& state)\{}
+\DoxyCodeLine{    \textcolor{comment}{// do something}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_advancers_autotoc_md5}{}\doxysection{advance\+\_\+n\+\_\+times}\label{md_pages_ode_advancers_autotoc_md5}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{    time-\/step is fixed}}
+\DoxyCodeLine{\textcolor{comment}{   */}}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  BasicSteppableClass<scalar\_type> stepper;}
+\DoxyCodeLine{  std::vector<scalar\_type> state = \{1,2,3\};}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type start\_time = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pode::step\_count\_type num\_steps = 10;}
+\DoxyCodeLine{  pode::advance\_n\_steps(stepper, state, start\_time, dt, num\_steps);}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Final state: ["{}}}
+\DoxyCodeLine{        << state[0] << \textcolor{stringliteral}{"{} "{}} << state[1] << \textcolor{stringliteral}{"{} "{}} << state[2] << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{        << std::endl;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{    time-\/step is fixed, and stepper needs an auxiliary object}}
+\DoxyCodeLine{\textcolor{comment}{   */}}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  SteppableClassThatNeedsSomethingElse<scalar\_type> stepper;}
+\DoxyCodeLine{  std::vector<scalar\_type> state = \{1,2,3\};}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type start\_time = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pode::step\_count\_type num\_steps = 10;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  Foo aux;}
+\DoxyCodeLine{  pode::advance\_n\_steps(stepper, state, start\_time, dt, num\_steps, aux);}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Final state: ["{}}}
+\DoxyCodeLine{        << state[0] << \textcolor{stringliteral}{"{} "{}} << state[1] << \textcolor{stringliteral}{"{} "{}} << state[2] << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{        << std::endl;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{    time-\/step is specified by the user with a functor}}
+\DoxyCodeLine{\textcolor{comment}{   */}}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  BasicSteppableClass<scalar\_type> stepper;}
+\DoxyCodeLine{  std::vector<scalar\_type> state = \{1,2,3\};}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type start\_time = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pode::step\_count\_type num\_steps = 10;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{auto} dt\_setter = [](\textcolor{keyword}{const} pode::step\_count\_type step,}
+\DoxyCodeLine{              \textcolor{keyword}{const} scalar\_type \& time,}
+\DoxyCodeLine{              scalar\_type \& dt)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    \textcolor{comment}{// step starts at 1 for the first step}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// set the time step size you want at each step, time}}
+\DoxyCodeLine{    dt = (scalar\_type) step;}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  pode::advance\_n\_steps(stepper, state, start\_time, dt\_setter, num\_steps);}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Final state: ["{}}}
+\DoxyCodeLine{        << state[0] << \textcolor{stringliteral}{"{} "{}} << state[1] << \textcolor{stringliteral}{"{} "{}} << state[2] << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{        << std::endl;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_advancers_autotoc_md6}{}\doxysection{advance\+\_\+n\+\_\+times\+\_\+and\+\_\+observe}\label{md_pages_ode_advancers_autotoc_md6}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{    time-\/step is fixed, user passes an observer to monitor state}}
+\DoxyCodeLine{\textcolor{comment}{   */}}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  BasicSteppableClass<scalar\_type> stepper;}
+\DoxyCodeLine{  std::vector<scalar\_type> state = \{1,2,3\};}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type start\_time = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pode::step\_count\_type num\_steps = 10;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  MyObserver monitor;}
+\DoxyCodeLine{  pode::advance\_n\_steps\_and\_observe(stepper, state, start\_time, dt, num\_steps, monitor);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Similarly works for the other cases accepting the time step setter, etc.\hypertarget{md_pages_ode_advancers_autotoc_md7}{}\doxysection{advance\+\_\+to\+\_\+target\+\_\+time}\label{md_pages_ode_advancers_autotoc_md7}
+This always needs a functor to set the time step.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{/*}}
+\DoxyCodeLine{\textcolor{comment}{    time-\/step is provided}}
+\DoxyCodeLine{\textcolor{comment}{   */}}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pode = pressio::ode;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  BasicSteppableClass<scalar\_type> stepper;}
+\DoxyCodeLine{  std::vector<scalar\_type> state = \{1,2,3\};}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type dt = 0.1;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type start\_time = 0.0;}
+\DoxyCodeLine{  \textcolor{keyword}{const} scalar\_type final\_time = 2.8;}
+\DoxyCodeLine{  \textcolor{keyword}{const} pode::step\_count\_type num\_steps = 10;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{auto} dt\_setter = [](\textcolor{keyword}{const} pode::step\_count\_type step,}
+\DoxyCodeLine{              \textcolor{keyword}{const} scalar\_type \& time,}
+\DoxyCodeLine{              scalar\_type \& dt)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    \textcolor{comment}{// step starts at 1 for the first step}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// set the time step size you want at each step, time}}
+\DoxyCodeLine{    dt = (scalar\_type) step + (scalar\_type) 0.5;}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{} step = "{}} << step << \textcolor{stringliteral}{"{} dt = "{}} << dt << \textcolor{charliteral}{'\(\backslash\)n'};}
+\DoxyCodeLine{  \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  pode::advance\_to\_target\_time(stepper, state, start\_time, final\_time, dt\_setter);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_ode_advancers_autotoc_md8}{}\doxysection{advance\+\_\+to\+\_\+target\+\_\+time\+\_\+and\+\_\+observe}\label{md_pages_ode_advancers_autotoc_md8}
+This is like above, but you also need to pass an obsever. 

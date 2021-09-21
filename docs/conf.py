@@ -4,27 +4,51 @@ MAIN_PROJECT_URL: ""
 
 LINKS_NAVBAR1 = [
 
-  ("<a>ODE</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+  ("<a href=\"md_pages_utils_logger.html\">logger</a>", []),
+
+  ("<a>solvers nonlinear</a>",
    [
-     ("<a href=\"md_pages_ode_tutorial1.html\">Explicit Time Integration (Known Types)</a>", ),
-     ("<a href=\"md_pages_ode_tutorial2.html\">Explicit Time Integration (Arbitrary Types)</a>", )
+     ("<a href=\"md_pages_solvers_nonlinear_tutorial_0.html\">General options </a>", ),
+     ("<a href=\"md_pages_solvers_nonlinear_tutorial_1.html\">Newton-Raphson (known types)</a>", ),
+     ("<a href=\"md_pages_solvers_nonlinear_tutorial_2.html\">Newton-Raphson (custom types)</a>", ),
+     ("<a href=\"md_pages_solvers_nonlinear_tutorial_3.html\">Gauss-Newton normal equations (known types)</a>", ),
+     ("<a href=\"md_pages_solvers_nonlinear_tutorial_4.html\">Gauss-Newton normal equations (custom types)</a>", )
    ]),
 
-  ("<a>ROM</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
+  # ("<a href=\"md_pages_ode_advancers_advancers.html\">ode_advancers</a>", []),
+
+  ("<a>ode</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
-     ("<a href=\"md_pages_rom_tutorial_lindec.html\">Linear Decoder (Known Types)</a>", ),
-     ("<a href=\"md_pages_rom_tutorial_lindec_at.html\">Linear Decoder (Arbitrary Types)</a>", ),
-     ("<a href=\"md_pages_rom_tutorial2.html\">Default Galerkin explicit</a>", )
+     ("<a href=\"md_pages_ode_advancers.html\">Advancers</a>", ),
+     ("<a href=\"md_pages_ode_steppers_tutorial1.html\">Explicit Time Integration (known types)</a>", ),
+     ("<a href=\"md_pages_ode_steppers_tutorial2.html\">Explicit Time Integration (custom types)</a>", ),
+     ("<a href=\"md_pages_ode_steppers_tutorial3.html\">Implicit Time Integration (known types)</a>", ),
+     ("<a href=\"md_pages_ode_steppers_tutorial4.html\">Implicit Time Integration (custom types)</a>", )
    ]),
 
-  ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
+  ("<a>pROMs</a>", #("<a href=\"md_pages_tutorials.html\">Tutorials</a>",
    [
-     ("<a href=\"md_pages_swe_fom.html\">FOM Driver</a>", ),
-     ("<a href=\"md_pages_swe_lspg.html\">LSPG Driver</a>", ),
-     ("<a href=\"md_pages_swe_hrlspg.html\">Hyper-reduced LSPG Driver</a>", ),
-     ("<a href=\"md_pages_swe_endtoend.html\">End-to-end Usecase</a>", )
-     #("<a href=\"md_pages_swe_endtoend.html\">End-to-end LSPG example</a>", )
-   ])
+     ("<a href=\"md_pages_rom_tutorial_lin_dec.html\">Linear Decoder (known types)</a>", ),
+     ("<a href=\"md_pages_rom_tutorial_lin_dec_custom_types.html\">Linear Decoder (custom types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_explicit.html\">Default Explicit Galerkin (known types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_explicit_custom_types.html\">Default Explicit Galerkin (custom types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_implicit.html\">Default Implicit Galerkin (known types)</a>", ),
+     ("<a href=\"md_pages_rom_galerkin_default_implicit_custom_types.html\">Default Implicit Galerkin (custom types)</a>", )
+   ]),
+
+  # these are here just to make the menu bar spaced better
+  ("<a></a>", []),
+  ("<a></a>", []),
+  ("<a></a>", []),
+
+  # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
+  #  [
+  #    ("<a href=\"md_pages_swe_fom.html\">FOM Driver</a>", ),
+  #    ("<a href=\"md_pages_swe_lspg.html\">LSPG Driver</a>", ),
+  #    ("<a href=\"md_pages_swe_hrlspg.html\">Hyper-reduced LSPG Driver</a>", ),
+  #    ("<a href=\"md_pages_swe_endtoend.html\">End-to-end Usecase</a>", )
+  #    #("<a href=\"md_pages_swe_endtoend.html\">End-to-end LSPG example</a>", )
+  #  ])
 
   # # demos
   # ("<a href=>Demos</a>", #("<a href=\"md_pages_examples.html\">Full Examples</a>",
