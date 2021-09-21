@@ -77,48 +77,152 @@
         <h1>
           How to use ode advancers
         </h1>
-<section id="autotoc_md5"><h2><a href="#autotoc_md5">advance_n_times</a></h2><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
-<span class="k">struct</span> <span class="nc">SteppableClass</span>
-<span class="p">{</span>
-
+<p>Suppose that you have:</p><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">BasicSteppableClass</span><span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
   <span class="kt">void</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">state</span><span class="p">,</span>
-          <span class="k">const</span> <span class="n">ScalarType</span> <span class="n">time</span><span class="p">,</span>
-          <span class="k">const</span> <span class="n">ScalarType</span> <span class="n">dt</span><span class="p">,</span>
-          <span class="k">const</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">step</span><span class="p">)</span> <span class="k">const</span>
+                  <span class="k">const</span> <span class="n">ScalarType</span> <span class="n">time</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">ScalarType</span> <span class="n">dt</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">step</span><span class="p">)</span> <span class="k">const</span>
   <span class="p">{</span>
     <span class="c1">// for simplicity, let&#39;s say that taking one step</span>
     <span class="c1">// corresponds to adding 1 to the state</span>
-    <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dt</span><span class="p">;</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dt</span><span class="p">;</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">dt</span><span class="p">;</span>
   <span class="p">};</span>
 <span class="p">};</span>
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">SteppableClassThatNeedsSomethingElse</span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">SomethingElse</span><span class="o">&gt;</span>
+  <span class="kt">void</span> <span class="k">operator</span><span class="p">()(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">state</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">ScalarType</span> <span class="n">time</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">ScalarType</span> <span class="n">dt</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">step</span><span class="p">,</span>
+          <span class="n">SomethingElse</span> <span class="o">&amp;</span> <span class="n">my_auxiliary_object</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="c1">// just for demonstration, we might need auxiliary object</span>
+    <span class="c1">// to do something, but we don&#39;t know the type in advance</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">my_auxiliary_object</span><span class="p">.</span><span class="n">aComplicatedMethod</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">Foo</span>
 <span class="p">{</span>
-  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span>
+  <span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">ScalarType</span><span class="o">&gt;</span>
+  <span class="kt">void</span> <span class="n">aComplicatedMethod</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">state</span><span class="p">){</span>
+    <span class="c1">// do something</span>
+  <span class="p">}</span>
+<span class="p">};</span></pre><section id="autotoc_md5"><h2><a href="#autotoc_md5">advance_n_times</a></h2><pre class="m-code"><span class="p">{</span>
+  <span class="cm">/*</span>
+<span class="cm">    time-step is fixed</span>
+<span class="cm">   */</span>
   <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
-
   <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
-  <span class="n">SteppableClass</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">stepper</span><span class="p">;</span>
 
+  <span class="n">BasicSteppableClass</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">stepper</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
   <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
   <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">start_time</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
   <span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
   <span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">);</span>
-
   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Final state: [&quot;</span>
-            <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;] &quot;</span>
-            <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;] &quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></pre><pre class="m-code"><span class="p">{</span>
+  <span class="cm">/*</span>
+<span class="cm">    time-step is fixed, and stepper needs an auxiliary object</span>
+<span class="cm">   */</span>
+  <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
 
-  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
-  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></pre></section><section id="autotoc_md6"><h2><a href="#autotoc_md6">advance_n_times_and_observe</a></h2><p>...</p></section><section id="autotoc_md7"><h2><a href="#autotoc_md7">advance_to_target_time</a></h2><p>...</p></section><section id="autotoc_md8"><h2><a href="#autotoc_md8">advance_to_target_time_and_observe</a></h2><p>...</p></section>
+  <span class="n">SteppableClassThatNeedsSomethingElse</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">stepper</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">start_time</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+  <span class="n">Foo</span> <span class="n">aux</span><span class="p">;</span>
+  <span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">aux</span><span class="p">);</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Final state: [&quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;] &quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></pre><pre class="m-code"><span class="p">{</span>
+  <span class="cm">/*</span>
+<span class="cm">    time-step is specified by the user with a functor</span>
+<span class="cm">   */</span>
+  <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+
+  <span class="n">BasicSteppableClass</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">stepper</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">start_time</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+  <span class="k">auto</span> <span class="n">dt_setter</span> <span class="o">=</span> <span class="p">[](</span><span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">step</span><span class="p">,</span>
+              <span class="k">const</span> <span class="n">scalar_type</span> <span class="o">&amp;</span> <span class="n">time</span><span class="p">,</span>
+              <span class="n">scalar_type</span> <span class="o">&amp;</span> <span class="n">dt</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// step starts at 1 for the first step</span>
+
+    <span class="c1">// set the time step size you want at each step, time</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span><span class="n">scalar_type</span><span class="p">)</span> <span class="n">step</span><span class="p">;</span>
+  <span class="p">};</span>
+
+  <span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">dt_setter</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">);</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Final state: [&quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;] &quot;</span>
+        <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span></pre></section><section id="autotoc_md6"><h2><a href="#autotoc_md6">advance_n_times_and_observe</a></h2><pre class="m-code"><span class="p">{</span>
+  <span class="cm">/*</span>
+<span class="cm">    time-step is fixed, user passes an observer to monitor state</span>
+<span class="cm">   */</span>
+  <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+
+  <span class="n">BasicSteppableClass</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">stepper</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">start_time</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+  <span class="n">MyObserver</span> <span class="n">monitor</span><span class="p">;</span>
+  <span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps_and_observe</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">monitor</span><span class="p">);</span>
+<span class="p">}</span></pre><p>Similarly works for the other cases accepting the time step setter, etc.</p></section><section id="autotoc_md7"><h2><a href="#autotoc_md7">advance_to_target_time</a></h2><p>This always needs a functor to set the time step.</p><pre class="m-code"><span class="p">{</span>
+  <span class="cm">/*</span>
+<span class="cm">    time-step is provided</span>
+<span class="cm">   */</span>
+  <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+
+  <span class="n">BasicSteppableClass</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">stepper</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">start_time</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">final_time</span> <span class="o">=</span> <span class="mf">2.8</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+  <span class="k">auto</span> <span class="n">dt_setter</span> <span class="o">=</span> <span class="p">[](</span><span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">step</span><span class="p">,</span>
+              <span class="k">const</span> <span class="n">scalar_type</span> <span class="o">&amp;</span> <span class="n">time</span><span class="p">,</span>
+              <span class="n">scalar_type</span> <span class="o">&amp;</span> <span class="n">dt</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="c1">// step starts at 1 for the first step</span>
+
+    <span class="c1">// set the time step size you want at each step, time</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span><span class="n">scalar_type</span><span class="p">)</span> <span class="n">step</span> <span class="o">+</span> <span class="p">(</span><span class="n">scalar_type</span><span class="p">)</span> <span class="mf">0.5</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; step = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">step</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; dt = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">dt</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+  <span class="p">};</span>
+
+  <span class="n">pode</span><span class="o">::</span><span class="n">advance_to_target_time</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">final_time</span><span class="p">,</span> <span class="n">dt_setter</span><span class="p">);</span>
+<span class="p">}</span></pre></section><section id="autotoc_md8"><h2><a href="#autotoc_md8">advance_to_target_time_and_observe</a></h2><p>This is like above, but you also need to pass an obsever.</p></section>
       </div>
     </div>
   </div>
