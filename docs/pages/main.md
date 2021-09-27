@@ -1,14 +1,26 @@
+
 # Pressio C++ Tutorials
 
-<!-- *Leading-edge reduced order models (ROMs) for dynamical systems in science and engineering.* -->
 
-This website presents the [C++ tutorials](https://github.com/Pressio/pressio-tutorials),
-which use the [pressio C++ core library](https://pressio.github.io/pressio/html/index.html).<br>
-<!-- The full project website is [here](https://pressio.github.io/). -->
+@m_class{m-frame m-default}
 
-## Get Started
+@parblock
+This website contains the tutorials
+covering the [pressio C++ library](https://pressio.github.io/pressio/html/index.html).
 
-Requires CMake > 3.13.0 and a C++ compiler with C++11 support:
+Disclaimer: this is still work-in-progress, some coverage might be missing.
+We plan to improve this over time.
+@endparblock
+
+
+## Building
+
+@m_class{m-note m-warning}
+
+@parblock
+All you need CMake > 3.18.0 and a C++14 compliant compiler.
+@endparblock
+
 ```bash
 git clone --recursive git@github.com:Pressio/pressio-tutorials.git
 export CXX=<path-to-your-CXX-compiler>
@@ -16,7 +28,13 @@ cd pressio-tutorials && mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j4
 ```
-The executables for all tutorials are built inside the build subdirectory.
+
+@m_class{m-note m-info}
+
+@parblock
+Individual executables for all tutorials are built inside the build subdirectory.
+@endparblock
+
 
 ## License and Citation
 The BSD-3 license is available [here](https://pressio.github.io/various/license/).

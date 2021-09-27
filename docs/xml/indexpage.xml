@@ -7,16 +7,24 @@
     </briefdescription>
     <detaileddescription>
 <para><anchor id="index_1md_pages_main"/></para>
-<para>This website presents the <ulink url="https://github.com/Pressio/pressio-tutorials">C++ tutorials</ulink>, which use the <ulink url="https://pressio.github.io/pressio/html/index.html">pressio C++ core library</ulink>.<linebreak/>
-</para>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-frame m-default" /></para>
+<para><parblock><para>This website contains the tutorials covering the <ulink url="https://pressio.github.io/pressio/html/index.html">pressio C++ library</ulink>.</para>
+<para>Disclaimer: this is still work-in-progress, some coverage might be missing. We plan to improve this over time. </para>
+</parblock></para>
 <sect1 id="index_1autotoc_md1">
-<title>Get Started</title>
-<para>Requires CMake &gt; 3.13.0 and a C++ compiler with C++11 support: <programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>git@github.com:Pressio/pressio-tutorials.git</highlight></codeline>
+<title>Building</title>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-note m-warning" /></para>
+<para><parblock><para>All you need CMake &gt; 3.18.0 and a C++14 compliant compiler. </para>
+</parblock></para>
+<para><programlisting filename=".bash"><codeline><highlight class="normal">git<sp/>clone<sp/>--recursive<sp/>git@github.com:Pressio/pressio-tutorials.git</highlight></codeline>
 <codeline><highlight class="normal">export<sp/>CXX=&lt;path-to-your-CXX-compiler&gt;</highlight></codeline>
 <codeline><highlight class="normal">cd<sp/>pressio-tutorials<sp/>&amp;&amp;<sp/>mkdir<sp/>build<sp/>&amp;&amp;<sp/>cd<sp/>build</highlight></codeline>
 <codeline><highlight class="normal">cmake<sp/>-DCMAKE_BUILD_TYPE=Release<sp/>..</highlight></codeline>
 <codeline><highlight class="normal">make<sp/>-j4</highlight></codeline>
-</programlisting> The executables for all tutorials are built inside the build subdirectory.</para>
+</programlisting></para>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-note m-info" /></para>
+<para><parblock><para>Individual executables for all tutorials are built inside the build subdirectory. </para>
+</parblock></para>
 </sect1>
 <sect1 id="index_1autotoc_md2">
 <title>License and Citation</title>
