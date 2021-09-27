@@ -36,6 +36,8 @@ LINKS_NAVBAR1 = [
      ("<a href=\"md_pages_rom_galerkin_default_implicit_custom_types.html\">Default Implicit Galerkin (custom types)</a>", )
    ]),
 
+  ("<a href=\"https://github.com/Pressio/pressio-tutorials\">Github Page</a>", []),
+
   # these are here just to make the menu bar spaced better
   ("<a></a>", []),
   ("<a></a>", []),

@@ -1,8 +1,21 @@
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.18.0)
 project(pressio-tutorials CXX)
-set (CMAKE_CXX_STANDARD 11)
 
+#===================================================
+# c++ standard
+#===================================================
+# commands to test if compiler supports standard
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++14" COMPILER_SUPPORT_CPP14)
+if(NOT COMPILER_SUPPORT_CPP14)
+  message(FATAL_ERROR "Compiler does not support -std=c++14. This is required.")
+endif()
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+#===================================================
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/tpls/eigen/eigen3
   ${CMAKE_CURRENT_SOURCE_DIR}/tpls
@@ -10,13 +23,14 @@ include_directories(
 
 set(TUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
 
+#===================================================
+# add all executables
+#===================================================
 add_executable(
   utils_logger
   ${TUTDIR}/utils_logger.cc)
 
-#=================================
 # nonlinear solvers
-#=================================
 add_executable(
   nonlinsolvers_newtonraphson_known_types
   ${TUTDIR}/nonlinsolvers_newtonraphson_1.cc)
@@ -33,9 +47,7 @@ add_executable(
   nonlinsolvers_gn_custom_types
   ${TUTDIR}/nonlinsolvers_gn_2.cc)
 
-#=================================
 # ODE
-#=================================
 add_executable(
   ode_steppers_known_types
   ${TUTDIR}/ode_steppers_1.cc)
@@ -48,9 +60,7 @@ add_executable(
   ode_advancer
   ${TUTDIR}/ode_advancer.cc)
 
-#=================================
-# rom
-#=================================
+# rom decoder
 add_executable(
   rom_linear_decoder_known_types
   ${TUTDIR}/rom_linear_decoder_eigen.cc)
@@ -59,7 +69,7 @@ add_executable(
   rom_linear_decoder_custom_types
   ${TUTDIR}/rom_linear_decoder_arbitrary_types.cc)
 
-#---- galerkin -----
+# rom galerkin
 add_executable(
   rom_default_explicit_galerkin_known_types
   ${TUTDIR}/rom_default_explicit_galerkin_eigen.cc)
