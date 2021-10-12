@@ -56,12 +56,16 @@
                 <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
               </ol>
             </li>
+            <li>
+              <a>Full Demos</a>
+              <ol>
+                <li><a href="md_pages_swe_main.html">Shallow Water Eq</a></li>
+              </ol>
+            </li>
             <li><a href="https://github.com/Pressio/pressio-tutorials">Github Page</a></li>
             <li><a></a></li>
-            <li><a></a></li>
-            <li><a></a></li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="9">
+          <ol class="m-col-t-6 m-col-m-none" start="8">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -127,9 +131,9 @@ $t$
 <g id='eq3-page1'>
 <use x='0' y='0' xlink:href='#eq3-g0-116'/>
 </g>
-</svg> is time.</p><section id="autotoc_md10"><h2><a href="#autotoc_md10">Include</a></h2><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span><span class="cp"></span>
+</svg> is time.</p><section id="autotoc_md11"><h2><a href="#autotoc_md11">Include</a></h2><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_steppers_explicit.hpp&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span></pre></section><section id="autotoc_md11"><h2><a href="#autotoc_md11">Problem class</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">scalar_t</span><span class="o">&gt;</span>
+<span class="cp">#include</span> <span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span></pre></section><section id="autotoc_md12"><h2><a href="#autotoc_md12">Problem class</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">scalar_t</span><span class="o">&gt;</span>
 <span class="k">struct</span> <span class="nc">MySystem</span><span class="p">{</span>
   <span class="k">using</span> <span class="n">scalar_type</span>   <span class="o">=</span> <span class="n">scalar_t</span><span class="p">;</span>
   <span class="k">using</span> <span class="n">state_type</span>    <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_t</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
@@ -149,7 +153,7 @@ $t$
   <span class="n">velocity_type</span> <span class="nf">createVelocity</span><span class="p">()</span> <span class="k">const</span><span class="p">{</span>
     <span class="k">return</span> <span class="n">velocity_type</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
   <span class="p">};</span>
-<span class="p">};</span></pre></section><section id="autotoc_md12"><h2><a href="#autotoc_md12">Main</a></h2><pre class="m-code"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">};</span></pre></section><section id="autotoc_md13"><h2><a href="#autotoc_md13">Main</a></h2><pre class="m-code"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
 <span class="p">{</span>
   <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span>
 
@@ -183,7 +187,7 @@ $t$
 
   <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></pre></section><section id="autotoc_md13"><h2><a href="#autotoc_md13">Full Code</a></h2><p>The full code is available <a href="https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_1.cc">here</a>.</p></section>
+<span class="p">}</span></pre></section><section id="autotoc_md14"><h2><a href="#autotoc_md14">Full Code</a></h2><p>The full code is available <a href="https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_1.cc">here</a>.</p></section>
       </div>
     </div>
   </div>

@@ -3,7 +3,7 @@
 \begin{DoxyParagraph}{}
 This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs based on custom types, i.\+e. data types that pressio does not know how to operate on.
 \end{DoxyParagraph}
-\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md15}{}\doxysection{Custom Vector Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md15}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md16}{}\doxysection{Custom Vector Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md16}
 Suppose that you have an application that uses a custom vector class as follows\+:
 
 
@@ -34,7 +34,7 @@ Suppose that you have an application that uses a custom vector class as follows\
 \end{DoxyCode}
 
 
-This custom vector class is very simple but the key point is that the {\ttfamily Custom\+Vector} is unknown to Pressio. You can replace {\ttfamily Custom\+Vector} with any type that fits your needs.\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md16}{}\doxysection{Problem Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md16}
+This custom vector class is very simple but the key point is that the {\ttfamily Custom\+Vector} is unknown to Pressio. You can replace {\ttfamily Custom\+Vector} with any type that fits your needs.\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md17}{}\doxysection{Problem Class}\label{md_pages_ode_steppers_tutorial2_autotoc_md17}
 Here, we want to integrate in time the same system of ODEs shown in tutorial1, but with the problem implemented using the {\ttfamily Custom\+Vector} class as follows\+:
 
 
@@ -62,7 +62,7 @@ Here, we want to integrate in time the same system of ODEs shown in tutorial1, b
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
-\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md17}{}\doxysection{Specialize trait and ops}\label{md_pages_ode_steppers_tutorial2_autotoc_md17}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md18}{}\doxysection{Specialize trait and ops}\label{md_pages_ode_steppers_tutorial2_autotoc_md18}
 Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done as follows\+:
 
 
@@ -117,7 +117,7 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{\}\} \textcolor{comment}{//end namespace pressio::ops}}
 
 \end{DoxyCode}
-\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md18}{}\doxysection{Main}\label{md_pages_ode_steppers_tutorial2_autotoc_md18}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md19}{}\doxysection{Main}\label{md_pages_ode_steppers_tutorial2_autotoc_md19}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
@@ -153,5 +153,5 @@ Because we are working with custom data types, we need to provide the necessary 
 \DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
 
 \end{DoxyCode}
-\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md19}{}\doxysection{Full Code}\label{md_pages_ode_steppers_tutorial2_autotoc_md19}
+\hypertarget{md_pages_ode_steppers_tutorial2_autotoc_md20}{}\doxysection{Full Code}\label{md_pages_ode_steppers_tutorial2_autotoc_md20}
 The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_2.cc}{\texttt{ here}}. 

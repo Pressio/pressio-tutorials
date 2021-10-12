@@ -56,12 +56,16 @@
                 <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
               </ol>
             </li>
+            <li>
+              <a>Full Demos</a>
+              <ol>
+                <li><a href="md_pages_swe_main.html">Shallow Water Eq</a></li>
+              </ol>
+            </li>
             <li><a href="https://github.com/Pressio/pressio-tutorials">Github Page</a></li>
             <li><a></a></li>
-            <li><a></a></li>
-            <li><a></a></li>
           </ol>
-          <ol class="m-col-t-6 m-col-m-none" start="9">
+          <ol class="m-col-t-6 m-col-m-none" start="8">
             <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
               <use href="#m-doc-search-icon-path" />
             </svg></a></li>
@@ -121,7 +125,7 @@
   <span class="kt">void</span> <span class="n">aComplicatedMethod</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">state</span><span class="p">){</span>
     <span class="c1">// do something</span>
   <span class="p">}</span>
-<span class="p">};</span></pre><section id="autotoc_md5"><h2><a href="#autotoc_md5">advance_n_times</a></h2><pre class="m-code"><span class="p">{</span>
+<span class="p">};</span></pre><section id="autotoc_md6"><h2><a href="#autotoc_md6">advance_n_times</a></h2><pre class="m-code"><span class="p">{</span>
   <span class="cm">/*</span>
 <span class="cm">    time-step is fixed</span>
 <span class="cm">   */</span>
@@ -182,7 +186,7 @@
   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Final state: [&quot;</span>
         <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">state</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;] &quot;</span>
         <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="p">}</span></pre></section><section id="autotoc_md6"><h2><a href="#autotoc_md6">advance_n_times_and_observe</a></h2><pre class="m-code"><span class="p">{</span>
+<span class="p">}</span></pre></section><section id="autotoc_md7"><h2><a href="#autotoc_md7">advance_n_times_and_observe</a></h2><pre class="m-code"><span class="p">{</span>
   <span class="cm">/*</span>
 <span class="cm">    time-step is fixed, user passes an observer to monitor state</span>
 <span class="cm">   */</span>
@@ -197,7 +201,7 @@
 
   <span class="n">MyObserver</span> <span class="n">monitor</span><span class="p">;</span>
   <span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps_and_observe</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">monitor</span><span class="p">);</span>
-<span class="p">}</span></pre><p>Similarly works for the other cases accepting the time step setter, etc.</p></section><section id="autotoc_md7"><h2><a href="#autotoc_md7">advance_to_target_time</a></h2><p>This always needs a functor to set the time step.</p><pre class="m-code"><span class="p">{</span>
+<span class="p">}</span></pre><p>Similarly works for the other cases accepting the time step setter, etc.</p></section><section id="autotoc_md8"><h2><a href="#autotoc_md8">advance_to_target_time</a></h2><p>This always needs a functor to set the time step.</p><pre class="m-code"><span class="p">{</span>
   <span class="cm">/*</span>
 <span class="cm">    time-step is provided</span>
 <span class="cm">   */</span>
@@ -223,7 +227,7 @@
   <span class="p">};</span>
 
   <span class="n">pode</span><span class="o">::</span><span class="n">advance_to_target_time</span><span class="p">(</span><span class="n">stepper</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">final_time</span><span class="p">,</span> <span class="n">dt_setter</span><span class="p">);</span>
-<span class="p">}</span></pre></section><section id="autotoc_md8"><h2><a href="#autotoc_md8">advance_to_target_time_and_observe</a></h2><p>This is like above, but you also need to pass an obsever.</p></section>
+<span class="p">}</span></pre></section><section id="autotoc_md9"><h2><a href="#autotoc_md9">advance_to_target_time_and_observe</a></h2><p>This is like above, but you also need to pass an obsever.</p></section>
       </div>
     </div>
   </div>

@@ -36,11 +36,14 @@ LINKS_NAVBAR1 = [
      ("<a href=\"md_pages_rom_galerkin_default_implicit_custom_types.html\">Default Implicit Galerkin (custom types)</a>", )
    ]),
 
+  ("<a>Full Demos</a>",
+   [
+     ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq</a>", )
+   ]),
+
   ("<a href=\"https://github.com/Pressio/pressio-tutorials\">Github Page</a>", []),
 
   # these are here just to make the menu bar spaced better
-  ("<a></a>", []),
-  ("<a></a>", []),
   ("<a></a>", []),
 
   # ("<a href=\"md_pages_swe_main.html\">Shallow Water Eq.</a>",
@@ -51,12 +54,6 @@ LINKS_NAVBAR1 = [
   #    ("<a href=\"md_pages_swe_endtoend.html\">End-to-end Usecase</a>", )
   #    #("<a href=\"md_pages_swe_endtoend.html\">End-to-end LSPG example</a>", )
   #  ])
-
-  # # demos
-  # ("<a href=>Demos</a>", #("<a href=\"md_pages_examples.html\">Full Examples</a>",
-  #  [
-  #    ("<a href=\"md_pages_examples_example1.html\">Example1</a>", )
-  #  ]),
 
   # ('Classes', 'annotated', []),
   # ('Namespaces', 'namespaces', [])
