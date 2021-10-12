@@ -10,14 +10,14 @@
 <para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs that uses data types natively supported in pressio. By natively supported, we mean data types that pressio knows how to manipulate and perform computation on, and therefore the user does not need to provide any auxiliary information. Here, we use Eigen data types as an example, but the same code can be used for other natively supported types.</para>
 </simplesect>
 We demonstate how to integrate in time the following system of ODEs: <formula id="0">\[ \frac{d \mathbf{y}}{d t} = 10 \mathbf{y} \]</formula> where <formula id="1">$\mathbf{y} \in R^3$</formula> is the state and <formula id="2">$t$</formula> is time.</para>
-<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md10">
+<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md11">
 <title>Include</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&quot;pressio/ode_advancers.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pressio/ode_steppers_explicit.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md11">
+<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md12">
 <title>Problem class</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>scalar_t&gt;</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">MySystem{</highlight></codeline>
@@ -42,7 +42,7 @@ We demonstate how to integrate in time the following system of ODEs: <formula id
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md12">
+<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md13">
 <title>Main</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*argv[])</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -81,7 +81,7 @@ We demonstate how to integrate in time the following system of ODEs: <formula id
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md13">
+<sect1 id="md_pages_ode_steppers_tutorial1_1autotoc_md14">
 <title>Full Code</title>
 <para>The full code is available <ulink url="https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_1.cc">here</ulink>. </para>
 </sect1>

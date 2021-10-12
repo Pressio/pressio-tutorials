@@ -10,7 +10,7 @@
 <para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to</para>
 </simplesect>
 </para>
-<sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md26">
+<sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md27">
 <title>Custom Data Class</title>
 <para>Suppose that you have an application that uses arbitrary types. For the sake of this tutorial, let&apos;s define these to be:</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>ScalarType&gt;</highlight></codeline>
@@ -61,7 +61,7 @@
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md27">
+<sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md28">
 <title>Specialize trait and ops</title>
 <para>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows: <programlisting filename=".cpp"><codeline><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">pressio{</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
@@ -195,7 +195,7 @@
 <codeline><highlight class="normal">}}</highlight><highlight class="comment">//end<sp/>namespace<sp/>pressio::ops</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md28">
+<sect1 id="md_pages_rom_galerkin_default_explicit_custom_types_1autotoc_md29">
 <title>Main</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="preprocessor">#include<sp/>&quot;pressio/rom_galerkin.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>

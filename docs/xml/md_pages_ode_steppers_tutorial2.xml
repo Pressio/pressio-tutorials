@@ -10,7 +10,7 @@
 <para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs based on custom types, i.e. data types that pressio does not know how to operate on.</para>
 </simplesect>
 </para>
-<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md15">
+<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md16">
 <title>Custom Vector Class</title>
 <para>Suppose that you have an application that uses a custom vector class as follows:</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>ScalarType&gt;</highlight></codeline>
@@ -38,7 +38,7 @@
 </programlisting></para>
 <para>This custom vector class is very simple but the key point is that the <computeroutput>CustomVector</computeroutput> is unknown to Pressio. You can replace <computeroutput>CustomVector</computeroutput> with any type that fits your needs.</para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md16">
+<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md17">
 <title>Problem Class</title>
 <para>Here, we want to integrate in time the same system of ODEs shown in tutorial1, but with the problem implemented using the <computeroutput>CustomVector</computeroutput> class as follows:</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">struct<sp/></highlight><highlight class="normal">MySystem</highlight></codeline>
@@ -64,7 +64,7 @@
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md17">
+<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md18">
 <title>Specialize trait and ops</title>
 <para>Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done as follows:</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">pressio{</highlight></codeline>
@@ -117,7 +117,7 @@
 <codeline><highlight class="normal">}}<sp/></highlight><highlight class="comment">//end<sp/>namespace<sp/>pressio::ops</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md18">
+<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md19">
 <title>Main</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*argv[])</highlight></codeline>
 <codeline><highlight class="normal">{</highlight></codeline>
@@ -152,7 +152,7 @@
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md19">
+<sect1 id="md_pages_ode_steppers_tutorial2_1autotoc_md20">
 <title>Full Code</title>
 <para>The full code is available <ulink url="https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_2.cc">here</ulink>. </para>
 </sect1>

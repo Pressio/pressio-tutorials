@@ -3,7 +3,7 @@
 \begin{DoxyParagraph}{}
 This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs that uses data types natively supported in pressio. By natively supported, we mean data types that pressio knows how to manipulate and perform computation on, and therefore the user does not need to provide any auxiliary information. Here, we use Eigen data types as an example, but the same code can be used for other natively supported types.
 \end{DoxyParagraph}
-We demonstate how to integrate in time the following system of ODEs\+: \[ \frac{d \mathbf{y}}{d t} = 10 \mathbf{y} \] where $\mathbf{y} \in R^3$ is the state and $t$ is time.\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md10}{}\doxysection{Include}\label{md_pages_ode_steppers_tutorial1_autotoc_md10}
+We demonstate how to integrate in time the following system of ODEs\+: \[ \frac{d \mathbf{y}}{d t} = 10 \mathbf{y} \] where $\mathbf{y} \in R^3$ is the state and $t$ is time.\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md11}{}\doxysection{Include}\label{md_pages_ode_steppers_tutorial1_autotoc_md11}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/ode\_advancers.hpp"{}}}
@@ -11,7 +11,7 @@ We demonstate how to integrate in time the following system of ODEs\+: \[ \frac{
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <Eigen/Core>}}
 
 \end{DoxyCode}
-\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md11}{}\doxysection{Problem class}\label{md_pages_ode_steppers_tutorial1_autotoc_md11}
+\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md12}{}\doxysection{Problem class}\label{md_pages_ode_steppers_tutorial1_autotoc_md12}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} scalar\_t>}
@@ -37,7 +37,7 @@ We demonstate how to integrate in time the following system of ODEs\+: \[ \frac{
 \DoxyCodeLine{\};}
 
 \end{DoxyCode}
-\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md12}{}\doxysection{Main}\label{md_pages_ode_steppers_tutorial1_autotoc_md12}
+\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md13}{}\doxysection{Main}\label{md_pages_ode_steppers_tutorial1_autotoc_md13}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} *argv[])}
@@ -77,5 +77,5 @@ We demonstate how to integrate in time the following system of ODEs\+: \[ \frac{
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}
-\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md13}{}\doxysection{Full Code}\label{md_pages_ode_steppers_tutorial1_autotoc_md13}
+\hypertarget{md_pages_ode_steppers_tutorial1_autotoc_md14}{}\doxysection{Full Code}\label{md_pages_ode_steppers_tutorial1_autotoc_md14}
 The full code is available \href{https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_1.cc}{\texttt{ here}}. 

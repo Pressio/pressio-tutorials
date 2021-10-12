@@ -52,7 +52,7 @@
 <codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal">};</highlight></codeline>
 </programlisting></para>
-<sect1 id="md_pages_ode_advancers_1autotoc_md5">
+<sect1 id="md_pages_ode_advancers_1autotoc_md6">
 <title>advance_n_times</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="normal">{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -122,7 +122,7 @@
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_advancers_1autotoc_md6">
+<sect1 id="md_pages_ode_advancers_1autotoc_md7">
 <title>advance_n_times_and_observe</title>
 <para><programlisting filename=".cpp"><codeline><highlight class="normal">{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -143,7 +143,7 @@
 </programlisting></para>
 <para>Similarly works for the other cases accepting the time step setter, etc.</para>
 </sect1>
-<sect1 id="md_pages_ode_advancers_1autotoc_md7">
+<sect1 id="md_pages_ode_advancers_1autotoc_md8">
 <title>advance_to_target_time</title>
 <para>This always needs a functor to set the time step.</para>
 <para><programlisting filename=".cpp"><codeline><highlight class="normal">{</highlight></codeline>
@@ -175,7 +175,7 @@
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 </sect1>
-<sect1 id="md_pages_ode_advancers_1autotoc_md8">
+<sect1 id="md_pages_ode_advancers_1autotoc_md9">
 <title>advance_to_target_time_and_observe</title>
 <para>This is like above, but you also need to pass an obsever. </para>
 </sect1>

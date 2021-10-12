@@ -2,6 +2,8 @@
 <doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
   <compound refid="main_8md" kind="file"><name>main.md</name>
   </compound>
+  <compound refid="swe_2main_8md" kind="file"><name>main.md</name>
+  </compound>
   <compound refid="advancers_8md" kind="file"><name>advancers.md</name>
   </compound>
   <compound refid="steppers__tutorial1_8md" kind="file"><name>steppers_tutorial1.md</name>
@@ -68,6 +70,8 @@
   </compound>
   <compound refid="md_pages_solvers_nonlinear_tutorial_4" kind="page"><name>md_pages_solvers_nonlinear_tutorial_4</name>
   </compound>
+  <compound refid="md_pages_swe_main" kind="page"><name>md_pages_swe_main</name>
+  </compound>
   <compound refid="md_pages_utils_logger" kind="page"><name>md_pages_utils_logger</name>
   </compound>
   <compound refid="dir_dfdc6e3fe3dd83592e3200d32aae2cb7" kind="dir"><name>pages/ode</name>
@@ -77,6 +81,8 @@
   <compound refid="dir_6a89a6e57a3601fc15116e5484f781e5" kind="dir"><name>pages/rom</name>
   </compound>
   <compound refid="dir_4cccaec18f48de5ad93eff32399233b5" kind="dir"><name>pages/solvers_nonlinear</name>
+  </compound>
+  <compound refid="dir_7727e9f4b0e1be84717ab35bab219223" kind="dir"><name>pages/swe</name>
   </compound>
   <compound refid="dir_4708a13a89458f6d0cd5a4a9a3b52825" kind="dir"><name>pages/utils</name>
   </compound>

@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="md_pages_swe_main" kind="page">
+    <compoundname>md_pages_swe_main</compoundname>
+    <title>Shallow Water Equations Demo</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>We consider the shallow water equations (SWE) on the spatial domain <formula id="3">$\Omega = [-\frac{L}{2},\frac{L}{2}] \times [-\frac{L}{2},\frac{L}{2}]$</formula>: <formula id="4">\[ \begin{split} &amp;\frac{\partial h}{\partial t} + \frac{\partial}{\partial x }( h u) + \frac{\partial}{\partial y }( h v) = 0,\\ &amp;\frac{\partial h u}{\partial t} + \frac{\partial}{\partial x} (h u^2 + \frac{1}{2} \mu_1 h^2) + \frac{\partial}{\partial y }( h u v) = \mu_3 hv,\\ &amp;\frac{\partial h v}{\partial t} + \frac{\partial}{\partial x} (h u v) + \frac{\partial}{\partial y }( h v^2 + \frac{1}{2} \mu_1 h^2) = \mu_3 hu. \end{split} \]</formula></para>
+<para>In the above, <formula id="5">$h : \Omega \rightarrow \mathbb{R}$</formula> is the height of the water surface, <formula id="6">$u : \Omega \rightarrow \mathbb{R}$</formula> is the x-velocity, and <formula id="7">$v : \Omega \rightarrow \mathbb{R}$</formula> is the y-velocity. The system has three parameters:<itemizedlist>
+<listitem><para><formula id="8">$\mu_1$</formula> is the gravity parameter</para>
+</listitem><listitem><para><formula id="9">$\mu_2$</formula> controls the magnitude of the initial pulse</para>
+</listitem><listitem><para><formula id="10">$\mu_3$</formula> controls the magnitude of the Coriolis forcing</para>
+</listitem></itemizedlist>
+</para>
+<para><image type="html" name="swetut_f1.gif" width="90%"></image>
+</para>
+<para><linebreak/>
+</para>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-note m-warning" /></para>
+<para><parblock><para>We are updating the code to use latest pressio, we will repost this soon. </para>
+</parblock></para>
+    </detaileddescription>
+    <location file="pages/swe/main.md"/>
+  </compounddef>
+</doxygen>
