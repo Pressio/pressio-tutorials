@@ -79,8 +79,7 @@
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>scalar_t<sp/>dt<sp/>=<sp/>1.;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_steps<sp/>=<sp/>3;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>Observer<sp/>obs;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/>pressio::ode::advance_n_steps_and_observe(</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>problem.stepper(),<sp/>romState,<sp/>0.,<sp/>dt,<sp/>num_steps,<sp/>obs);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pressio::ode::advance_n_steps_and_observe(problem,<sp/>romState,<sp/>0.,<sp/>dt,<sp/>num_steps,<sp/>obs);</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/>pressio::log::finalize();</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>

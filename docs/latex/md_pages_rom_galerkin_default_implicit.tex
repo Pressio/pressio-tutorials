@@ -80,16 +80,15 @@ This tutorial demonstrates how to ...
 \DoxyCodeLine{  \textcolor{keyword}{auto} problem = pressio::rom::galerkin::create\_default\_implicit\_problem}
 \DoxyCodeLine{    (odescheme, fomSystem, decoder, romState, fomReferenceState);}
 \DoxyCodeLine{  \textcolor{keyword}{using} problem\_t = decltype(problem);}
-\DoxyCodeLine{  \textcolor{keyword}{auto} \& stepperObj = problem.stepper();}
 \DoxyCodeLine{}
 \DoxyCodeLine{  \textcolor{keyword}{using} galerkin\_jacobian\_t = \textcolor{keyword}{typename} pressio::Traits<problem\_t>::galerkin\_jacobian\_type;}
 \DoxyCodeLine{  \textcolor{keyword}{using} lin\_solver\_t = pls::Solver<pls::iterative::LSCG, galerkin\_jacobian\_t>;}
 \DoxyCodeLine{  lin\_solver\_t linearSolverObj;}
-\DoxyCodeLine{  \textcolor{keyword}{auto} nonLinSolver = pnonls::create\_newton\_raphson(stepperObj, romState, linearSolverObj);}
+\DoxyCodeLine{  \textcolor{keyword}{auto} nonLinSolver = pnonls::create\_newton\_raphson(problem, romState, linearSolverObj);}
 \DoxyCodeLine{  nonLinSolver.setMaxIterations(1);}
 \DoxyCodeLine{}
 \DoxyCodeLine{  scalar\_t dt = 2.;}
-\DoxyCodeLine{  pressio::ode::advance\_n\_steps(stepperObj, romState, 0.0, dt, 1, nonLinSolver);}
+\DoxyCodeLine{  pressio::ode::advance\_n\_steps(problem, romState, 0.0, dt, 1, nonLinSolver);}
 \DoxyCodeLine{  std::cout << romState << std::endl;}
 \DoxyCodeLine{}
 \DoxyCodeLine{  pressio::log::finalize();}

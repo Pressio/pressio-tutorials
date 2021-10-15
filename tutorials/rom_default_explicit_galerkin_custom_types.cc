@@ -251,8 +251,7 @@ int main(int argc, char *argv[])
   const scalar_t dt = 1.;
   const int num_steps = 3;
   Observer obs;
-  pressio::ode::advance_n_steps_and_observe(
-      problem.stepper(), romState, 0., dt, num_steps, obs);
+  pressio::ode::advance_n_steps_and_observe(problem, romState, 0., dt, num_steps, obs);
 
   pressio::log::finalize();
 }

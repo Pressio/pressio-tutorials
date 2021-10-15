@@ -121,16 +121,15 @@ int main(int argc, char *argv[])
   auto problem = pressio::rom::galerkin::create_default_implicit_problem
     (odescheme, fomSystem, decoder, romState, fomReferenceState);
   using problem_t = decltype(problem);
-  auto & stepperObj = problem.stepper();
 
   using galerkin_jacobian_t = typename pressio::Traits<problem_t>::galerkin_jacobian_type;
   using lin_solver_t = pls::Solver<pls::iterative::LSCG, galerkin_jacobian_t>;
   lin_solver_t linearSolverObj;
-  auto nonLinSolver = pnonls::create_newton_raphson(stepperObj, romState, linearSolverObj);
+  auto nonLinSolver = pnonls::create_newton_raphson(problem, romState, linearSolverObj);
   nonLinSolver.setMaxIterations(1);
 
   scalar_t dt = 2.;
-  pressio::ode::advance_n_steps(stepperObj, romState, 0.0, dt, 1, nonLinSolver);
+  pressio::ode::advance_n_steps(problem, romState, 0.0, dt, 1, nonLinSolver);
   std::cout << romState << std::endl;
 
   pressio::log::finalize();
