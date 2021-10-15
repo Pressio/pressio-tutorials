@@ -326,10 +326,10 @@
   <span class="k">const</span> <span class="n">scalar_t</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span>
   <span class="k">const</span> <span class="kt">int</span> <span class="n">num_steps</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
   <span class="n">Observer</span> <span class="n">obs</span><span class="p">;</span>
-  <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">advance_n_steps_and_observe</span><span class="p">(</span>
-      <span class="n">problem</span><span class="p">.</span><span class="n">stepper</span><span class="p">(),</span> <span class="n">romState</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">obs</span><span class="p">);</span>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">advance_n_steps_and_observe</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">romState</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">obs</span><span class="p">);</span>
 
-  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span></pre></section>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
+<span class="p">}</span></pre></section>
       </div>
     </div>
   </div>
