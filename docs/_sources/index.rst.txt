@@ -34,7 +34,7 @@ Organization and structure
    If you are in this category, :ref:`start exploring here <knowntypesanchor>`.
 
 
-.. admonition:: users relying on data types/structures *not yet known* to pressio
+.. admonition:: users relying on data types/structures *not (yet) supported* in pressio
 
    This refers to truly arbitrary data types that pressio does not know how to manipulate or perform operations on, so the user is responsible to provide all the necessary operations and info to do so. This is actually an advantage from a certain viewpoint, since it gives you *full control* to make all the operations needed as efficient as possible.
 
