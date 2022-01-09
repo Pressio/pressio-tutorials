@@ -1,0 +1,93 @@
+
+
+\begin{DoxyParagraph}{}
+This tutorial demonstrates how to use the normal-\/equations-\/based Gauss-\/\+Newton solver from {\ttfamily pressio/solvers\+\_\+nonlinear} using data types natively supported in pressio. Here, we use Eigen data types, but a similar code can be used for other natively supported types.
+\end{DoxyParagraph}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_3_autotoc_md48}{}\doxysection{Problem class}\label{md_pages_solvers_nonlinear_tutorial_3_autotoc_md48}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }MyRosenbrockSystem}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type  = Eigen::VectorXd;}
+\DoxyCodeLine{  \textcolor{keyword}{using} residual\_type = state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = Eigen::MatrixXd;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  residual\_type createResidual()\textcolor{keyword}{ const}\{ \textcolor{keywordflow}{return} residual\_type(6);   \}}
+\DoxyCodeLine{  jacobian\_type createJacobian()\textcolor{keyword}{ const}\{ \textcolor{keywordflow}{return} jacobian\_type(6, 4);\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} residual(\textcolor{keyword}{const} state\_type\& x, residual\_type \& res)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x1 = x(0);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x2 = x(1);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x3 = x(2);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x4 = x(3);}
+\DoxyCodeLine{    res(0) = 10.*(x4 -\/ x3*x3);}
+\DoxyCodeLine{    res(1) = 10.*(x3 -\/ x2*x2);}
+\DoxyCodeLine{    res(2) = 10.*(x2 -\/ x1*x1);}
+\DoxyCodeLine{    res(3) = (1.-\/x1);}
+\DoxyCodeLine{    res(4) = (1.-\/x2);}
+\DoxyCodeLine{    res(5) = (1.-\/x3);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} jacobian(\textcolor{keyword}{const} state\_type \& x, jacobian\_type \& JJ)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x1 = x(0);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x2 = x(1);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} \& x3 = x(2);}
+\DoxyCodeLine{    JJ.setZero();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    JJ(0,2) = -\/20.*x3;}
+\DoxyCodeLine{    JJ(0,3) = 10.;}
+\DoxyCodeLine{    JJ(1,1) = -\/20.*x2;}
+\DoxyCodeLine{    JJ(1,2) = 10.;}
+\DoxyCodeLine{    JJ(2,0) = -\/20.*x1;}
+\DoxyCodeLine{    JJ(2,1) = 10.;}
+\DoxyCodeLine{    JJ(3,0) = -\/1.;}
+\DoxyCodeLine{    JJ(4,1) = -\/1.;}
+\DoxyCodeLine{    JJ(5,2) = -\/1.;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_3_autotoc_md49}{}\doxysection{Main}\label{md_pages_solvers_nonlinear_tutorial_3_autotoc_md49}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }plog   = pressio::log;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pls    = pressio::linearsolvers;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pnonls = pressio::nonlinearsolvers;}
+\DoxyCodeLine{  plog::initialize(pressio::logto::terminal);}
+\DoxyCodeLine{  plog::setVerbosity(\{plog::level::info\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} problem\_t = MyRosenbrockSystem;}
+\DoxyCodeLine{  problem\_t problem;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_t   = \textcolor{keyword}{typename} problem\_t::state\_type;}
+\DoxyCodeLine{  state\_t x(4);}
+\DoxyCodeLine{  x(0) = -\/0.05; x(1) = 1.1; x(2) = 1.2; x(3) = 1.5;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} hessian\_t = Eigen::MatrixXd;}
+\DoxyCodeLine{  \textcolor{keyword}{using} lin\_tag      = pls::direct::HouseholderQR;}
+\DoxyCodeLine{  \textcolor{keyword}{using} lin\_solver\_t = pls::Solver<lin\_tag, hessian\_t>;}
+\DoxyCodeLine{  lin\_solver\_t linSolver;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{auto} gnSolver = pnonls::create\_gauss\_newton(problem, x, linSolver);}
+\DoxyCodeLine{  gnSolver.setTolerance(1e-\/5);}
+\DoxyCodeLine{  gnSolver.solve(problem, x);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// check solution}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: \(\backslash\)n "{}}}
+\DoxyCodeLine{            << \textcolor{stringliteral}{"{}["{}} << x(0) << \textcolor{stringliteral}{"{} "{}} << x(1) << \textcolor{stringliteral}{"{} "{}} << x(2) << \textcolor{stringliteral}{"{} "{}} << x(3) << \textcolor{stringliteral}{"{} "{}} << \textcolor{stringliteral}{"{}] \(\backslash\)n"{}}}
+\DoxyCodeLine{            << \textcolor{stringliteral}{"{}Expected solution: \(\backslash\)n "{}}}
+\DoxyCodeLine{            << \textcolor{stringliteral}{"{}[1.0000000156741, 0.99999999912477, 0.99999999651993, 0.99999998889888]"{}}}
+\DoxyCodeLine{            << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  plog::finalize();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_3_autotoc_md50}{}\doxysection{Full Code}\label{md_pages_solvers_nonlinear_tutorial_3_autotoc_md50}
+The full code is available TODO. 

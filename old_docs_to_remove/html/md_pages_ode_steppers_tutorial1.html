@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Explicit Time Integration for Known Types | Pressio|C++ Tutorials</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="index.html" id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">Pressio|C++ Tutorials</a>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="md_pages_utils_logger.html">logger</a></li>
+            <li>
+              <a>solvers nonlinear</a>
+              <ol>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_0.html">General options </a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_1.html">Newton-Raphson (known types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_2.html">Newton-Raphson (custom types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_3.html">Gauss-Newton normal equations (known types)</a></li>
+                <li><a href="md_pages_solvers_nonlinear_tutorial_4.html">Gauss-Newton normal equations (custom types)</a></li>
+              </ol>
+            </li>
+            <li>
+              <a>ode</a>
+              <ol>
+                <li><a href="md_pages_ode_advancers.html">Advancers</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial1.html">Explicit Time Integration (known types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial2.html">Explicit Time Integration (custom types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial3.html">Implicit Time Integration (known types)</a></li>
+                <li><a href="md_pages_ode_steppers_tutorial4.html">Implicit Time Integration (custom types)</a></li>
+              </ol>
+            </li>
+            <li>
+              <a>pROMs</a>
+              <ol>
+                <li><a href="md_pages_rom_tutorial_lin_dec.html">Linear Decoder (known types)</a></li>
+                <li><a href="md_pages_rom_tutorial_lin_dec_custom_types.html">Linear Decoder (custom types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_explicit.html">Default Explicit Galerkin (known types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_explicit_custom_types.html">Default Explicit Galerkin (custom types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_implicit.html">Default Implicit Galerkin (known types)</a></li>
+                <li><a href="md_pages_rom_galerkin_default_implicit_custom_types.html">Default Implicit Galerkin (custom types)</a></li>
+              </ol>
+            </li>
+            <li>
+              <a>Full Demos</a>
+              <ol>
+                <li><a href="md_pages_swe_main.html">Shallow Water Eq</a></li>
+              </ol>
+            </li>
+            <li><a href="https://github.com/Pressio/pressio-tutorials">Github Page</a></li>
+            <li><a></a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="8">
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          Explicit Time Integration for Known Types
+        </h1>
+<aside class="m-block m-info"><p>This tutorial demonstrates how to use the pressio/ode component to run explicit time integration for a system of ODEs that uses data types natively supported in pressio. By natively supported, we mean data types that pressio knows how to manipulate and perform computation on, and therefore the user does not need to provide any auxiliary information. Here, we use Eigen data types as an example, but the same code can be used for other natively supported types.</p></aside><p>We demonstate how to integrate in time the following system of ODEs:</p><div class="m-math"><svg style="width: 5.136em; height: 2.562em;" viewBox="170.218811 -24.590612 49.300855 24.590612">
+<title>
+\[ \frac{d \mathbf{y}}{d t} = 10 \mathbf{y} \]
+</title>
+<defs>
+<path id='eq1-g2-48' d='M5.355915-3.825654C5.355915-4.817933 5.296139-5.786301 4.865753-6.694894C4.375592-7.687173 3.514819-7.950187 2.929016-7.950187C2.235616-7.950187 1.3868-7.603487 .944458-6.611208C.609714-5.858032 .490162-5.116812 .490162-3.825654C.490162-2.666002 .573848-1.793275 1.004234-.944458C1.470486-.035866 2.295392 .251059 2.917061 .251059C3.957161 .251059 4.554919-.37061 4.901619-1.06401C5.332005-1.960648 5.355915-3.132254 5.355915-3.825654ZM2.917061 .011955C2.534496 .011955 1.75741-.203238 1.530262-1.506351C1.398755-2.223661 1.398755-3.132254 1.398755-3.969116C1.398755-4.94944 1.398755-5.834122 1.590037-6.539477C1.793275-7.340473 2.402989-7.711083 2.917061-7.711083C3.371357-7.711083 4.064757-7.436115 4.291905-6.40797C4.447323-5.726526 4.447323-4.782067 4.447323-3.969116C4.447323-3.16812 4.447323-2.259527 4.315816-1.530262C4.088667-.215193 3.335492 .011955 2.917061 .011955Z'/>
+<path id='eq1-g2-49' d='M3.443088-7.663263C3.443088-7.938232 3.443088-7.950187 3.203985-7.950187C2.917061-7.627397 2.319303-7.185056 1.08792-7.185056V-6.838356C1.362889-6.838356 1.960648-6.838356 2.618182-7.149191V-.920548C2.618182-.490162 2.582316-.3467 1.530262-.3467H1.159651V0C1.482441-.02391 2.642092-.02391 3.036613-.02391S4.578829-.02391 4.901619 0V-.3467H4.531009C3.478954-.3467 3.443088-.490162 3.443088-.920548V-7.663263Z'/>
+<path id='eq1-g2-61' d='M8.069738-3.873474C8.237111-3.873474 8.452304-3.873474 8.452304-4.088667C8.452304-4.315816 8.249066-4.315816 8.069738-4.315816H1.028144C.860772-4.315816 .645579-4.315816 .645579-4.100623C.645579-3.873474 .848817-3.873474 1.028144-3.873474H8.069738ZM8.069738-1.649813C8.237111-1.649813 8.452304-1.649813 8.452304-1.865006C8.452304-2.092154 8.249066-2.092154 8.069738-2.092154H1.028144C.860772-2.092154 .645579-2.092154 .645579-1.876961C.645579-1.649813 .848817-1.649813 1.028144-1.649813H8.069738Z'/>
+<path id='eq1-g0-121' d='M5.917808-4.531009C5.989539-4.698381 6.03736-4.794022 6.802491-4.794022V-5.308095C6.396015-5.284184 6.348194-5.284184 5.858032-5.284184C5.535243-5.284184 5.511333-5.284184 4.829888-5.308095V-4.794022C4.841843-4.794022 5.403736-4.794022 5.403736-4.638605C5.403736-4.60274 5.36787-4.531009 5.355915-4.495143L3.957161-1.482441L2.426899-4.794022H3.084433V-5.308095C2.797509-5.284184 1.984558-5.284184 1.649813-5.284184C1.303113-5.284184 .597758-5.284184 .286924-5.308095V-4.794022H1.052055L3.263761 0C3.203985 .143462 3.036613 .490162 2.976837 .633624C2.725778 1.171606 2.343213 1.996513 1.506351 1.996513C1.458531 1.996513 1.315068 1.996513 1.183562 1.924782C1.207472 1.912827 1.566127 1.769365 1.566127 1.315068C1.566127 .920548 1.279203 .669489 .920548 .669489C.549938 .669489 .263014 .920548 .263014 1.327024C.263014 1.888917 .789041 2.391034 1.506351 2.391034C2.486675 2.391034 3.132254 1.506351 3.371357 .980324L5.917808-4.531009Z'/>
+<path id='eq1-g1-100' d='M6.01345-7.998007C6.025405-8.045828 6.049315-8.117559 6.049315-8.177335C6.049315-8.296887 5.929763-8.296887 5.905853-8.296887C5.893898-8.296887 5.308095-8.249066 5.248319-8.237111C5.045081-8.225156 4.865753-8.201245 4.65056-8.18929C4.351681-8.16538 4.267995-8.153425 4.267995-7.938232C4.267995-7.81868 4.363636-7.81868 4.531009-7.81868C5.116812-7.81868 5.128767-7.711083 5.128767-7.591532C5.128767-7.519801 5.104857-7.424159 5.092902-7.388294L4.363636-4.483188C4.23213-4.794022 3.90934-5.272229 3.287671-5.272229C1.936737-5.272229 .478207-3.526775 .478207-1.75741C.478207-.573848 1.171606 .119552 1.984558 .119552C2.642092 .119552 3.203985-.394521 3.53873-.789041C3.658281-.083686 4.220174 .119552 4.578829 .119552S5.224408-.095641 5.439601-.526027C5.630884-.932503 5.798257-1.661768 5.798257-1.709589C5.798257-1.769365 5.750436-1.817186 5.678705-1.817186C5.571108-1.817186 5.559153-1.75741 5.511333-1.578082C5.332005-.872727 5.104857-.119552 4.614695-.119552C4.267995-.119552 4.244085-.430386 4.244085-.669489C4.244085-.71731 4.244085-.968369 4.327771-1.303113L6.01345-7.998007ZM3.598506-1.422665C3.53873-1.219427 3.53873-1.195517 3.371357-.968369C3.108344-.633624 2.582316-.119552 2.020423-.119552C1.530262-.119552 1.255293-.561893 1.255293-1.267248C1.255293-1.924782 1.625903-3.263761 1.853051-3.765878C2.259527-4.60274 2.82142-5.033126 3.287671-5.033126C4.076712-5.033126 4.23213-4.052802 4.23213-3.957161C4.23213-3.945205 4.196264-3.789788 4.184309-3.765878L3.598506-1.422665Z'/>
+<path id='eq1-g1-116' d='M2.402989-4.805978H3.502864C3.730012-4.805978 3.849564-4.805978 3.849564-5.021171C3.849564-5.152677 3.777833-5.152677 3.53873-5.152677H2.486675L2.929016-6.898132C2.976837-7.065504 2.976837-7.089415 2.976837-7.173101C2.976837-7.364384 2.82142-7.47198 2.666002-7.47198C2.570361-7.47198 2.295392-7.436115 2.199751-7.053549L1.733499-5.152677H.609714C.37061-5.152677 .263014-5.152677 .263014-4.925529C.263014-4.805978 .3467-4.805978 .573848-4.805978H1.637858L.848817-1.649813C.753176-1.231382 .71731-1.111831 .71731-.956413C.71731-.394521 1.111831 .119552 1.78132 .119552C2.988792 .119552 3.634371-1.625903 3.634371-1.709589C3.634371-1.78132 3.58655-1.817186 3.514819-1.817186C3.490909-1.817186 3.443088-1.817186 3.419178-1.769365C3.407223-1.75741 3.395268-1.745455 3.311582-1.554172C3.060523-.956413 2.510585-.119552 1.817186-.119552C1.458531-.119552 1.43462-.418431 1.43462-.681445C1.43462-.6934 1.43462-.920548 1.470486-1.06401L2.402989-4.805978Z'/>
+</defs>
+<g id='eq1-page1'>
+<use x='170.218811' y='-16.288421' xlink:href='#eq1-g1-100'/>
+<use x='176.301504' y='-16.288421' xlink:href='#eq1-g0-121'/>
+<rect x='170.218811' y='-11.428548' height='.478187' width='13.36787'/>
+<use x='171.747822' y='0' xlink:href='#eq1-g1-100'/>
+<use x='177.830515' y='0' xlink:href='#eq1-g1-116'/>
+<use x='188.103024' y='-8.200662' xlink:href='#eq1-g2-61'/>
+<use x='200.528505' y='-8.200662' xlink:href='#eq1-g2-49'/>
+<use x='206.381495' y='-8.200662' xlink:href='#eq1-g2-48'/>
+<use x='212.234486' y='-8.200662' xlink:href='#eq1-g0-121'/>
+</g>
+</svg></div><p>where <svg class="m-math" style="width: 3.660em; height: 1.229em; vertical-align: -0.243em;" viewBox="0 -9.474739 35.139676 11.799346">
+<title>
+$\mathbf{y} \in R^3$
+</title>
+<defs>
+<path id='eq2-g3-51' d='M2.016438-2.662017C2.646077-2.662017 3.044583-2.199751 3.044583-1.362889C3.044583-.366625 2.478705-.071731 2.056289-.071731C1.617933-.071731 1.020174-.231133 .74122-.653549C1.028144-.653549 1.227397-.836862 1.227397-1.099875C1.227397-1.354919 1.044085-1.538232 .789041-1.538232C.573848-1.538232 .350685-1.40274 .350685-1.083935C.350685-.326775 1.163636 .167372 2.072229 .167372C3.132254 .167372 3.873474-.565878 3.873474-1.362889C3.873474-2.024408 3.347447-2.630137 2.534496-2.805479C3.164134-3.028643 3.634371-3.57061 3.634371-4.208219S2.917061-5.300125 2.088169-5.300125C1.235367-5.300125 .589788-4.837858 .589788-4.23213C.589788-3.937235 .789041-3.809714 .996264-3.809714C1.243337-3.809714 1.40274-3.985056 1.40274-4.216189C1.40274-4.511083 1.147696-4.622665 .972354-4.630635C1.307098-5.068991 1.920797-5.092902 2.064259-5.092902C2.271482-5.092902 2.87721-5.029141 2.87721-4.208219C2.87721-3.650311 2.646077-3.315567 2.534496-3.188045C2.295392-2.940971 2.11208-2.925031 1.625903-2.893151C1.474471-2.885181 1.41071-2.87721 1.41071-2.773599C1.41071-2.662017 1.482441-2.662017 1.617933-2.662017H2.016438Z'/>
+<path id='eq2-g2-82' d='M4.399502-7.352428C4.507098-7.79477 4.554919-7.81868 5.021171-7.81868H5.881943C6.910087-7.81868 7.675218-7.507846 7.675218-6.575342C7.675218-5.965629 7.364384-4.208219 4.961395-4.208219H3.610461L4.399502-7.352428ZM6.06127-4.064757C7.543711-4.387547 8.703362-5.34396 8.703362-6.372105C8.703362-7.304608 7.758904-8.16538 6.097136-8.16538H2.857285C2.618182-8.16538 2.510585-8.16538 2.510585-7.938232C2.510585-7.81868 2.594271-7.81868 2.82142-7.81868C3.53873-7.81868 3.53873-7.723039 3.53873-7.591532C3.53873-7.567621 3.53873-7.49589 3.490909-7.316563L1.876961-.884682C1.769365-.466252 1.745455-.3467 .920548-.3467C.645579-.3467 .561893-.3467 .561893-.119552C.561893 0 .6934 0 .729265 0C.944458 0 1.195517-.02391 1.422665-.02391H2.833375C3.048568-.02391 3.299626 0 3.514819 0C3.610461 0 3.741968 0 3.741968-.227148C3.741968-.3467 3.634371-.3467 3.455044-.3467C2.725778-.3467 2.725778-.442341 2.725778-.561893C2.725778-.573848 2.725778-.657534 2.749689-.753176L3.550685-3.969116H4.985305C6.121046-3.969116 6.336239-3.251806 6.336239-2.857285C6.336239-2.677958 6.216687-2.211706 6.133001-1.900872C6.001494-1.350934 5.965629-1.219427 5.965629-.992279C5.965629-.143462 6.659029 .251059 7.460025 .251059C8.428394 .251059 8.846824-.932503 8.846824-1.099875C8.846824-1.183562 8.787049-1.219427 8.715318-1.219427C8.619676-1.219427 8.595766-1.147696 8.571856-1.052055C8.284932-.203238 7.79477 .011955 7.49589 .011955S7.005729-.119552 7.005729-.657534C7.005729-.944458 7.149191-2.032379 7.161146-2.092154C7.220922-2.534496 7.220922-2.582316 7.220922-2.677958C7.220922-3.550685 6.515567-3.921295 6.06127-4.064757Z'/>
+<path id='eq2-g1-50' d='M6.551432-2.749689C6.75467-2.749689 6.969863-2.749689 6.969863-2.988792S6.75467-3.227895 6.551432-3.227895H1.482441C1.625903-4.829888 3.000747-5.977584 4.686426-5.977584H6.551432C6.75467-5.977584 6.969863-5.977584 6.969863-6.216687S6.75467-6.455791 6.551432-6.455791H4.662516C2.618182-6.455791 .992279-4.901619 .992279-2.988792S2.618182 .478207 4.662516 .478207H6.551432C6.75467 .478207 6.969863 .478207 6.969863 .239103S6.75467 0 6.551432 0H4.686426C3.000747 0 1.625903-1.147696 1.482441-2.749689H6.551432Z'/>
+<path id='eq2-g0-121' d='M5.917808-4.531009C5.989539-4.698381 6.03736-4.794022 6.802491-4.794022V-5.308095C6.396015-5.284184 6.348194-5.284184 5.858032-5.284184C5.535243-5.284184 5.511333-5.284184 4.829888-5.308095V-4.794022C4.841843-4.794022 5.403736-4.794022 5.403736-4.638605C5.403736-4.60274 5.36787-4.531009 5.355915-4.495143L3.957161-1.482441L2.426899-4.794022H3.084433V-5.308095C2.797509-5.284184 1.984558-5.284184 1.649813-5.284184C1.303113-5.284184 .597758-5.284184 .286924-5.308095V-4.794022H1.052055L3.263761 0C3.203985 .143462 3.036613 .490162 2.976837 .633624C2.725778 1.171606 2.343213 1.996513 1.506351 1.996513C1.458531 1.996513 1.315068 1.996513 1.183562 1.924782C1.207472 1.912827 1.566127 1.769365 1.566127 1.315068C1.566127 .920548 1.279203 .669489 .920548 .669489C.549938 .669489 .263014 .920548 .263014 1.327024C.263014 1.888917 .789041 2.391034 1.506351 2.391034C2.486675 2.391034 3.132254 1.506351 3.371357 .980324L5.917808-4.531009Z'/>
+</defs>
+<g id='eq2-page1'>
+<use x='0' y='0' xlink:href='#eq2-g0-121'/>
+<use x='10.60601' y='0' xlink:href='#eq2-g1-50'/>
+<use x='21.896978' y='0' xlink:href='#eq2-g2-82'/>
+<use x='30.905493' y='-4.338437' xlink:href='#eq2-g3-51'/>
+</g>
+</svg> is the state and <svg class="m-math" style="width: 0.440em; height: 0.766em; vertical-align: -0.000em;" viewBox="0 -7.353395 4.22716 7.353395">
+<title>
+$t$
+</title>
+<defs>
+<path id='eq3-g0-116' d='M2.402989-4.805978H3.502864C3.730012-4.805978 3.849564-4.805978 3.849564-5.021171C3.849564-5.152677 3.777833-5.152677 3.53873-5.152677H2.486675L2.929016-6.898132C2.976837-7.065504 2.976837-7.089415 2.976837-7.173101C2.976837-7.364384 2.82142-7.47198 2.666002-7.47198C2.570361-7.47198 2.295392-7.436115 2.199751-7.053549L1.733499-5.152677H.609714C.37061-5.152677 .263014-5.152677 .263014-4.925529C.263014-4.805978 .3467-4.805978 .573848-4.805978H1.637858L.848817-1.649813C.753176-1.231382 .71731-1.111831 .71731-.956413C.71731-.394521 1.111831 .119552 1.78132 .119552C2.988792 .119552 3.634371-1.625903 3.634371-1.709589C3.634371-1.78132 3.58655-1.817186 3.514819-1.817186C3.490909-1.817186 3.443088-1.817186 3.419178-1.769365C3.407223-1.75741 3.395268-1.745455 3.311582-1.554172C3.060523-.956413 2.510585-.119552 1.817186-.119552C1.458531-.119552 1.43462-.418431 1.43462-.681445C1.43462-.6934 1.43462-.920548 1.470486-1.06401L2.402989-4.805978Z'/>
+</defs>
+<g id='eq3-page1'>
+<use x='0' y='0' xlink:href='#eq3-g0-116'/>
+</g>
+</svg> is time.</p><section id="autotoc_md11"><h2><a href="#autotoc_md11">Include</a></h2><pre class="m-code"><span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pressio/ode_steppers_explicit.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span></pre></section><section id="autotoc_md12"><h2><a href="#autotoc_md12">Problem class</a></h2><pre class="m-code"><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">scalar_t</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nc">MySystem</span><span class="p">{</span>
+  <span class="k">using</span> <span class="n">scalar_type</span>   <span class="o">=</span> <span class="n">scalar_t</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">state_type</span>    <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_t</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="k">using</span> <span class="n">velocity_type</span> <span class="o">=</span> <span class="n">state_type</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+  <span class="kt">void</span> <span class="n">velocity</span><span class="p">(</span><span class="k">const</span> <span class="n">state_type</span> <span class="o">&amp;</span> <span class="n">y</span><span class="p">,</span>
+                <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">t</span><span class="p">,</span>
+                <span class="n">velocity_type</span> <span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span>
+  <span class="p">{</span>
+    <span class="k">constexpr</span> <span class="n">scalar_type</span> <span class="n">ten</span><span class="p">{</span><span class="mi">10</span><span class="p">};</span>
+    <span class="n">rhs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="n">ten</span> <span class="o">*</span> <span class="n">y</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">rhs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">ten</span> <span class="o">*</span> <span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">rhs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="n">ten</span> <span class="o">*</span> <span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="p">};</span>
+
+  <span class="n">velocity_type</span> <span class="nf">createVelocity</span><span class="p">()</span> <span class="k">const</span><span class="p">{</span>
+    <span class="k">return</span> <span class="n">velocity_type</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">};</span></pre></section><section id="autotoc_md13"><h2><a href="#autotoc_md13">Main</a></h2><pre class="m-code"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span>
+
+  <span class="k">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="kt">double</span><span class="p">;</span>
+
+  <span class="c1">// create the system/app object</span>
+  <span class="k">using</span> <span class="n">app_t</span> <span class="o">=</span> <span class="n">MySystem</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="n">app_t</span> <span class="n">appObj</span><span class="p">;</span>
+
+  <span class="c1">// create and initialize the state</span>
+  <span class="k">using</span> <span class="n">state_t</span> <span class="o">=</span> <span class="k">typename</span> <span class="nc">app_t</span><span class="o">::</span><span class="n">state_type</span><span class="p">;</span>
+  <span class="n">state_t</span> <span class="n">y</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+  <span class="n">y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">;</span> <span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">;</span>
+
+  <span class="c1">// instantiate the stepper</span>
+  <span class="k">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="p">;</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">scheme</span> <span class="o">=</span> <span class="n">pode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
+  <span class="k">auto</span> <span class="n">stepperObj</span> <span class="o">=</span> <span class="n">pode</span><span class="o">::</span><span class="n">create_explicit_stepper</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">appObj</span><span class="p">);</span>
+
+  <span class="c1">// integrate in time</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">scalar_type</span> <span class="n">startTime</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">pode</span><span class="o">::</span><span class="n">step_count_type</span> <span class="n">numSteps</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">startTime</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">numSteps</span><span class="p">);</span>
+
+  <span class="c1">// check solution</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Computed solution: [&quot;</span>
+            <span class="o">&lt;&lt;</span> <span class="n">y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;] &quot;</span>
+            <span class="o">&lt;&lt;</span> <span class="s">&quot;Expected solution: [2,4,6] &quot;</span>
+            <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></pre></section><section id="autotoc_md14"><h2><a href="#autotoc_md14">Full Code</a></h2><p>The full code is available <a href="https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/ode_steppers_1.cc">here</a>.</p></section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>Pressio|C++ Tutorials. Created with <a href="https://doxygen.org/">Doxygen</a> 1.9.1 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

@@ -1,0 +1,196 @@
+
+
+\begin{DoxyParagraph}{}
+This tutorial demonstrates how to use the Newton-\/\+Raphson solver from pressio/solvers\+\_\+nonlinear using custom data types.
+\end{DoxyParagraph}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md41}{}\doxysection{Custom data types}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md41}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomVector}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  CustomVector(std::size\_t ext) : d\_(ext)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  ScalarType \& operator[](\textcolor{keywordtype}{int} i)\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator[](\textcolor{keywordtype}{int} i)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} d\_[i]; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? d\_.size() : 0; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [](ScalarType \& v)\{ v= 0.; \});}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }CustomMatrix}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} value\_type = ScalarType;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  CustomMatrix(std::size\_t nr, std::size\_t nc)}
+\DoxyCodeLine{    : num\_rows\_(nr), num\_cols\_(nc), d\_(nr*nc)\{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  std::size\_t extent(\textcolor{keywordtype}{int} k)\textcolor{keyword}{const }\{ \textcolor{keywordflow}{return} (k==0) ? num\_rows\_ : num\_cols\_; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  ScalarType \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
+\DoxyCodeLine{  \textcolor{keyword}{const} ScalarType \& operator()(\textcolor{keywordtype}{int} i, \textcolor{keywordtype}{int} j)\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} d\_[num\_cols\_*i+j]; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} fill(ScalarType value)\{}
+\DoxyCodeLine{    std::for\_each(d\_.begin(), d\_.end(), [=](ScalarType \& v)\{ v= value; \});}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{  std::size\_t num\_rows\_ = \{\};}
+\DoxyCodeLine{  std::size\_t num\_cols\_ = \{\};}
+\DoxyCodeLine{  std::vector<ScalarType> d\_ = \{\};}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md42}{}\doxysection{Problem class}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md42}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type = CustomVector<scalar\_type>;}
+\DoxyCodeLine{  \textcolor{keyword}{using} residual\_type = state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = CustomMatrix<scalar\_type>;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  residual\_type createResidual()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} residual\_type\{2\}; \}}
+\DoxyCodeLine{  jacobian\_type createJacobian()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} jacobian\_type\{2,2\}; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} residual(\textcolor{keyword}{const} state\_type\& x,}
+\DoxyCodeLine{                residual\_type\& res)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    res[0] =  x[0]*x[0]*x[0] + x[1] -\/ 1.0;}
+\DoxyCodeLine{    res[1] = -\/x[0] + x[1]*x[1]*x[1] + 1.0;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} jacobian(\textcolor{keyword}{const} state\_type\& x, jacobian\_type\& J)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    J(0,0) = 3.0*x[0]*x[0];}
+\DoxyCodeLine{    J(0,1) =  1.0;}
+\DoxyCodeLine{    J(1,0) = -\/1.0;}
+\DoxyCodeLine{    J(1,1) = 3.0*x[1]*x[1];}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md43}{}\doxysection{Specialize trait and ops}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md43}
+Because we are working with custom data types, we need to provide the necessary operations to do the algebra that pressio needs. This is done via specialization as follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{namespace }pressio\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomVector<T>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> \textcolor{keyword}{struct }Traits<CustomMatrix<T>>\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} size\_type = std::size\_t;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{namespace }ops\{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T> }
+\DoxyCodeLine{CustomVector<T> clone(\textcolor{keyword}{const} CustomVector<T> \& src)\{ \textcolor{keywordflow}{return} src; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{CustomMatrix<T> clone(\textcolor{keyword}{const} CustomMatrix<T> \& src)\{ \textcolor{keywordflow}{return} src; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomVector<T> \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} set\_zero(CustomMatrix<T> \& o)\{ o.fill(0); \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{T norm2(\textcolor{keyword}{const} CustomVector<T> \& v)\{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} std::sqrt(v[0]*v[0] + v[1]*v[1]);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} update(CustomVector<T> \& v, \textcolor{keywordtype}{double} a,}
+\DoxyCodeLine{        \textcolor{keyword}{const} CustomVector<T> \& v1, \textcolor{keywordtype}{double} b)\{}
+\DoxyCodeLine{  v[0] = v[0]*a + b*v1[0];}
+\DoxyCodeLine{  v[1] = v[1]*a + b*v1[1];}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} T>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} scale(CustomVector<T> \& v, \textcolor{keywordtype}{double} factor)\{}
+\DoxyCodeLine{  v[0] = v[0]*factor;}
+\DoxyCodeLine{  v[1] = v[1]*factor;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\}\}\textcolor{comment}{//end namespace pressio::ops}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md44}{}\doxysection{Custom Linear solver}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md44}
+In this example, we use a custom linear solver.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{class} ScalarType>}
+\DoxyCodeLine{\textcolor{keyword}{struct }LinearSolver\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} matrix\_type = CustomMatrix<ScalarType>;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} solve(\textcolor{keyword}{const} matrix\_type \& M, }
+\DoxyCodeLine{             \textcolor{keyword}{const} CustomVector<ScalarType> \& rhs, }
+\DoxyCodeLine{             CustomVector<ScalarType> \& x)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} a = M(0,0);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} b = M(0,1);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} c = M(1,0);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} d = M(1,1);}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keyword}{auto} det = a*d -\/ b*c;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    x[0] = (d*rhs[0]  -\/ b*rhs[1])/det;}
+\DoxyCodeLine{    x[1] = (-\/c*rhs[0] + a*rhs[1])/det;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md45}{}\doxysection{Main}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md45}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }plog   = pressio::log;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pnonls = pressio::nonlinearsolvers;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  plog::initialize(pressio::logto::terminal);}
+\DoxyCodeLine{  plog::setVerbosity(\{plog::level::info\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} problem\_t  = MySystem;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_t    = problem\_t::state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_t   = problem\_t::scalar\_type;}
+\DoxyCodeLine{  problem\_t sys;}
+\DoxyCodeLine{  state\_t y(2);}
+\DoxyCodeLine{  y[0] = 0.001;}
+\DoxyCodeLine{  y[1] = -\/0.1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  LinearSolver<scalar\_t> linearSolverObj;}
+\DoxyCodeLine{  \textcolor{keyword}{auto} nonLinSolver = pnonls::create\_newton\_raphson(sys, y, linearSolverObj);}
+\DoxyCodeLine{  nonLinSolver.solve(sys, y);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// check solution}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
+\DoxyCodeLine{            << y[0] << \textcolor{stringliteral}{"{} "{}} << y[1] << \textcolor{stringliteral}{"{} "{}} << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{            << \textcolor{stringliteral}{"{}Expected solution: [1., 0.] "{}}}
+\DoxyCodeLine{            << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  plog::finalize();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_2_autotoc_md46}{}\doxysection{Full Code}\label{md_pages_solvers_nonlinear_tutorial_2_autotoc_md46}
+The full code is available TODO. 

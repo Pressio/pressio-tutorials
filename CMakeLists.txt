@@ -30,56 +30,65 @@ add_executable(
   utils_logger
   ${TUTDIR}/utils_logger.cc)
 
+#------------------
 # nonlinear solvers
+#------------------
 add_executable(
-  nonlinsolvers_newtonraphson_known_types
-  ${TUTDIR}/nonlinsolvers_newtonraphson_1.cc)
+  nonlinsolvers_newtonraphson_known_types_eigen
+  ${TUTDIR}/nonlinsolvers_newtonraphson_known_types_eigen.cc)
 
 add_executable(
   nonlinsolvers_newtonraphson_custom_types
-  ${TUTDIR}/nonlinsolvers_newtonraphson_2.cc)
+  ${TUTDIR}/nonlinsolvers_newtonraphson_custom_types.cc)
 
 add_executable(
-  nonlinsolvers_gn_known_types
-  ${TUTDIR}/nonlinsolvers_gn_1.cc)
+  nonlinsolvers_gn_known_types_eigen
+  ${TUTDIR}/nonlinsolvers_gn_known_types_eigen.cc)
 
 add_executable(
   nonlinsolvers_gn_custom_types
-  ${TUTDIR}/nonlinsolvers_gn_2.cc)
+  ${TUTDIR}/nonlinsolvers_gn_custom_types.cc)
 
+#------------------
 # ODE
+#------------------
 add_executable(
-  ode_steppers_known_types
-  ${TUTDIR}/ode_steppers_1.cc)
+  ode_steppers_known_types_eigen
+  ${TUTDIR}/ode_steppers_known_types_eigen.cc)
 
 add_executable(
   ode_steppers_custom_types
-  ${TUTDIR}/ode_steppers_2.cc)
+  ${TUTDIR}/ode_steppers_custom_types.cc)
 
 add_executable(
   ode_advancer
   ${TUTDIR}/ode_advancer.cc)
 
+#------------------
 # rom decoder
+#------------------
 add_executable(
-  rom_linear_decoder_known_types
-  ${TUTDIR}/rom_linear_decoder_eigen.cc)
+  rom_linear_decoder_known_types_eigen
+  ${TUTDIR}/rom_linear_decoder_known_types_eigen.cc)
 
 add_executable(
   rom_linear_decoder_custom_types
-  ${TUTDIR}/rom_linear_decoder_arbitrary_types.cc)
+  ${TUTDIR}/rom_linear_decoder_custom_types.cc)
 
+#------------------
 # rom galerkin
+#------------------
 add_executable(
-  rom_default_explicit_galerkin_known_types
-  ${TUTDIR}/rom_default_explicit_galerkin_eigen.cc)
+  rom_galerkin_default_explicit_known_types_eigen
+  ${TUTDIR}/rom_galerkin_default_explicit_known_types_eigen.cc)
 
 add_executable(
-  rom_default_explicit_galerkin_custom_types
-  ${TUTDIR}/rom_default_explicit_galerkin_custom_types.cc)
+  rom_galerkin_default_explicit_custom_types
+  ${TUTDIR}/rom_galerkin_default_explicit_custom_types.cc)
 
 add_executable(
-  rom_default_implicit_galerkin_known_types
-  ${TUTDIR}/rom_default_implicit_galerkin_eigen.cc)
+  rom_galerkin_default_implicit_known_types_eigen
+  ${TUTDIR}/rom_galerkin_default_implicit_known_types_eigen.cc)
+
 
 # #add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)

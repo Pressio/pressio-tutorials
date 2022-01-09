@@ -1,0 +1,17 @@
+We consider the shallow water equations (SWE) on the spatial domain $\Omega = [-\frac{L}{2},\frac{L}{2}] \times [-\frac{L}{2},\frac{L}{2}]$\+: \[ \begin{split} &\frac{\partial h}{\partial t} + \frac{\partial}{\partial x }( h u) + \frac{\partial}{\partial y }( h v) = 0,\\ &\frac{\partial h u}{\partial t} + \frac{\partial}{\partial x} (h u^2 + \frac{1}{2} \mu_1 h^2) + \frac{\partial}{\partial y }( h u v) = \mu_3 hv,\\ &\frac{\partial h v}{\partial t} + \frac{\partial}{\partial x} (h u v) + \frac{\partial}{\partial y }( h v^2 + \frac{1}{2} \mu_1 h^2) = \mu_3 hu. \end{split} \]
+
+In the above, $h : \Omega \rightarrow \mathbb{R}$ is the height of the water surface, $u : \Omega \rightarrow \mathbb{R}$ is the x-\/velocity, and $v : \Omega \rightarrow \mathbb{R}$ is the y-\/velocity. The system has three parameters\+:
+\begin{DoxyItemize}
+\item $\mu_1$ is the gravity parameter
+\item $\mu_2$ controls the magnitude of the initial pulse
+\item $\mu_3$ controls the magnitude of the Coriolis forcing
+\end{DoxyItemize}
+
+
+
+~\newline
+
+
+
+
+We are updating the code to use latest pressio, we will repost this soon. 

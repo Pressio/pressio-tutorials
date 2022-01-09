@@ -1,0 +1,87 @@
+
+
+\begin{DoxyParagraph}{}
+This tutorial demonstrates how to use the Newton-\/\+Raphson solver from {\ttfamily pressio/solvers\+\_\+nonlinear} using data types natively supported in pressio. Here, we use Eigen data types, but a similar code can be used for other natively supported types.
+\end{DoxyParagraph}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_1_autotoc_md36}{}\doxysection{Include}\label{md_pages_solvers_nonlinear_tutorial_1_autotoc_md36}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/solvers\_linear.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}pressio/solvers\_nonlinear.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <Eigen/Core>}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_1_autotoc_md37}{}\doxysection{Problem class}\label{md_pages_solvers_nonlinear_tutorial_1_autotoc_md37}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }MySystem}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{using} scalar\_type = double;}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_type = Eigen::VectorXd;}
+\DoxyCodeLine{  \textcolor{keyword}{using} residual\_type = state\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_type = Eigen::SparseMatrix<scalar\_type>;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  residual\_type createResidual()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} residual\_type(2);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  jacobian\_type createJacobian()\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} jacobian\_type(2, 2);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} residual(\textcolor{keyword}{const} state\_type\& x,}
+\DoxyCodeLine{                residual\_type\& res)\textcolor{keyword}{ const}}
+\DoxyCodeLine{\textcolor{keyword}{  }\{}
+\DoxyCodeLine{    res(0) =  x(0)*x(0)*x(0) + x(1) -\/ 1.0;}
+\DoxyCodeLine{    res(1) = -\/x(0) + x(1)*x(1)*x(1) + 1.0;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{void} jacobian(\textcolor{keyword}{const} state\_type\& x, jacobian\_type\& jac)\textcolor{keyword}{ const }\{}
+\DoxyCodeLine{    jac.coeffRef(0, 0) = 3.0*x(0)*x(0);}
+\DoxyCodeLine{    jac.coeffRef(0, 1) =  1.0;}
+\DoxyCodeLine{    jac.coeffRef(1, 0) = -\/1.0;}
+\DoxyCodeLine{    jac.coeffRef(1, 1) = 3.0*x(1)*x(1);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_1_autotoc_md38}{}\doxysection{Main}\label{md_pages_solvers_nonlinear_tutorial_1_autotoc_md38}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }plog   = pressio::log;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pls    = pressio::linearsolvers;}
+\DoxyCodeLine{  \textcolor{keyword}{namespace }pnonls = pressio::nonlinearsolvers;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  plog::initialize(pressio::logto::terminal);}
+\DoxyCodeLine{  plog::setVerbosity(\{plog::level::info\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} problem\_t  = MySystem;}
+\DoxyCodeLine{  problem\_t problemObj;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keyword}{using} state\_t    = problem\_t::state\_type;}
+\DoxyCodeLine{  state\_t y(2);}
+\DoxyCodeLine{  y(0) = 0.001; y(1) = -\/0.1;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// linear solver}}
+\DoxyCodeLine{  \textcolor{keyword}{using} jacobian\_t = problem\_t::jacobian\_type;}
+\DoxyCodeLine{  \textcolor{keyword}{using} lin\_solver\_t = pls::Solver<pls::iterative::LSCG, jacobian\_t>;}
+\DoxyCodeLine{  lin\_solver\_t linearSolverObj;}
+\DoxyCodeLine{  \textcolor{comment}{// nonlinear solvers}}
+\DoxyCodeLine{  \textcolor{keyword}{auto} nonLinSolver = pnonls::create\_newton\_raphson(problemObj, y, linearSolverObj);}
+\DoxyCodeLine{  nonLinSolver.solve(problemObj, y);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// check solution}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Computed solution: ["{}}}
+\DoxyCodeLine{            << y(0) << \textcolor{stringliteral}{"{} "{}} << y(1) << \textcolor{stringliteral}{"{} "{}} << \textcolor{stringliteral}{"{}] "{}}}
+\DoxyCodeLine{            << \textcolor{stringliteral}{"{}Expected solution: [1., 0.] "{}}}
+\DoxyCodeLine{            << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  plog::finalize();}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_pages_solvers_nonlinear_tutorial_1_autotoc_md39}{}\doxysection{Full Code}\label{md_pages_solvers_nonlinear_tutorial_1_autotoc_md39}
+The full code is available TODO. 

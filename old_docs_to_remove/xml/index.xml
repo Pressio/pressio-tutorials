@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
+  <compound refid="main_8md" kind="file"><name>main.md</name>
+  </compound>
+  <compound refid="swe_2main_8md" kind="file"><name>main.md</name>
+  </compound>
+  <compound refid="advancers_8md" kind="file"><name>advancers.md</name>
+  </compound>
+  <compound refid="steppers__tutorial1_8md" kind="file"><name>steppers_tutorial1.md</name>
+  </compound>
+  <compound refid="steppers__tutorial2_8md" kind="file"><name>steppers_tutorial2.md</name>
+  </compound>
+  <compound refid="steppers__tutorial3_8md" kind="file"><name>steppers_tutorial3.md</name>
+  </compound>
+  <compound refid="steppers__tutorial4_8md" kind="file"><name>steppers_tutorial4.md</name>
+  </compound>
+  <compound refid="galerkin__default__explicit_8md" kind="file"><name>galerkin_default_explicit.md</name>
+  </compound>
+  <compound refid="galerkin__default__explicit__custom__types_8md" kind="file"><name>galerkin_default_explicit_custom_types.md</name>
+  </compound>
+  <compound refid="galerkin__default__implicit_8md" kind="file"><name>galerkin_default_implicit.md</name>
+  </compound>
+  <compound refid="galerkin__default__implicit__custom__types_8md" kind="file"><name>galerkin_default_implicit_custom_types.md</name>
+  </compound>
+  <compound refid="tutorial__lin__dec_8md" kind="file"><name>tutorial_lin_dec.md</name>
+  </compound>
+  <compound refid="tutorial__lin__dec__custom__types_8md" kind="file"><name>tutorial_lin_dec_custom_types.md</name>
+  </compound>
+  <compound refid="tutorial__0_8md" kind="file"><name>tutorial_0.md</name>
+  </compound>
+  <compound refid="tutorial__1_8md" kind="file"><name>tutorial_1.md</name>
+  </compound>
+  <compound refid="tutorial__2_8md" kind="file"><name>tutorial_2.md</name>
+  </compound>
+  <compound refid="tutorial__3_8md" kind="file"><name>tutorial_3.md</name>
+  </compound>
+  <compound refid="tutorial__4_8md" kind="file"><name>tutorial_4.md</name>
+  </compound>
+  <compound refid="logger_8md" kind="file"><name>logger.md</name>
+  </compound>
+  <compound refid="md_pages_ode_advancers" kind="page"><name>md_pages_ode_advancers</name>
+  </compound>
+  <compound refid="md_pages_ode_steppers_tutorial1" kind="page"><name>md_pages_ode_steppers_tutorial1</name>
+  </compound>
+  <compound refid="md_pages_ode_steppers_tutorial2" kind="page"><name>md_pages_ode_steppers_tutorial2</name>
+  </compound>
+  <compound refid="md_pages_ode_steppers_tutorial3" kind="page"><name>md_pages_ode_steppers_tutorial3</name>
+  </compound>
+  <compound refid="md_pages_ode_steppers_tutorial4" kind="page"><name>md_pages_ode_steppers_tutorial4</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_explicit" kind="page"><name>md_pages_rom_galerkin_default_explicit</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_explicit_custom_types" kind="page"><name>md_pages_rom_galerkin_default_explicit_custom_types</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_implicit" kind="page"><name>md_pages_rom_galerkin_default_implicit</name>
+  </compound>
+  <compound refid="md_pages_rom_galerkin_default_implicit_custom_types" kind="page"><name>md_pages_rom_galerkin_default_implicit_custom_types</name>
+  </compound>
+  <compound refid="md_pages_rom_tutorial_lin_dec" kind="page"><name>md_pages_rom_tutorial_lin_dec</name>
+  </compound>
+  <compound refid="md_pages_rom_tutorial_lin_dec_custom_types" kind="page"><name>md_pages_rom_tutorial_lin_dec_custom_types</name>
+  </compound>
+  <compound refid="md_pages_solvers_nonlinear_tutorial_0" kind="page"><name>md_pages_solvers_nonlinear_tutorial_0</name>
+  </compound>
+  <compound refid="md_pages_solvers_nonlinear_tutorial_1" kind="page"><name>md_pages_solvers_nonlinear_tutorial_1</name>
+  </compound>
+  <compound refid="md_pages_solvers_nonlinear_tutorial_2" kind="page"><name>md_pages_solvers_nonlinear_tutorial_2</name>
+  </compound>
+  <compound refid="md_pages_solvers_nonlinear_tutorial_3" kind="page"><name>md_pages_solvers_nonlinear_tutorial_3</name>
+  </compound>
+  <compound refid="md_pages_solvers_nonlinear_tutorial_4" kind="page"><name>md_pages_solvers_nonlinear_tutorial_4</name>
+  </compound>
+  <compound refid="md_pages_swe_main" kind="page"><name>md_pages_swe_main</name>
+  </compound>
+  <compound refid="md_pages_utils_logger" kind="page"><name>md_pages_utils_logger</name>
+  </compound>
+  <compound refid="dir_dfdc6e3fe3dd83592e3200d32aae2cb7" kind="dir"><name>pages/ode</name>
+  </compound>
+  <compound refid="dir_208d2690607c4e3d3fabfa1d18673d36" kind="dir"><name>pages</name>
+  </compound>
+  <compound refid="dir_6a89a6e57a3601fc15116e5484f781e5" kind="dir"><name>pages/rom</name>
+  </compound>
+  <compound refid="dir_4cccaec18f48de5ad93eff32399233b5" kind="dir"><name>pages/solvers_nonlinear</name>
+  </compound>
+  <compound refid="dir_7727e9f4b0e1be84717ab35bab219223" kind="dir"><name>pages/swe</name>
+  </compound>
+  <compound refid="dir_4708a13a89458f6d0cd5a4a9a3b52825" kind="dir"><name>pages/utils</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

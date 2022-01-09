@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="md_pages_solvers_nonlinear_tutorial_3" kind="page">
+    <compoundname>md_pages_solvers_nonlinear_tutorial_3</compoundname>
+    <title>Gauss-Newton via Normal Equations with Known Types</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para> <mcss:class xmlns:mcss="http://mcss.mosra.cz/doxygen/" mcss:class="m-block m-info" /></para>
+<para><simplesect kind="par"><title></title><para>This tutorial demonstrates how to use the normal-equations-based Gauss-Newton solver from <computeroutput>pressio/solvers_nonlinear</computeroutput> using data types natively supported in pressio. Here, we use Eigen data types, but a similar code can be used for other natively supported types.</para>
+</simplesect>
+</para>
+<sect1 id="md_pages_solvers_nonlinear_tutorial_3_1autotoc_md48">
+<title>Problem class</title>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">struct<sp/></highlight><highlight class="normal">MyRosenbrockSystem</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>scalar_type<sp/>=<sp/>double;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>state_type<sp/><sp/>=<sp/>Eigen::VectorXd;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>residual_type<sp/>=<sp/>state_type;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>jacobian_type<sp/>=<sp/>Eigen::MatrixXd;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>residual_type<sp/>createResidual()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>residual_type(6);<sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>jacobian_type<sp/>createJacobian()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>jacobian_type(6,<sp/>4);}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>residual(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>state_type&amp;<sp/>x,<sp/>residual_type<sp/>&amp;<sp/>res)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x1<sp/>=<sp/>x(0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x2<sp/>=<sp/>x(1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x3<sp/>=<sp/>x(2);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x4<sp/>=<sp/>x(3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res(0)<sp/>=<sp/>10.*(x4<sp/>-<sp/>x3*x3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res(1)<sp/>=<sp/>10.*(x3<sp/>-<sp/>x2*x2);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res(2)<sp/>=<sp/>10.*(x2<sp/>-<sp/>x1*x1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res(3)<sp/>=<sp/>(1.-x1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res(4)<sp/>=<sp/>(1.-x2);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>res(5)<sp/>=<sp/>(1.-x3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>jacobian(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>state_type<sp/>&amp;<sp/>x,<sp/>jacobian_type<sp/>&amp;<sp/>JJ)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x1<sp/>=<sp/>x(0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x2<sp/>=<sp/>x(1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>x3<sp/>=<sp/>x(2);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ.setZero();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(0,2)<sp/>=<sp/>-20.*x3;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(0,3)<sp/>=<sp/>10.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(1,1)<sp/>=<sp/>-20.*x2;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(1,2)<sp/>=<sp/>10.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(2,0)<sp/>=<sp/>-20.*x1;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(2,1)<sp/>=<sp/>10.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(3,0)<sp/>=<sp/>-1.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(4,1)<sp/>=<sp/>-1.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>JJ(5,2)<sp/>=<sp/>-1.;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="md_pages_solvers_nonlinear_tutorial_3_1autotoc_md49">
+<title>Main</title>
+<para><programlisting filename=".cpp"><codeline><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>main()</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">plog<sp/><sp/><sp/>=<sp/>pressio::log;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">pls<sp/><sp/><sp/><sp/>=<sp/>pressio::linearsolvers;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">pnonls<sp/>=<sp/>pressio::nonlinearsolvers;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>plog::initialize(pressio::logto::terminal);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>plog::setVerbosity({plog::level::info});</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>problem_t<sp/>=<sp/>MyRosenbrockSystem;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>problem_t<sp/>problem;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>state_t<sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>problem_t::state_type;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>state_t<sp/>x(4);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>x(0)<sp/>=<sp/>-0.05;<sp/>x(1)<sp/>=<sp/>1.1;<sp/>x(2)<sp/>=<sp/>1.2;<sp/>x(3)<sp/>=<sp/>1.5;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>hessian_t<sp/>=<sp/>Eigen::MatrixXd;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>lin_tag<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>pls::direct::HouseholderQR;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>lin_solver_t<sp/>=<sp/>pls::Solver&lt;lin_tag,<sp/>hessian_t&gt;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>lin_solver_t<sp/>linSolver;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>gnSolver<sp/>=<sp/>pnonls::create_gauss_newton(problem,<sp/>x,<sp/>linSolver);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>gnSolver.setTolerance(1e-5);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>gnSolver.solve(problem,<sp/>x);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>check<sp/>solution</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Computed<sp/>solution:<sp/>\n<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>x(0)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>x(1)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>x(2)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>x(3)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]<sp/>\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Expected<sp/>solution:<sp/>\n<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;[1.0000000156741,<sp/>0.99999999912477,<sp/>0.99999999651993,<sp/>0.99999998889888]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>plog::finalize();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="md_pages_solvers_nonlinear_tutorial_3_1autotoc_md50">
+<title>Full Code</title>
+<para>The full code is available TODO. </para>
+</sect1>
+    </detaileddescription>
+    <location file="pages/solvers_nonlinear/tutorial_3.md"/>
+  </compounddef>
+</doxygen>
