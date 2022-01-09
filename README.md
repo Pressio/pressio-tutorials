@@ -1,10 +1,15 @@
 
 # pressio-tutorials
 
-This repository is continuously updated with tutorials covering
+This repository contains tutorials covering
 the [pressio C++ library](https://pressio.github.io/pressio/html/index.html).
 
-[EXPLORE THE TUTORIALS WEBSITE!](https://pressio.github.io/pressio-tutorials/html/index.html)
+
+Click below to checkout the documentation:
+
+<a href="https://pressio.github.io/pressio-tutorials/html/index.html" target="_blank">
+    <img src='logo-readme.svg' width='95%'>
+</a>
 
 
 ## License and Citation
