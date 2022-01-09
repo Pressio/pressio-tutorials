@@ -1,8 +1,8 @@
 
 .. _knowntypesanchor:
 
-Using *known* data types
-========================
+Using *supported* data types
+============================
 
 .. toctree::
     :maxdepth: 3
