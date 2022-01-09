@@ -2,7 +2,7 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Nonlinear Solvers" href="nonlinearsolvers.html" />
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Using known data types" href="known_types.html" />
 
     <meta name="generator" content="sphinx-4.3.2, furo 2022.01.02"/>
         <title>pressio C++ tutorials 0.12.0 documentation</title>
@@ -155,49 +155,51 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="nonlinearsolvers.html">Nonlinear Solvers</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="nonlinsolvers_generaloptions.html">general options</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="nonlinsolvers_newtonraphson.html">newton-raphson</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_newtonraphson_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_newtonraphson_known_types.html">known types</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="known_types.html">Using <em>known</em> data types</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="known_types/nonlinearsolvers.html">Nonlinear Solvers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_generaloptions.html">general options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="nonlinsolvers_gaussnewton.html">gauss-newton</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_gaussnewton_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_gaussnewton_known_types.html">known types</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="known_types/ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="known_types/ode_advancers.html">advance functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/ode_explicit.html">Explicit Stepping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/ode_implicit.html">Implicit Stepping</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="known_types/proms.html">pRoms</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_decoder_linear.html">decoder: linear</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_galerkin_default_explicit.html">Galerkin: default: time explicit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_galerkin_default_implicit.html">Galerkin: default: time implicit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_galerkin_hypred_explicit.html">Galerkin: hyper-reduced: time explicit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_galerkin_hypred_implicit.html">Galerkin: hyper-reduced: time implicit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_galerkin_masked_explicit.html">Galerkin: masked: time explicit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_galerkin_masked_implicit.html">Galerkin: masked: time implicit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_lspg_steady_default.html">LSPG: steady: default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_lspg_steady_hypred.html">LSPG: steady: hyper-reduced</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_lspg_steady_masked.html">LSPG: steady: masked</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_lspg_unsteady_default.html">LSPG: unsteady: default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_lspg_unsteady_hypred.html">LSPG: unsteady: hyper-reduced</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/proms_lspg_unsteady_masked.html">LSPG: unsteady: masked</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="ode_advancers.html">advance functions</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="ode_explicit_time_stepping.html">explicit time stepping</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="ode_explicit_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_explicit_known_types.html">known types</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="arbitrary_types.html">Using <em>arbitrary</em> data types</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="arbitrary_types/nonlinearsolvers.html">Nonlinear Solvers</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="arbitrary_types/nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
+<li class="toctree-l3"><a class="reference internal" href="arbitrary_types/nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="ode_implicit_time_stepping.html">implicit time stepping</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="ode_implicit_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_implicit_known_types.html">known types</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="arbitrary_types/ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="arbitrary_types/ode_explicit.html">Explicit Stepping</a></li>
 </ul>
 </li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="arbitrary_types/proms.html">pRoms</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="arbitrary_types/proms_decoder_linear.html">decoder: linear</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="proms.html">pRoms</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="proms_decoder_linear_arbitrary_types.html">decoder: linear, arbitrary types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_decoder_linear_known_types.html">decoder: linear, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_default_explicit_known_types.html">Galerkin: default: time explicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_default_implicit_known_types.html">Galerkin: default: time implicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_hypred_explicit_known_types.html">Galerkin: hyper-reduced: time explicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_hypred_implicit_known_types.html">Galerkin: hyper-reduced: time implicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_masked_explicit_known_types.html">Galerkin: masked: time explicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_masked_implicit_known_types.html">Galerkin: masked: time implicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_steady_default_known_types.html">LSPG: steady: default, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_steady_hypred_known_types.html">LSPG: steady: hyper-reduced, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_steady_masked_known_types.html">LSPG: steady: masked, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_unsteady_default_known_types.html">LSPG: unsteady: default, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_unsteady_hypred_known_types.html">LSPG: unsteady: hyper-reduced, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_unsteady_masked_known_types.html">LSPG: unsteady: masked, known types</a></li>
 </ul>
 </li>
 </ul>
@@ -233,90 +235,50 @@
           <div class="section" id="pressio-c-tutorials">
 <h1>Pressio C++ Tutorials<a class="headerlink" href="#pressio-c-tutorials" title="Permalink to this headline">¶</a></h1>
 <p>Tutorials suite covering the <a class="reference external" href="https://pressio.github.io/pressio/html/index.html">pressio C++ library</a>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This is still work-in-progress, some coverage might be missing.
-We are actively working on adding more.
+<div class="caution admonition">
+<p class="admonition-title">This is still work-in-progress, some coverage might be missing.</p>
+<p>We are actively working on adding more.
 If you don’t find something, you can temporarily look at the <a class="reference external" href="https://github.com/Pressio/pressio/tree/main/tests">C++ tests
-subdirectory</a>.
-These tests are readable,
-but are obviously not formatted in a tutorial fashion.</p>
-</div>
-<div class="section" id="try-yourself">
-<h2>Try yourself!<a class="headerlink" href="#try-yourself" title="Permalink to this headline">¶</a></h2>
-<p>You only need CMake &gt; 3.18.0 and a C++14 compliant compiler.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="o">--</span><span class="n">recursive</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Pressio</span><span class="o">/</span><span class="n">pressio</span><span class="o">-</span><span class="n">tutorials</span><span class="o">.</span><span class="n">git</span>
-<span class="n">export</span> <span class="n">CXX</span><span class="o">=&lt;</span><span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">your</span><span class="o">-</span><span class="n">CXX</span><span class="o">-</span><span class="n">compiler</span><span class="o">&gt;</span>
-<span class="n">cd</span> <span class="n">pressio</span><span class="o">-</span><span class="n">tutorials</span> <span class="o">&amp;&amp;</span> <span class="n">mkdir</span> <span class="n">build</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">build</span>
-<span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">Release</span> <span class="o">..</span>
-<span class="n">make</span> <span class="o">-</span><span class="n">j4</span>
-</pre></div>
-</div>
-<p>Individual executables for all tutorials are built inside the build subdirectory.</p>
+subdirectory</a>,
+which contains tests that are readable, but are obviously not formatted in a tutorial fashion.</p>
 </div>
 <div class="section" id="organization-and-structure">
 <h2>Organization and structure<a class="headerlink" href="#organization-and-structure" title="Permalink to this headline">¶</a></h2>
-<p>These tutorials are organized to closely reflect the modularity/structure of the code.
-For each “component” of pressio, we provide here code and discussions to demonstrate the corresponding functionalities. More specifically, we also separate the usage when using known data types (i.e., data types that pressio already knows how to operate on) from the one based on arbitrary data types (i.e. data types that pressio does not know how to manipulate, so the user is responsible to provide all the info needed).
-This way, we hope that users can easily pick up what they need.</p>
+<div class="line-block">
+<div class="line">The key thing to notice is that there are two main toplevel sections:</div>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="nonlinearsolvers.html">Nonlinear Solvers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nonlinsolvers_generaloptions.html">general options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nonlinsolvers_newtonraphson.html">newton-raphson</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_newtonraphson_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_newtonraphson_known_types.html">known types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="nonlinsolvers_gaussnewton.html">gauss-newton</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_gaussnewton_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_gaussnewton_known_types.html">known types</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ode.html">Ode</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ode_advancers.html">advance functions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ode_advancers.html#advance-n-times">advance_n_times</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_advancers.html#advance-n-times-and-observe">advance_n_times_and_observe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_advancers.html#advance-to-target-time">advance_to_target_time</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_advancers.html#advance-to-target-time-and-observe">advance_to_target_time_and_observe</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="ode_explicit_time_stepping.html">explicit time stepping</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ode_explicit_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_explicit_known_types.html">known types</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="ode_implicit_time_stepping.html">implicit time stepping</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ode_implicit_arbitrary_types.html">arbitrary types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ode_implicit_known_types.html">known types</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="proms.html">pRoms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="proms_decoder_linear_arbitrary_types.html">decoder: linear, arbitrary types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_decoder_linear_known_types.html">decoder: linear, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_default_explicit_known_types.html">Galerkin: default: time explicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_default_implicit_known_types.html">Galerkin: default: time implicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_hypred_explicit_known_types.html">Galerkin: hyper-reduced: time explicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_hypred_implicit_known_types.html">Galerkin: hyper-reduced: time implicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_masked_explicit_known_types.html">Galerkin: masked: time explicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_galerkin_masked_implicit_known_types.html">Galerkin: masked: time implicit, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_steady_default_known_types.html">LSPG: steady: default, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_steady_hypred_known_types.html">LSPG: steady: hyper-reduced, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_steady_masked_known_types.html">LSPG: steady: masked, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_unsteady_default_known_types.html">LSPG: unsteady: default, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_unsteady_hypred_known_types.html">LSPG: unsteady: hyper-reduced, known types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="proms_lspg_unsteady_masked_known_types.html">LSPG: unsteady: masked, known types</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="known_types.html">Using <em>known</em> data types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arbitrary_types.html">Using <em>arbitrary</em> data types</a></li>
 </ul>
 </div>
 <div class="line-block">
-<div class="line"><br/></div>
+<div class="line">The reason behind this is that it reflects two categories of users:</div>
 </div>
+<div class="important admonition">
+<p class="admonition-title">users relying on data types/structures that pressio already supports internally</p>
+<p>You are in this category if you use data types/structures that pressio already knows how to operate on efficiently. Currently, these include data structures from these libraries: Eigen, Kokkos, and Trilinos. As we progress, we will add more.
+For example, you have an application built on top of Trilinos linear algebra data structure.</p>
+<p>If you are in this category, <a class="reference internal" href="known_types.html#knowntypesanchor"><span class="std std-ref">start exploring here</span></a>.</p>
+</div>
+<div class="admonition-users-relying-on-data-types-structures-not-yet-known-to-pressio admonition">
+<p class="admonition-title">users relying on data types/structures <em>not yet known</em> to pressio</p>
+<p>This refers to truly arbitrary data types that pressio does not know how to manipulate or perform operations on, so the user is responsible to provide all the necessary operations and info to do so. This is actually an advantage from a certain viewpoint, since it gives you <em>full control</em> to make all the operations needed as efficient as possible.</p>
+<p>If you are in this category, <a class="reference internal" href="arbitrary_types.html#arbtypesanchor"><span class="std std-ref">start exploring here</span></a>.</p>
+</div>
+</div>
+<div class="section" id="build-the-tutorials">
+<h2>Build the tutorials!<a class="headerlink" href="#build-the-tutorials" title="Permalink to this headline">¶</a></h2>
+<p>You only need CMake &gt; 3.18.0 and a C++14 compliant compiler.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">CXX</span><span class="o">=</span>&lt;fullpath-to-your-CXX-compiler&gt;
+git clone --recursive git@github.com:Pressio/pressio-tutorials.git
+<span class="nb">cd</span> pressio-tutorials <span class="o">&amp;&amp;</span> mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
+cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release ..
+make -j4
+</pre></div>
+</div>
+<p>Individual executables for all tutorials are built inside the build subdirectory.</p>
 </div>
 <div class="section" id="license-and-citation">
 <h2>License and Citation<a class="headerlink" href="#license-and-citation" title="Permalink to this headline">¶</a></h2>
@@ -341,12 +303,12 @@ A previous arXiv <a class="reference external" href="https://arxiv.org/abs/2003.
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="nonlinearsolvers.html">
+          <a class="next-page" href="known_types.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Nonlinear Solvers</div>
+                <div class="title">Using <em>known</em> data types</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -379,8 +341,8 @@ A previous arXiv <a class="reference external" href="https://arxiv.org/abs/2003.
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Pressio C++ Tutorials</a><ul>
-<li><a class="reference internal" href="#try-yourself">Try yourself!</a></li>
 <li><a class="reference internal" href="#organization-and-structure">Organization and structure</a></li>
+<li><a class="reference internal" href="#build-the-tutorials">Build the tutorials!</a></li>
 <li><a class="reference internal" href="#license-and-citation">License and Citation</a></li>
 <li><a class="reference internal" href="#questions">Questions?</a></li>
 </ul>

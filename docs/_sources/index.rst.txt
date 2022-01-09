@@ -4,25 +4,54 @@ Pressio C++ Tutorials
 
 Tutorials suite covering the `pressio C++ library <https://pressio.github.io/pressio/html/index.html>`_.
 
-.. Warning:: 
-
-   This is still work-in-progress, some coverage might be missing.
+.. admonition:: This is still work-in-progress, some coverage might be missing.
+   :class: caution
+   
    We are actively working on adding more.
    If you don't find something, you can temporarily look at the `C++ tests 
-   subdirectory <https://github.com/Pressio/pressio/tree/main/tests>`_. 
-   These tests are readable, 
-   but are obviously not formatted in a tutorial fashion.
+   subdirectory <https://github.com/Pressio/pressio/tree/main/tests>`_, 
+   which contains tests that are readable, but are obviously not formatted in a tutorial fashion.
+
+Organization and structure
+--------------------------
+
+| The key thing to notice is that there are two main toplevel sections:
+
+.. toctree::
+    :maxdepth: 1
+
+    known_types
+    arbitrary_types
+
+| The reason behind this is that it reflects two categories of users:
+
+.. admonition:: users relying on data types/structures that pressio already supports internally
+   :class: important
+
+   You are in this category if you use data types/structures that pressio already knows how to operate on efficiently. Currently, these include data structures from these libraries: Eigen, Kokkos, and Trilinos. As we progress, we will add more.
+   For example, you have an application built on top of Trilinos linear algebra data structure.
+
+   If you are in this category, :ref:`start exploring here <knowntypesanchor>`.
 
 
-Try yourself!
--------------
+.. admonition:: users relying on data types/structures *not yet known* to pressio
+
+   This refers to truly arbitrary data types that pressio does not know how to manipulate or perform operations on, so the user is responsible to provide all the necessary operations and info to do so. This is actually an advantage from a certain viewpoint, since it gives you *full control* to make all the operations needed as efficient as possible.
+
+   If you are in this category, :ref:`start exploring here <arbtypesanchor>`.
+
+
+
+
+Build the tutorials!
+--------------------
 
 You only need CMake > 3.18.0 and a C++14 compliant compiler.
 
-.. code-block::
+.. code-block:: bash
 
+   export CXX=<fullpath-to-your-CXX-compiler>
    git clone --recursive git@github.com:Pressio/pressio-tutorials.git
-   export CXX=<path-to-your-CXX-compiler>
    cd pressio-tutorials && mkdir build && cd build
    cmake -DCMAKE_BUILD_TYPE=Release ..
    make -j4
@@ -30,22 +59,6 @@ You only need CMake > 3.18.0 and a C++14 compliant compiler.
 Individual executables for all tutorials are built inside the build subdirectory.
 
 
-Organization and structure
---------------------------
-
-These tutorials are organized to closely reflect the modularity/structure of the code. 
-For each "component" of pressio, we provide here code and discussions to demonstrate the corresponding functionalities. More specifically, we also separate the usage when using known data types (i.e., data types that pressio already knows how to operate on) from the one based on arbitrary data types (i.e. data types that pressio does not know how to manipulate, so the user is responsible to provide all the info needed). 
-This way, we hope that users can easily pick up what they need.
-
-.. toctree::
-    :maxdepth: 3
-
-    nonlinearsolvers
-    ode
-    proms
-
-
-|
 
 License and Citation
 --------------------

@@ -1,4 +1,0 @@
-arbitrary types
-===============
-
-to do
