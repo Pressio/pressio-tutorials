@@ -7,7 +7,7 @@ the [pressio C++ library](https://pressio.github.io/pressio/html/index.html).
 
 Click below to checkout the documentation:
 
-<a href="https://pressio.github.io/pressio-tutorials/html/index.html" target="_blank">
+<a href="https://pressio.github.io/pressio-tutorials" target="_blank">
     <img src='logo-readme.svg' width='95%'>
 </a>
 
