@@ -49,6 +49,10 @@ add_executable(
   nonlinsolvers_gn_custom_types
   ${TUTDIR}/nonlinsolvers_gn_custom_types.cc)
 
+add_executable(
+  nonlinsolvers_gn_qr_known_types
+  ${TUTDIR}/nonlinsolvers_gn_qr_known_types.cc)
+
 #------------------
 # ODE
 #------------------

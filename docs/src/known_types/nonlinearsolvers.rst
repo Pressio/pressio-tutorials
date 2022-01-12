@@ -7,3 +7,4 @@ Nonlinear Solvers
     nonlinsolvers_generaloptions
     nonlinsolvers_newtonraphson
     nonlinsolvers_gaussnewton
+    nonlinsolvers_gaussnewton_qr
