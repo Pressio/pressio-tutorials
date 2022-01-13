@@ -45,4 +45,4 @@ using custom data types.
 
 **Full Code**
 
-The full code is available in `nonlinsolvers_irls_custom_types.cc <nonlinsolvers_irls_custom_types.cc>`_
+The full code is available in `nonlinsolvers_irls_custom_types.cc <https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/nonlinsolvers_irls_custom_types.cc>`_

@@ -30,4 +30,4 @@ can be used for other natively supported types.
 
 **Full Code**
 
-The full code is available in `nonlinsolvers_lm_known_types.cc <nonlinsolvers_lm_known_types.cc>`_
+The full code is available in `nonlinsolvers_lm_known_types.cc <https://github.com/Pressio/pressio-tutorials/blob/main/tutorials/nonlinsolvers_lm_known_types.cc>`_
