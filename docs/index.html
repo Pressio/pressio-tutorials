@@ -2,7 +2,8 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Using supported data types" href="known_types.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Using supported data types" href="known_types.html" />
 
     <meta name="generator" content="sphinx-4.3.2, furo 2022.01.02"/>
         <title>pressio C++ tutorials 0.12.0 documentation</title>
@@ -160,6 +161,9 @@
 <li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_generaloptions.html">general options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_gaussnewton_qr.html">Gauss-Newton with QR Factorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_lm.html">Levenberg-Marquardt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="known_types/nonlinsolvers_irls.html">IRLS</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="known_types/ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -190,6 +194,8 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="arbitrary_types/nonlinearsolvers.html">Nonlinear Solvers</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="arbitrary_types/nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="arbitrary_types/nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="arbitrary_types/nonlinsolvers_lm.html">Levenberg-Marquardt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="arbitrary_types/nonlinsolvers_irls.html">IRLS</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="arbitrary_types/ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -232,7 +238,7 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="pressio-c-tutorials">
+          <section id="pressio-c-tutorials">
 <h1>Pressio C++ Tutorials<a class="headerlink" href="#pressio-c-tutorials" title="Permalink to this headline">¶</a></h1>
 <p>Tutorials suite covering the <a class="reference external" href="https://pressio.github.io/pressio/html/index.html">pressio C++ library</a>.</p>
 <div class="caution admonition">
@@ -242,7 +248,7 @@ If you don’t find something, you can temporarily look at the <a class="referen
 subdirectory</a>,
 which contains tests that are readable, but are obviously not formatted in a tutorial fashion.</p>
 </div>
-<div class="section" id="organization-and-structure">
+<section id="organization-and-structure">
 <h2>Organization and structure<a class="headerlink" href="#organization-and-structure" title="Permalink to this headline">¶</a></h2>
 <div class="line-block">
 <div class="line">The key thing to notice is that there are two main toplevel sections:</div>
@@ -267,8 +273,8 @@ For example, you have an application built on top of Trilinos linear algebra dat
 <p>This refers to truly arbitrary data types that pressio does not know how to manipulate or perform operations on, so the user is responsible to provide all the necessary operations and info to do so. This is actually an advantage from a certain viewpoint, since it gives you <em>full control</em> to make all the operations needed as efficient as possible.</p>
 <p>If you are in this category, <a class="reference internal" href="arbitrary_types.html#arbtypesanchor"><span class="std std-ref">start exploring here</span></a>.</p>
 </div>
-</div>
-<div class="section" id="build-the-tutorials">
+</section>
+<section id="build-the-tutorials">
 <h2>Build the tutorials!<a class="headerlink" href="#build-the-tutorials" title="Permalink to this headline">¶</a></h2>
 <p>You only need CMake &gt; 3.18.0 and a C++14 compliant compiler.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">CXX</span><span class="o">=</span>&lt;fullpath-to-your-CXX-compiler&gt;
@@ -279,14 +285,14 @@ make -j4
 </pre></div>
 </div>
 <p>Individual executables for all tutorials are built inside the build subdirectory.</p>
-</div>
-<div class="section" id="license-and-citation">
+</section>
+<section id="license-and-citation">
 <h2>License and Citation<a class="headerlink" href="#license-and-citation" title="Permalink to this headline">¶</a></h2>
 <p>The BSD-3 license is available <a class="reference external" href="https://pressio.github.io/various/license/">here</a>.</p>
 <p>We are working on publishing this.
 A previous arXiv <a class="reference external" href="https://arxiv.org/abs/2003.07798">preprint</a>.</p>
-</div>
-<div class="section" id="questions">
+</section>
+<section id="questions">
 <h2>Questions?<a class="headerlink" href="#questions" title="Permalink to this headline">¶</a></h2>
 <p>Find us on <a class="reference external" href="https://pressioteam.slack.com">Slack</a>.</p>
 <div class="toctree-wrapper compound">
@@ -295,8 +301,8 @@ A previous arXiv <a class="reference external" href="https://arxiv.org/abs/2003.
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials/issues">Open an issue/feature req.</a></li>
 </ul>
 </div>
-</div>
-</div>
+</section>
+</section>
 
         </article>
       </div>
@@ -317,7 +323,7 @@ A previous arXiv <a class="reference external" href="https://arxiv.org/abs/2003.
 
         <div class="related-information">
               Copyright &#169; 2021, National Technology &amp; Engineering Solutions of Sandia, LLC (NTESS) |
-            Last updated on Jan 09, 2022. |
+            Last updated on Jan 13, 2022. |
           Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
           <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
             | <a class="muted-link" href="_sources/index.rst.txt"

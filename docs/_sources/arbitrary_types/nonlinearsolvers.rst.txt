@@ -6,3 +6,5 @@ Nonlinear Solvers
 
     nonlinsolvers_newtonraphson
     nonlinsolvers_gaussnewton
+    nonlinsolvers_lm
+    nonlinsolvers_irls

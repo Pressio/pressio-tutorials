@@ -49,6 +49,26 @@ add_executable(
   nonlinsolvers_gn_custom_types
   ${TUTDIR}/nonlinsolvers_gn_custom_types.cc)
 
+add_executable(
+  nonlinsolvers_gn_qr_known_types
+  ${TUTDIR}/nonlinsolvers_gn_qr_known_types.cc)
+
+add_executable(
+  nonlinsolvers_lm_known_types
+  ${TUTDIR}/nonlinsolvers_lm_known_types.cc)
+
+add_executable(
+  nonlinsolvers_lm_custom_types
+  ${TUTDIR}/nonlinsolvers_lm_custom_types.cc)
+
+add_executable(
+  nonlinsolvers_irls_known_types
+  ${TUTDIR}/nonlinsolvers_irls_known_types.cc)
+
+add_executable(
+  nonlinsolvers_irls_custom_types
+  ${TUTDIR}/nonlinsolvers_irls_custom_types.cc)
+
 #------------------
 # ODE
 #------------------

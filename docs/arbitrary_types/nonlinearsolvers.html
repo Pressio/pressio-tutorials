@@ -2,7 +2,8 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Newton-Raphson" href="nonlinsolvers_newtonraphson.html" /><link rel="prev" title="Using arbitrary data types" href="../arbitrary_types.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Newton-Raphson" href="nonlinsolvers_newtonraphson.html" /><link rel="prev" title="Using arbitrary data types" href="../arbitrary_types.html" />
 
     <meta name="generator" content="sphinx-4.3.2, furo 2022.01.02"/>
         <title>Nonlinear Solvers - pressio C++ tutorials 0.12.0 documentation</title>
@@ -160,6 +161,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../known_types/nonlinsolvers_generaloptions.html">general options</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../known_types/nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../known_types/nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../known_types/nonlinsolvers_gaussnewton_qr.html">Gauss-Newton with QR Factorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../known_types/nonlinsolvers_lm.html">Levenberg-Marquardt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../known_types/nonlinsolvers_irls.html">IRLS</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../known_types/ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -190,6 +194,8 @@
 <li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">Nonlinear Solvers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_lm.html">Levenberg-Marquardt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nonlinsolvers_irls.html">IRLS</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="ode.html">Ode</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -232,15 +238,17 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="nonlinear-solvers">
+          <section id="nonlinear-solvers">
 <h1>Nonlinear Solvers<a class="headerlink" href="#nonlinear-solvers" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="nonlinsolvers_newtonraphson.html">Newton-Raphson</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nonlinsolvers_gaussnewton.html">Gauss-Newton</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nonlinsolvers_lm.html">Levenberg-Marquardt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nonlinsolvers_irls.html">IRLS</a></li>
 </ul>
 </div>
-</div>
+</section>
 
         </article>
       </div>
@@ -271,7 +279,7 @@
 
         <div class="related-information">
               Copyright &#169; 2021, National Technology &amp; Engineering Solutions of Sandia, LLC (NTESS) |
-            Last updated on Jan 09, 2022. |
+            Last updated on Jan 13, 2022. |
           Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
           <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
             | <a class="muted-link" href="../_sources/arbitrary_types/nonlinearsolvers.rst.txt"
