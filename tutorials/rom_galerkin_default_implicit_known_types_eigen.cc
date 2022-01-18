@@ -87,6 +87,21 @@ struct TrivialFomVelocityAndJacobianEigen
   }
 };
 
+struct Observer
+{
+  void operator()(int32_t step, double time, const Eigen::VectorXd &state)
+  {
+  	std::cout << "Observer called: \n"
+  	<< " step: " << step
+  	<< "\n"
+  	<< " state = ";
+  	for (int i=0; i<state.size(); ++i){
+  		std::cout << state(i) << ", ";
+  	}
+  	std::cout << "\n";
+  }
+};
+
 int main(int argc, char *argv[])
 {
   pressio::log::initialize(pressio::logto::terminal);
@@ -129,7 +144,8 @@ int main(int argc, char *argv[])
   nonLinSolver.setMaxIterations(1);
 
   scalar_t dt = 2.;
-  pressio::ode::advance_n_steps(problem, romState, 0.0, dt, 1, nonLinSolver);
+  Observer obs;
+  pressio::ode::advance_n_steps_and_observe(problem, romState, 0.0, dt, 1, obs, nonLinSolver);
   std::cout << romState << std::endl;
 
   pressio::log::finalize();

@@ -110,5 +110,40 @@ add_executable(
   rom_galerkin_default_implicit_known_types_eigen
   ${TUTDIR}/rom_galerkin_default_implicit_known_types_eigen.cc)
 
+add_executable(
+  rom_galerkin_default_implicit_custom_types
+  ${TUTDIR}/rom_galerkin_default_implicit_custom_types.cc)
+
+add_executable(
+  rom_galerkin_hyperreduced_explicit_known_types_eigen
+  ${TUTDIR}/rom_galerkin_hyperreduced_explicit_known_types_eigen.cc)
+
+add_executable(
+  rom_galerkin_hyperreduced_explicit_custom_types
+  ${TUTDIR}/rom_galerkin_hyperreduced_explicit_custom_types.cc)
+
+add_executable(
+  rom_galerkin_hyperreduced_implicit_known_types_eigen
+  ${TUTDIR}/rom_galerkin_hyperreduced_implicit_known_types_eigen.cc)
+
+add_executable(
+  rom_galerkin_hyperreduced_implicit_custom_types
+  ${TUTDIR}/rom_galerkin_hyperreduced_implicit_custom_types.cc)
+
+add_executable(
+  rom_galerkin_masked_explicit_known_types_eigen
+  ${TUTDIR}/rom_galerkin_masked_explicit_known_types_eigen.cc)
+
+add_executable(
+  rom_galerkin_masked_explicit_custom_types
+  ${TUTDIR}/rom_galerkin_masked_explicit_custom_types.cc)
+
+add_executable(
+  rom_galerkin_masked_implicit_known_types_eigen
+  ${TUTDIR}/rom_galerkin_masked_implicit_known_types_eigen.cc)
+
+add_executable(
+  rom_galerkin_masked_implicit_custom_types
+  ${TUTDIR}/rom_galerkin_masked_implicit_custom_types.cc)
 
 # #add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)
