@@ -23,12 +23,12 @@ include_directories(
 
 set(TUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
 
-#===================================================
-# add all executables
-#===================================================
-add_executable(
-  utils_logger
-  ${TUTDIR}/utils_logger.cc)
+# #===================================================
+# # add all executables
+# #===================================================
+# add_executable(
+#   utils_logger
+#   ${TUTDIR}/utils_logger.cc)
 
 #------------------
 # nonlinear solvers
@@ -65,10 +65,6 @@ add_executable(
   nonlinsolvers_irls_known_types
   ${TUTDIR}/nonlinsolvers_irls_known_types.cc)
 
-add_executable(
-  nonlinsolvers_irls_custom_types
-  ${TUTDIR}/nonlinsolvers_irls_custom_types.cc)
-
 #------------------
 # ODE
 #------------------
@@ -79,71 +75,3 @@ add_executable(
 add_executable(
   ode_steppers_custom_types
   ${TUTDIR}/ode_steppers_custom_types.cc)
-
-add_executable(
-  ode_advancer
-  ${TUTDIR}/ode_advancer.cc)
-
-#------------------
-# rom decoder
-#------------------
-add_executable(
-  rom_linear_decoder_known_types_eigen
-  ${TUTDIR}/rom_linear_decoder_known_types_eigen.cc)
-
-add_executable(
-  rom_linear_decoder_custom_types
-  ${TUTDIR}/rom_linear_decoder_custom_types.cc)
-
-#------------------
-# rom galerkin
-#------------------
-add_executable(
-  rom_galerkin_default_explicit_known_types_eigen
-  ${TUTDIR}/rom_galerkin_default_explicit_known_types_eigen.cc)
-
-add_executable(
-  rom_galerkin_default_explicit_custom_types
-  ${TUTDIR}/rom_galerkin_default_explicit_custom_types.cc)
-
-add_executable(
-  rom_galerkin_default_implicit_known_types_eigen
-  ${TUTDIR}/rom_galerkin_default_implicit_known_types_eigen.cc)
-
-add_executable(
-  rom_galerkin_default_implicit_custom_types
-  ${TUTDIR}/rom_galerkin_default_implicit_custom_types.cc)
-
-add_executable(
-  rom_galerkin_hyperreduced_explicit_known_types_eigen
-  ${TUTDIR}/rom_galerkin_hyperreduced_explicit_known_types_eigen.cc)
-
-add_executable(
-  rom_galerkin_hyperreduced_explicit_custom_types
-  ${TUTDIR}/rom_galerkin_hyperreduced_explicit_custom_types.cc)
-
-add_executable(
-  rom_galerkin_hyperreduced_implicit_known_types_eigen
-  ${TUTDIR}/rom_galerkin_hyperreduced_implicit_known_types_eigen.cc)
-
-add_executable(
-  rom_galerkin_hyperreduced_implicit_custom_types
-  ${TUTDIR}/rom_galerkin_hyperreduced_implicit_custom_types.cc)
-
-add_executable(
-  rom_galerkin_masked_explicit_known_types_eigen
-  ${TUTDIR}/rom_galerkin_masked_explicit_known_types_eigen.cc)
-
-add_executable(
-  rom_galerkin_masked_explicit_custom_types
-  ${TUTDIR}/rom_galerkin_masked_explicit_custom_types.cc)
-
-add_executable(
-  rom_galerkin_masked_implicit_known_types_eigen
-  ${TUTDIR}/rom_galerkin_masked_implicit_known_types_eigen.cc)
-
-add_executable(
-  rom_galerkin_masked_implicit_custom_types
-  ${TUTDIR}/rom_galerkin_masked_implicit_custom_types.cc)
-
-# #add_subdirectory(tutorials/swe2d ${CMAKE_CURRENT_BINARY_DIR}/swe2d)
