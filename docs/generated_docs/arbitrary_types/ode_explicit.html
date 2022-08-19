@@ -2,14 +2,15 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.01.02"/>
+    <meta name="generator" content="sphinx-4.4.0, furo 2022.02.23"/>
         <title>Explicit Stepping - pressio-tutorials 0.13.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=df49af52631e7917044a9c21a57f7b83170a6dd0" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=3c656993158f05539f962c5cea52a5e6c184bb8c" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=fade93df149f7c5fedb3ff897f799dc7d283b420" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
     
     
 
@@ -41,17 +42,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -60,14 +57,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -82,7 +79,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -90,7 +87,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -157,21 +154,20 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="../build.html">Building Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build.html">Dependencies and build instructions</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">C++ for Supported Data Types</span></p>
+<p class="caption" role="heading"><span class="caption-text">End-to-end ROMs using pressio-demoapps</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../known_types/nonlinearsolvers.html">Nonlinear Solvers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../known_types/ode.html">Ode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/readthisfirst.html">Start reading here</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_galerkin_default.html">Default Galerkin for 2D SWE</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">C++ for Arbitrary Data Types</span></p>
+<p class="caption" role="heading"><span class="caption-text">Self-contained tutorials using Eigen data types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="nonlinearsolvers.html">Nonlinear Solvers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ode.html">Ode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comingsoon.html">Coming soon</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">pressio4py</span></p>
+<p class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../pressio4py/dummy.html">Dummy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../comingsoon.html">Coming soon</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Miscellanea</span></p>
 <ul>
@@ -182,6 +178,7 @@
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -189,8 +186,13 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
-        <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -204,120 +206,9 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="explicit-stepping">
-<h1>Explicit Stepping<a class="headerlink" href="#explicit-stepping" title="Permalink to this headline">¶</a></h1>
-<div class="code cpp highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#include &lt;vector&gt;</span>
-<span class="c1">#include "custom_data_types.hpp"</span>
-
-<span class="n">namespace</span> <span class="n">pressio</span><span class="p">{</span>
-
-<span class="n">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="n">struct</span> <span class="n">Traits</span><span class="o">&lt;</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">{</span>
-  <span class="n">using</span> <span class="n">scalar_type</span> <span class="o">=</span> <span class="n">typename</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">::</span><span class="n">value_type</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="n">namespace</span> <span class="n">ops</span><span class="p">{</span>
-<span class="n">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="n">void</span> <span class="n">deep_copy</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">dest</span><span class="p">,</span> <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">from</span><span class="p">){</span>
-  <span class="n">dest</span> <span class="o">=</span> <span class="n">from</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">(</span><span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">src</span><span class="p">){</span>
-  <span class="k">return</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">extent</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
-<span class="p">};</span>
-
-<span class="n">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="n">void</span> <span class="n">update</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span>        <span class="n">const</span> <span class="n">double</span> <span class="n">a</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">b</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">v</span><span class="o">.</span><span class="n">extent</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
-    <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">v1</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="n">void</span> <span class="n">update</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span>        <span class="n">const</span> <span class="n">double</span> <span class="n">a</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">b</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v2</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">c</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">v</span><span class="o">.</span><span class="n">extent</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
-    <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">v1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">v2</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-<span class="n">void</span> <span class="n">update</span><span class="p">(</span><span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v</span><span class="p">,</span>        <span class="n">const</span> <span class="n">double</span> <span class="n">a</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">b</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v2</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">c</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v3</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">d</span><span class="p">,</span>
-            <span class="n">const</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">&amp;</span> <span class="n">v4</span><span class="p">,</span> <span class="n">const</span> <span class="n">double</span> <span class="n">e</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">v</span><span class="o">.</span><span class="n">extent</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
-    <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">v1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="o">*</span><span class="n">v2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="n">v3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">e</span><span class="o">*</span><span class="n">v4</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-<span class="p">}}</span> <span class="o">//</span><span class="n">end</span> <span class="n">namespace</span> <span class="n">pressio</span><span class="p">::</span><span class="n">ops</span>
-
-<span class="c1">#include "pressio/ode_advancers.hpp"</span>
-<span class="c1">#include "pressio/ode_steppers_explicit.hpp"</span>
-
-<span class="n">struct</span> <span class="n">MySystem</span>
-<span class="p">{</span>
-  <span class="n">using</span> <span class="n">scalar_type</span>   <span class="o">=</span> <span class="n">double</span><span class="p">;</span>
-  <span class="n">using</span> <span class="n">state_type</span>    <span class="o">=</span> <span class="n">CustomVector</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">;</span>
-  <span class="n">using</span> <span class="n">velocity_type</span> <span class="o">=</span> <span class="n">state_type</span><span class="p">;</span>
-
-<span class="n">public</span><span class="p">:</span>
-  <span class="n">void</span> <span class="n">velocity</span><span class="p">(</span><span class="n">const</span> <span class="n">state_type</span> <span class="o">&amp;</span> <span class="n">y</span><span class="p">,</span>
-                <span class="n">scalar_type</span> <span class="n">t</span><span class="p">,</span>
-                <span class="n">velocity_type</span> <span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="n">const</span>
-  <span class="p">{</span>
-    <span class="n">constexpr</span> <span class="n">scalar_type</span> <span class="n">ten</span><span class="p">{</span><span class="mi">10</span><span class="p">};</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ten</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ten</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-    <span class="n">rhs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">ten</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-  <span class="p">};</span>
-
-  <span class="n">velocity_type</span> <span class="n">createVelocity</span><span class="p">()</span> <span class="n">const</span><span class="p">{</span>
-    <span class="k">return</span> <span class="n">velocity_type</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-  <span class="p">};</span>
-<span class="p">};</span>
-
-<span class="nb">int</span> <span class="n">main</span><span class="p">(</span><span class="nb">int</span> <span class="n">argc</span><span class="p">,</span> <span class="n">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-  <span class="n">pressio</span><span class="p">::</span><span class="n">log</span><span class="p">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="p">::</span><span class="n">logto</span><span class="p">::</span><span class="n">terminal</span><span class="p">);</span>
-
-  <span class="o">//</span> <span class="n">create</span> <span class="n">the</span> <span class="n">system</span><span class="o">/</span><span class="n">app</span> <span class="nb">object</span>
-  <span class="n">using</span> <span class="n">app_t</span> <span class="o">=</span> <span class="n">MySystem</span><span class="p">;</span>
-  <span class="n">app_t</span> <span class="n">appObj</span><span class="p">;</span>
-
-  <span class="o">//</span> <span class="n">create</span> <span class="ow">and</span> <span class="n">initialize</span> <span class="n">the</span> <span class="n">state</span>
-  <span class="n">using</span> <span class="n">state_t</span> <span class="o">=</span> <span class="n">typename</span> <span class="n">app_t</span><span class="p">::</span><span class="n">state_type</span><span class="p">;</span>
-  <span class="n">state_t</span> <span class="n">y</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-  <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">;</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">;</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">;</span>
-
-  <span class="o">//</span> <span class="n">instantiate</span> <span class="n">the</span> <span class="n">stepper</span>
-  <span class="n">namespace</span> <span class="n">pode</span> <span class="o">=</span> <span class="n">pressio</span><span class="p">::</span><span class="n">ode</span><span class="p">;</span>
-  <span class="n">constexpr</span> <span class="n">auto</span> <span class="n">scheme</span> <span class="o">=</span> <span class="n">pode</span><span class="p">::</span><span class="n">StepScheme</span><span class="p">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
-  <span class="n">auto</span> <span class="n">stepperObj</span> <span class="o">=</span> <span class="n">pode</span><span class="p">::</span><span class="n">create_explicit_stepper</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">appObj</span><span class="p">);</span>
-
-  <span class="o">//</span> <span class="n">integrate</span> <span class="ow">in</span> <span class="n">time</span>
-  <span class="n">const</span> <span class="n">double</span> <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">pressio</span><span class="p">::</span><span class="n">ode</span><span class="p">::</span><span class="n">step_count_type</span> <span class="n">numSteps</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-  <span class="p">::</span><span class="n">pressio</span><span class="p">::</span><span class="n">ode</span><span class="p">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">numSteps</span><span class="p">);</span>
-
-  <span class="o">//</span> <span class="n">check</span> <span class="n">solution</span>
-  <span class="n">std</span><span class="p">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s2">"Computed solution: ["</span>
-            <span class="o">&lt;&lt;</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s2">" "</span> <span class="o">&lt;&lt;</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s2">" "</span> <span class="o">&lt;&lt;</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s2">"] "</span>
-            <span class="o">&lt;&lt;</span> <span class="s2">"Expected solution: [2,4,6] "</span>
-            <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="p">::</span><span class="n">endl</span><span class="p">;</span>
-
-  <span class="n">pressio</span><span class="p">::</span><span class="n">log</span><span class="p">::</span><span class="n">finalize</span><span class="p">();</span>
-  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
+          <section id="explicit-stepping">
+<h1>Explicit Stepping<a class="headerlink" href="#explicit-stepping" title="Permalink to this headline">#</a></h1>
+</section>
 
         </article>
       </div>
@@ -327,16 +218,22 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, National Technology &amp; Engineering Solutions of Sandia, LLC (NTESS) |
-            Last updated on Jul 28, 2022. |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
-            | <a class="muted-link" href="../_sources/arbitrary_types/ode_explicit.rst.txt"
-               rel="nofollow">
-              Show Source
-            </a>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, National Technology &amp; Engineering Solutions of Sandia, LLC (NTESS)
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            <div class="last-updated">
+              Last updated on Aug 18, 2022</div>
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>

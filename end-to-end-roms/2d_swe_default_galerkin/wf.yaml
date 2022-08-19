@@ -1,0 +1,37 @@
+problem: 2d_swe
+
+parameterSpace:
+  names: ['coriolis', 'pulsemag', 'gravity']
+  trainPoints:
+    0: [-1.0, 0.125, 9.8]
+    1: [ 0.0, 0.125, 9.8]
+  testPoints:
+    0: [-1.0, 0.125, 9.8]
+
+fom:
+  meshSize: [65, 65]
+  inviscidFluxReconstruction: "Weno3"
+  odeScheme: "RK4"
+  timeStepSize: 0.005
+  train:
+    finalTime: 5.0
+    stateSamplingFreq: 10
+    rhsSamplingFreq: 100
+  test:
+    finalTime: 5.0
+    stateSamplingFreq: 10
+    rhsSamplingFreq: 100
+
+offlineRom:
+  pod:
+    stateData:
+      useTrainingRuns: all
+      policy: default
+    rhsData:
+      useTrainingRuns: all
+      policy: default
+
+galerkinRom:
+  algorithm: defaultGalerkin
+  podTruncation:
+    energyBased: [99.99, 99.99999]

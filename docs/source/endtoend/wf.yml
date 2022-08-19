@@ -1,0 +1,59 @@
+problem:
+- 'name': 2d_swe
+
+fom:
+- 'meshSize': [256, 256],
+- 'finalTimeTrain': 10.0,
+- 'finalTimeTest' : 10.0,
+- 'inviscidFluxReconstruction' : "Weno5",
+- 'odeScheme': "RK4",
+- 'timeStepSize' : 0.005,
+- 'stateSamplingFreqTrain': 5,
+- 'stateSamplingFreqTest' : 20,
+- 'rhsSamplingFreqTrain': 5,
+- 'rhsSamplingFreqTest': 5,
+#
+- 'paramSpaceTraining' : {
+    # coriolis - pulseMag - gravity
+    0: {-1.0, 0.125, 9.8},
+    1: { 0.0, 0.150, 9.8},
+    ..
+  }
+#
+- 'paramSpaceTesting' : {
+    # coriolis/ pulseMag
+    0: {-1.0, 0.125, 9.8},
+    1: { 0.0, 0.150, 9.8},
+    ..
+  }
+
+galerkin-rom:
+- 'finalTime' : 10.0,
+- 'inviscidFluxReconstruction' : "Weno5",
+- 'odeScheme': "RK4",
+- 'timeStepSize' : 0.005,
+- 'stateSamplingFreq': 5,
+
+- 'algorithm' : <string>
+  # choices: DefaultGalerkin, GappyGalerkin, CollocationGalerkin
+
+- 'fomTrainRunsToUseForPodModes': [0,1,2]
+
+- 'podModesTruncationPolicies' :
+    - 'userDefinedValue' : [20]
+    - 'energyBased' : [99.9999]
+
+- 'useIcAsReferenceState' : bool
+  # True/False to set initial condition as ref state
+  # if true:
+  # - POD modes are computed on snapshots after
+  #   subtracting the corresponding initial condition
+  # - for each test run, the corresponding rom is done
+  #   using the initial state of that test run as reference state
+  # if false: FOM initial condition is used to compute rom ic
+
+- 'sampleMeshPolicies' = {}
+  # Example of sample meshes:
+  # sample_meshes[1] = [["random", 0.25], ["psampling", 0.25, 0] ]
+  # for random   : [string, fraction]
+  # for psampling: [string, fraction, int of dof to use to compute sm]
