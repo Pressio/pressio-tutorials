@@ -6,51 +6,38 @@
 #include "pressio/ode_advancers.hpp"
 
 #include "parsers.hpp"
-#include "observer.hpp"
-#include "run_fom.hpp"
+#include "myio.hpp"
+#include "run_fom_explicit.hpp"
+#include "run_fom_implicit.hpp"
 #include "run_default_galerkin.hpp"
+#include "run_hypred_galerkin.hpp"
 // #include "run_lspg.hpp"
 // #include "source.hpp"
 #include <chrono>
 
 template<class AppObjType, class ParserType>
-void dispatch(const AppObjType & appObj,
+void dispatch(const AppObjType & fomSystem,
 	      const ParserType & parser)
 {
 
   if (parser.doingFom()){
-    run_fom(appObj, parser);
+    if (pressio::ode::is_explicit_scheme(parser.odeScheme())){
+      run_fom_explicit(fomSystem, parser);
+    }
+    else{
+      run_fom_implicit(fomSystem, parser);
+    }
   }
 
   else if (parser.romAlgorithm()=="defaultGalerkin"){
-    std::cout << "run_galerkin_default \n";
-    run_galerkin_default(appObj, parser);
+    run_galerkin_default(fomSystem, parser);
   }
 
-  // else if (parser.doingRom() &&
-	 //   (parser.romKind()=="GalerkinCollocation" ||
-	 //    parser.romKind()=="GalerkinGappy")){
-  //   run_galerkin_hyperreduced(appObj, parser);
-  // }
-
-  // else if (parser.doingRom() && (parser.romKind()=="GalerkinMaskedCollocation")){
-  //   run_galerkin_masked(appObj, parser);
-  // }
-
-  // else if (parser.doingRom() &&
-	 //   (parser.romKind()=="GalerkinMaskedGappy")){
-  //   run_galerkin_masked(appObj, parser);
-  // }
-
-  // else if (parser.doingRom() && parser.romKind()=="LspgFull"){
-  //   run_lspg_default(appObj, parser);
-  // }
-
-  // else if (parser.doingRom() &&
-	 //   (parser.romKind()=="LspgCollocation" ||
-	 //    parser.romKind()=="LspgGappy")){
-  //   run_lspg_hyperreduced(appObj, parser);
-  // }
+  else if (   parser.romAlgorithm()=="collocationGalerkin"
+	   || parser.romAlgorithm()=="gappyGalerkin")
+  {
+    run_galerkin_hyperreduced(fomSystem, parser);
+  }
 
   else{
     throw std::runtime_error("dispatch: invalid branching");
@@ -73,10 +60,10 @@ int main(int argc, char *argv[])
   pressio::log::initialize(pressio::logto::terminal);
   pressio::log::setVerbosity({pressio::log::level::info});
 
-  // local scope because it is good practice
+  // local scope because it is helps
   {
     const auto inputFile = check_and_get_inputfile(argc, argv);
-    auto node            = YAML::LoadFile(inputFile);
+    auto node = YAML::LoadFile(inputFile);
 
     const auto problemNode = node["problem"];
     if (!problemNode){ throw std::runtime_error("Missing problem in yaml input!"); }
@@ -93,18 +80,13 @@ int main(int argc, char *argv[])
       ParserTwoDimShallowWater<scalar_t> parser(node);
       const auto meshObj = pda::load_cellcentered_uniform_mesh_eigen<scalar_t>(parser.meshDir());
       const auto probId  = pda::Swe2d::SlipWall;
-      const auto scheme  = (parser.inviscidFluxReconstruction()=="FirstOrder")
-        ? pda::InviscidFluxReconstruction::FirstOrder :
-           (parser.inviscidFluxReconstruction()=="Weno3")
-              ? pda::InviscidFluxReconstruction::Weno3
-                 : pda::InviscidFluxReconstruction::Weno5;
-
-      const auto gravity  = parser.gravity();
-      const auto coriolis = parser.coriolis();
-      const auto pulseMag = parser.pulseMagnitude();
-      auto appObj = pda::create_slip_wall_swe_2d_problem_eigen(meshObj, scheme,
-							       gravity, coriolis, pulseMag);
-      dispatch(appObj, parser);
+      const auto invScheme = string_to_inviscid_flux_scheme(parser.inviscidFluxReconstruction());
+      const auto gravity   = parser.gravity();
+      const auto coriolis  = parser.coriolis();
+      const auto pulseMag  = parser.pulseMagnitude();
+      auto fomSystem = pda::create_slip_wall_swe_2d_problem_eigen(meshObj, invScheme,
+								  gravity, coriolis, pulseMag);
+      dispatch(fomSystem, parser);
     }
 
     auto t2 = std::chrono::high_resolution_clock::now();
@@ -125,9 +107,9 @@ int main(int argc, char *argv[])
   //   const auto reaction  = parser.reaction();
   //   const auto scheme    = pda::ViscousFluxReconstruction::FirstOrder;
   //   const auto probId    = pda::DiffusionReaction2d::ProblemA;
-  //   auto appObj = pda::create_problem_eigen(meshObj, probId, scheme,
+  //   auto fomSystem = pda::create_problem_eigen(meshObj, probId, scheme,
   // 					    mySource, diffusion, reaction);
-  //   dispatch(appObj, parser);
+  //   dispatch(fomSystem, parser);
   // }
 
 
@@ -143,8 +125,8 @@ int main(int argc, char *argv[])
   //   const auto diffusionB = parser.diffusionB();
   //   const auto feedRate   = parser.feedRate();
   //   const auto killRate   = parser.killRate();
-  //   auto appObj = pda::create_problem_eigen(meshObj, probId, scheme,
+  //   auto fomSystem = pda::create_problem_eigen(meshObj, probId, scheme,
   // 			    diffusionA, diffusionB,
   // 			    feedRate, killRate);
-  //   dispatch(appObj, parser);
+  //   dispatch(fomSystem, parser);
   // }

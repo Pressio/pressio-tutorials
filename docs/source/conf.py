@@ -75,7 +75,8 @@ today_fmt = "%B %d, %Y"
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = "tango"
+pygments_dark_style = "monokai"
 
 
 # Options for HTML output

@@ -104,7 +104,7 @@ def str2bool(v):
 def add_dryrun_cmd_line_option(parser):
   parser.add_argument("--dryrun", "--dr",
                       dest="dryRun", type=str2bool,
-                      default=True,
+                      default=False,
                       help="True: creates directories but does not run. Default=True.")
 
 # -------------------------------------------------------------------
@@ -153,7 +153,7 @@ def find_full_mesh_and_ensure_unique(workDir):
       em += it + "\n"
     em += "inside the workDir = {} \n".format(workDir)
     em += "You can only have a single FULL mesh the working directory."
-    logger.error(em)
+    print(em)
     sys.exit(1)
   return fomFullMeshes[0]
 
@@ -216,8 +216,6 @@ def find_num_cells_from_info_file(workDir, ns):
 
 # -------------------------------------------------------------------
 def find_total_cells_from_info_file(workDir):
-  logger = logging.getLogger(__name__)
-
   dims = find_dimensionality_from_info_file(workDir)
   if dims == 1:
     return find_num_cells_from_info_file(workDir, "nx")
@@ -226,16 +224,17 @@ def find_total_cells_from_info_file(workDir):
     ny = find_num_cells_from_info_file(workDir, "ny")
     return nx*ny
   else:
-    logger.error("Invalid dims = {}".format(dims))
+    print("Invalid dims = {}".format(dims))
     sys.exit(1)
 
 
 # -------------------------------------------------------------------
-def load_single_snapshots_with_time_steps_along_rows(dataDir, fileName, fomTotDofs):
+def load_single_snapshots_with_time_steps_along_rows(dataDir, fileName, totDofs):
   print("reading data from {}".format(os.path.basename(dataDir)))
   data = np.fromfile(dataDir+"/"+fileName)
-  numTimeSteps = int(np.size(data)/fomTotDofs)
-  D  = np.reshape(data, (numTimeSteps, fomTotDofs))
+  numTimeSteps = int(np.size(data)/totDofs)
+  print(numTimeSteps, totDofs)
+  D  = np.reshape(data, (numTimeSteps, totDofs))
   print(" (numRows, numCols) = {}".format(D.shape))
   return D
 

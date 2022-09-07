@@ -1,15 +1,7 @@
 
 import os, subprocess
 
-# everything here MUST be defined
-
-# -----------------------------------------------------------
-dimensionality = 2
-numDofsPerCell = 3
-validParameterNames = ['coriolis', 'pulsemag', 'gravity']
-
-# -----------------------------------------------------------
-def inviscid_flux_string_to_stencil_size(stringIn):
+def _inviscid_flux_string_to_stencil_size(stringIn):
   if stringIn == "FirstOrder":
     return 3
   elif stringIn == "Weno3":
@@ -21,6 +13,13 @@ def inviscid_flux_string_to_stencil_size(stringIn):
     return None
 
 # -----------------------------------------------------------
+# fncs and constants below are mandatory 
+# -----------------------------------------------------------
+
+dimensionality = 2
+numDofsPerCell = 3
+validParameterNames = ['coriolis', 'pulsemag', 'gravity']
+
 def generate_full_mesh(pdaSrcPath, meshPath, dicIn):
   pdaMeshDir = pdaSrcPath + "/meshing_scripts"
 
@@ -28,7 +27,7 @@ def generate_full_mesh(pdaSrcPath, meshPath, dicIn):
 
   # figure out the stencil size needed for the mesh
   invFluxRec = dicIn['inviscidFluxReconstruction']
-  stencilSize = inviscid_flux_string_to_stencil_size(invFluxRec)
+  stencilSize = _inviscid_flux_string_to_stencil_size(invFluxRec)
 
   print('Generating mesh {}'.format(meshPath))
   # call script

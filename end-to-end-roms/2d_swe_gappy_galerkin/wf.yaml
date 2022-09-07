@@ -16,7 +16,7 @@ fom:
   train:
     finalTime: 5.0
     stateSamplingFreq: 10
-    rhsSamplingFreq: 5
+    rhsSamplingFreq: 10
   test:
     finalTime: 5.0
     stateSamplingFreq: 10
@@ -28,8 +28,10 @@ offlineRom:
       useTrainingRuns: all
     rhsData:
       useTrainingRuns: all
+  sampleMesh:
+    random: 0.1
 
 galerkinRom:
-  algorithm: defaultGalerkin
+  algorithm: gappyGalerkin
   podTruncation:
     energyBased: [99.999, 99.99999]

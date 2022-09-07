@@ -15,3 +15,8 @@ target_link_libraries(${exename} PRIVATE yaml-cpp)
 target_compile_options(${exename} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-march=native>)
 
 add_subdirectory(2d_swe_default_galerkin)
+add_subdirectory(2d_swe_gappy_galerkin)
+
+if(PRESSIOTUTORIALS_ENABLE_TESTS)
+  add_subdirectory(tests)
+endif()

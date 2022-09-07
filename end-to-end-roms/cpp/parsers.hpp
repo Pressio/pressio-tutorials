@@ -23,6 +23,20 @@ string_to_ode_scheme(const std::string & strIn)
   }
 }
 
+template<class T = void>
+pressiodemoapps::InviscidFluxReconstruction
+string_to_inviscid_flux_scheme(const std::string & strIn)
+{
+  namespace pda  = pressiodemoapps;
+
+       if (strIn == "FirstOrder"){ return pda::InviscidFluxReconstruction::FirstOrder; }
+  else if (strIn == "Weno3"){ return pda::InviscidFluxReconstruction::Weno3; }
+  else if (strIn == "Weno5"){ return pda::InviscidFluxReconstruction::Weno5; }
+  else{
+    throw std::runtime_error("string_to_inviscid_flux_scheme: Invalid choice");
+  }
+}
+
 template <typename ScalarType>
 class ParserCommon
 {
@@ -156,6 +170,9 @@ class ParserRom
   std::string romFullMeshPodBasisFileName_ = "empty";
   std::string romInitialStateFileName_ = "empty";
   std::string romAffineShiftFileName_ = "empty";
+  std::string romGalerkinHypRedOperatorFileName_ = "empty";
+  std::string romStencilMeshGidsFileName_ = "empty";
+  std::string romSampleMeshGidsFileName_ = "empty";
   bool isAffine_ = false;
 
 public:
@@ -171,6 +188,10 @@ public:
   auto romInitialStateFile()     const{ return romInitialStateFileName_; }
   auto romAffineShiftFile()	 const{ return romAffineShiftFileName_; }
   auto romIsAffine()             const{ return isAffine_; }
+  auto romGalerkinHypRedOperatorFile() const{ return romGalerkinHypRedOperatorFileName_; }
+
+  auto romStencilMeshGidsFile()	 const{ return romStencilMeshGidsFileName_; }
+  auto romSampleMeshGidsFile()	 const{ return romSampleMeshGidsFileName_; }
 
   void describe() const{
     std::cout << "\nromAlgoName_ = " << romAlgoName_ << " \n"
@@ -207,6 +228,15 @@ private:
 
       entry = "isAffine";
       if (romNode[entry]) isAffine_ = romNode[entry].as<bool>();
+
+      entry = "galerkinHypRedOperatorFile";
+      if (romNode[entry]) romGalerkinHypRedOperatorFileName_ = romNode[entry].as<std::string>();
+
+      entry = "stencilMeshGidsFile";
+      if (romNode[entry]) romStencilMeshGidsFileName_ = romNode[entry].as<std::string>();
+
+      entry = "sampleMeshGidsFile";
+      if (romNode[entry]) romSampleMeshGidsFileName_ = romNode[entry].as<std::string>();
     }
   }
 };

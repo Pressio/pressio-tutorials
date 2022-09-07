@@ -1,77 +1,114 @@
 Default Galerkin for 2D SWE
 ===========================
 
-This tutorials presents an end-to-end demostration of applying
-the pressio Galerkin ROM to the 2D shallow water equations (SWE)
-leveraging the 2D SWE in pressio-demoapps.
+- ROM technique: default Galerkin
 
-Since this is an end-to-end, we show how to run the following steps:
-generating the FOM training data, constructing the POD modes,
-setting up and running the Galerkin problem, and processing the results.
-
-Note that while the SWE are used here, one can easily setup and
-run the same workflow for any other problem in pressio-demoapps.
-
-To simplify things and actually make this tutorials useful,
-we are going to use the workflow codes inside pressio-demoapps
-which enable one to easily setup ROMs for any of those problems.
-Using those codes, this complete tutorial can be encoded via the
-following yaml file, which will show below how to run.
-
-.. code-block:: yaml
-
-   problem: 2d_swe
-
-   parameterSpace:
-     names: ['coriolis', 'pulsemag', 'gravity']
-     trainPoints:
-       0: [-1.0, 0.125, 9.8]
-       1: [ 0.0, 0.125, 9.8]
-     testPoints:
-       0: [-1.0, 0.125, 9.8]
-
-   fom:
-     meshSize: [65, 65]
-     inviscidFluxReconstruction: "Weno3"
-     odeScheme: "RK4"
-     timeStepSize: 0.005
-     train:
-       finalTime: 5.0
-       stateSamplingFreq: 10
-       rhsSamplingFreq: 100
-     test:
-       finalTime: 5.0
-       stateSamplingFreq: 10
-       rhsSamplingFreq: 100
-
-   offlineRom:
-     pod:
-       stateData:
-	 useTrainingRuns: all
-	 policy: default
-       rhsData:
-	 useTrainingRuns: all
-	 policy: default
-
-   galerkinRom:
-     algorithm: defaultGalerkin
-     podTruncation:
-       energyBased: [99.99, 99.99999]
+- problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
 
+Prerequisites
+-------------
 
-Running the worflow
+- A valid build of the tutorials, see `here <../build.html>`__
+
+- The following env variables set:
+
+.. code-block:: bash
+
+   export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
+   export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
+
+- To run all scripts below, you MUST be in the correct end-to-end directory:
+
+.. code-block:: bash
+
+   cd $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+
+
+Workflow File
+-------------
+
+The `workflow file <../../../end-to-end-roms/2d_swe_default_galerkin/wf.yaml>`_
+is shown below for exposition purposes, but it is automatically copied to the
+build directory, so you don't need to do anything:
+
+.. literalinclude:: ../../../end-to-end-roms/2d_swe_default_galerkin/wf.yaml
+   :language: yaml
+   :lines: 1-35
+   :linenos:
+
+
+Step 1: execute FOMs
+--------------------
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   python3 $REPOSRC/wf_foms.py --wf wf.yaml
+
+When we run the FOM driver, the following C++ code is being executed:
+
+.. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
+   :language: cpp
+   :lines: 9-31
+   :linenos:
+
+At the end, doing ``tree -L 1 .`` should produce:
+
+.. code-block:: bash
+
+   .
+   ├── CMakeFiles
+   ├── Makefile
+   ├── cmake_install.cmake
+   ├── fom_mesh
+   ├── fom_test_runid_0
+   ├── fom_train_runid_0
+   ├── fom_train_runid_1
+   ├── plot.py
+   └── wf.yaml
+
+Step 2: offline rom
 -------------------
 
-.. code-block:: py
+.. code-block:: bash
 
-   python3 $REPOSRC/wf_foms.py --wf wf.yaml --dr false
-   python3 $REPOSRC/wf_offline_rom.py --wf wf.yaml --dr false
-   python3 $REPOSRC/wf_default_galerkin.py --wf wf.yaml --dr false
-   python3 $REPOSRC/wf_reconstruct_on_full_mesh.py
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   python3 $REPOSRC/wf_offline_rom.py --wf wf.yaml
+
+The offline rom takes care of using the FOM training data to compute the POD modes,
+and creates all data into an "offline_rom" subdirectory:
+
+.. code-block:: bash
+
+   ./offline_rom/
+   ├── pod_input.yaml
+   ├── rhs_left_singular_vectors.bin
+   ├── rhs_singular_values.txt
+   ├── rhs_snapshots.bin
+   ├── state_left_singular_vectors.bin
+   ├── state_singular_values.txt
+   └── state_snapshots.bin
 
 
-This should generate following directory structure:
+Step 3: galerkin rom
+--------------------
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   python3 $REPOSRC/wf_galerkin.py --wf wf.yaml
+
+The following C++ code is being executed:
+
+.. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
+   :language: cpp
+   :lines: 10-43
+   :linenos:
+   :emphasize-lines: 28
+
+
+At the end, you should have the following directory structure:
 
 .. code-block:: bash
 
@@ -80,29 +117,31 @@ This should generate following directory structure:
    ├── Makefile
    ├── cmake_install.cmake
    ├── default_galerkin_truncation_energybased_99.99999_runid_0
-   ├── default_galerkin_truncation_energybased_99.99_runid_0
+   ├── default_galerkin_truncation_energybased_99.999_runid_0
    ├── fom_mesh
    ├── fom_test_runid_0
    ├── fom_train_runid_0
+   ├── fom_train_runid_1
    ├── offline_rom
+   ├── plot.py
    └── wf.yaml
 
 
-FOM snippet
-^^^^^^^^^^^
+Step 4: process results
+-----------------------
 
-When we run the FOM driver, the following C++ code is being executed:
+.. code-block:: bash
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_fom.hpp
-   :language: cpp
-   :lines: 5-35
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   python3 $REPOSRC/wf_reconstruct_on_full_mesh.py
+   python3 plot.py
 
-Galerkin ROM snippet
-^^^^^^^^^^^^^^^^^^^^
-
-When we run the Galerkin driver, the following C++ code is being executed:
-
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
-   :language: cpp
-   :lines: 10-50
-   :emphasize-lines: 20,21,22
+.. image:: ../../../end-to-end-roms/2d_swe_default_galerkin/FOM.png
+  :width: 32 %
+  :alt: FOM
+.. image:: ../../../end-to-end-roms/2d_swe_default_galerkin/ROM_22.png
+  :width: 32 %
+  :alt: ROM, 22 modes
+.. image:: ../../../end-to-end-roms/2d_swe_default_galerkin/ROM_55.png
+  :width: 32 %
+  :alt: ROM, 55 modes

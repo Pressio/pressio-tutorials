@@ -4,7 +4,7 @@
 # imports
 #==============================================================
 
-import sys, os, importlib, copy, git, time
+import sys, os, importlib, copy, git, time, random
 from argparse import ArgumentParser
 from pathlib import Path
 from scipy import linalg as scipyla
@@ -26,7 +26,7 @@ def _validate_wf_offlinerom_section(wfDic, customModule):
   assert 'stateData' in podDic, "stateData MUST be a subfield"
   statePodDic = podDic['stateData']
   assert 'useTrainingRuns' in statePodDic, "cannot find subfield: useTrainingRuns"
-  assert 'policy' in statePodDic, "cannot find subfield: policy"
+  #assert 'policy' in statePodDic, "cannot find subfield: policy"
 
 # -------------------------------------------------------------------
 def _do_svd(mymatrix, lsvFile, svaFile):
@@ -69,9 +69,10 @@ def _default_snapshots_and_pod(outDir, customModule, dataDirs, \
   # collect some info that we need
   fomTotCells = find_total_cells_from_info_file(fomMeshPath)
   totFomDofs  = fomTotCells*customModule.numDofsPerCell
-  print(totFomDofs)
 
   if stateDataOrRhsData == "stateData":
+    print("\n")
+    print("-------- computing POD on state data --------")
     M = load_fom_state_snapshots_from_multiple_runs(dataDirs, totFomDofs,
                                                     customModule.numDofsPerCell,
                                                     False) # don't subtract IC
@@ -84,7 +85,9 @@ def _default_snapshots_and_pod(outDir, customModule, dataDirs, \
     # so that the columns of M represent the snapshots taken
     _do_svd(M.T, lsvFile, svaFile)
 
-  else:
+  elif stateDataOrRhsData == "rhsData":
+    print("\n")
+    print("-------- computing POD on RHS data --------")
     M = load_fom_rhs_snapshots_from_multiple_runs(dataDirs, totFomDofs,
                                                   customModule.numDofsPerCell)
     write_matrix_to_bin_omit_shape(outDir+"/rhs_snapshots.bin", M)
@@ -94,6 +97,84 @@ def _default_snapshots_and_pod(outDir, customModule, dataDirs, \
     # i.e. each column is an instance of state or rhs
     # so that the columns of M represent the snapshots taken
     _do_svd(M.T, lsvFile, svaFile)
+
+  else:
+    print("Invalid case = ", stateDataOrRhsData)
+
+# -------------------------------------------------------------------
+def make_sample_mesh_random(valueOrList, workDir, module, pdaDir, fomMeshPath):
+  if type(valueOrList) != list:
+    valueOrList = [valueOrList]
+
+  for fractionOfCellsNeeded in valueOrList:
+    outDir = workDir + "/sample_mesh_random_{:3.3f}".format(fractionOfCellsNeeded)
+    if os.path.exists(outDir):
+      print('{} already exists'.format(outDir))
+    else:
+      print('Generating random sample mesh in {}'.format(outDir))
+      os.system('mkdir -p ' + outDir)
+
+      fomNumCells = find_total_cells_from_info_file(fomMeshPath)
+      sampleMeshCount = int(fomNumCells * fractionOfCellsNeeded)
+      sample_mesh_gids = random.sample(range(0, fomNumCells), sampleMeshCount)
+      sample_mesh_gids = np.sort(sample_mesh_gids)
+      print(" numCellsFullDomain = {}".format(fomNumCells))
+      print(" sampleMeshSize     = {}".format(sampleMeshCount))
+      np.savetxt(outDir+'/sample_mesh_gids.txt', sample_mesh_gids, fmt='%8i')
+
+      call_pda_to_make_sample_mesh(pdaDir, fomMeshPath, outDir)
+
+# -------------------------------------------------------------------
+def call_pda_to_make_sample_mesh(pdaDir, fomMeshPath, outDir):
+   owd = os.getcwd()
+   meshScriptsDir = pdaDir + "/meshing_scripts"
+   args = ("python3", meshScriptsDir+'/create_sample_mesh.py',
+           "--fullMeshDir", fomMeshPath,
+           "--sampleMeshIndices", outDir+'/sample_mesh_gids.txt',
+           "--outDir", outDir)
+   popen  = subprocess.Popen(args, stdout=subprocess.PIPE);
+   popen.wait()
+   output = popen.stdout.read();
+   print(output)
+
+# -------------------------------------------------------------------
+def make_sample_mesh_psampling(valueOrList, workDir, module, pdaDir, fomMeshPath):
+  # ensure there is RHS pod modes available or psampling cannot be done
+  rhsPodFile = workDir + '/rhs_left_singular_vectors.bin'
+  assert os.path.exists(rhsPodFile), "cannot find rhs modes, so aborting psampling sample mesh"
+
+  if type(valueOrList) != list:
+    valueOrList = [valueOrList]
+
+  for fractionOfCellsNeeded in valueOrList:
+    outDir = workDir + "/sample_mesh_psampling_{:3.3f}".format(fractionOfCellsNeeded)
+    if os.path.exists(outDir):
+      print('{} already exists'.format(outDir))
+    else:
+      print('Generating psampling sample mesh in {}'.format(outDir))
+      os.system('mkdir -p ' + outDir)
+
+      fomNumCells = find_total_cells_from_info_file(fomMeshPath)
+      sampleMeshCount = int(fomNumCells * fractionOfCellsNeeded)
+      sample_mesh_gids = random.sample(range(0, fomNumCells), sampleMeshCount)
+      sample_mesh_gids = np.sort(sample_mesh_gids)
+      print(" numCellsFullDomain = {}".format(fomNumCells))
+      print(" sampleMeshSize     = {}".format(sampleMeshCount))
+      np.savetxt(outDir+'/sample_mesh_gids.txt', sample_mesh_gids, fmt='%8i')
+
+      whichDofToUseForFindingCells = 0
+      myRhsPod = load_pod_basis(rhsPodFile)[whichDofToUseForFindingCells::module.numDofsPerCell]
+
+      if myRhsPod.shape[1] < sampleMeshCount:
+        print("Warning: psampling sample mesh: not enough rhs modes, I am reducing sample mesh count")
+        sampleMeshCount = myRhsPod.shape[1]-1
+
+      Q,R,P = scipyla.qr(myRhsPod[:,0:sampleMeshCount].transpose(), pivoting=True)
+      mySampleMeshGidsWrtFullMesh = np.sort(P[0:sampleMeshCount])
+      np.savetxt(outDir+'/sample_mesh_gids_p_0.txt',\
+                 mySampleMeshGidsWrtFullMesh, fmt='%8i')
+
+      call_pda_to_make_sample_mesh(pdaDir, fomMeshPath, outDir)
 
 #==============================================================
 # main
@@ -143,7 +224,6 @@ if __name__== "__main__":
 
   # for this driver to be valid, we need to ensure this:
   _validate_wf_offlinerom_section(wfDic, customModule)
-  podDic = wfDic['offlineRom']['pod']
 
   # figure out if offlineRom dir exists
   offlineRomDir = workDirFullPath + "/offline_rom"
@@ -153,7 +233,10 @@ if __name__== "__main__":
   else:
     os.system('mkdir -p ' + offlineRomDir)
 
-    # write to file
+    # -----------
+    # do POD
+    # -----------
+    podDic = wfDic['offlineRom']['pod']
     write_dic_to_yaml_file(offlineRomDir +"/pod_input.yaml", podDic)
     for s in ['stateData', 'rhsData']:
       if s in podDic:
@@ -169,11 +252,31 @@ if __name__== "__main__":
           trainRunIndices = podDic[s]['useTrainingRuns']
           trainDirsToUse = find_fom_train_dirs_for_target_set_of_indices(workDirFullPath, \
                                                                          trainRunIndices)
-        print(trainDirsToUse)
 
         # figure out the policy
-        policy = podDic[s]['policy']
-        if policy == "default":
+        # if missing, that means use default
+        if 'policy' not in podDic[s]:
           _default_snapshots_and_pod(offlineRomDir, customModule, trainDirsToUse, fomMeshPath, s)
         else:
-          print("invalid or unsupported pod policy {}".format(policy))
+          if policy == "default":
+            _default_snapshots_and_pod(offlineRomDir, customModule, trainDirsToUse, fomMeshPath, s)
+          else:
+            print("invalid or unsupported pod policy {}".format(policy))
+
+    # -----------
+    # do sample mesh
+    # -----------
+    print("\n")
+    print("-------- computing sample meshes --------")
+    pdaRepoFullPath = ptutRepoFullPath + '/tpls/pressio-demoapps'
+    if "sampleMesh" in wfDic['offlineRom']:
+      smDic = wfDic['offlineRom']['sampleMesh']
+      for key, valueOrList in smDic.items():
+        if key == "random":
+          make_sample_mesh_random(valueOrList, offlineRomDir, \
+                                  customModule, pdaRepoFullPath, \
+                                  fomMeshPath)
+        elif key == "psampling":
+          make_sample_mesh_psampling(valueOrList, offlineRomDir, \
+                                     customModule, pdaRepoFullPath, \
+                                     fomMeshPath)
