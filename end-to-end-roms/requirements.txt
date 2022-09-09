@@ -1,0 +1,5 @@
+numpy
+yaml
+scipy
+matplotlib
+GitPython

@@ -1,3 +1,0 @@
-LSPG: unsteady: hyper-reduced
-=============================
-
