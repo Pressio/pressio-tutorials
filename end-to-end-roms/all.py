@@ -1,6 +1,8 @@
 
 import numpy as np
-import sys, os, re, yaml, logging, git, subprocess
+import sys, os, re, yaml, logging
+import time, git, subprocess
+from scipy import linalg as scipyla
 
 cppExecutableName = "pdaWfExe"
 
@@ -302,8 +304,7 @@ def compute_cumulative_energy(svalues, targetPercentage):
 
 # -------------------------------------------------------------------
 def load_pod_basis(lsvFile):
-  # count=2 because the basis file always contains
-  # the shape at the top
+  # the basis file always contains the shape at the top
   nr, nc  = np.fromfile(lsvFile, dtype=np.int64, count=2)
   M = np.fromfile(lsvFile, offset=np.dtype(np.int64).itemsize*2)
   M = np.reshape(M, (nr, nc), order='F')
@@ -325,3 +326,38 @@ def load_fom_initial_condition(fromFile):
 #   logger.debug("rom state snapshots: shape  : {}".format(M.T.shape))
 #   logger.debug("rom state snapshots: min/max: {} {}".format(np.min(M), np.max(M)))
 #   return M.T
+
+# -------------------------------------------------------------------
+def do_svd(mymatrix, lsvFile, svaFile):
+  timing = np.zeros(1)
+  start = time.time()
+  U,S,_ = scipyla.svd(mymatrix, full_matrices=False, lapack_driver='gesdd')
+  end = time.time()
+  elapsed = end - start
+  timing[0] = elapsed
+  #print("elapsed ", elapsed)
+
+  #singular values
+  #print("Writing sing values to file: {}".format(svaFile))
+  np.savetxt(svaFile, S)
+
+  assert(U.flags['F_CONTIGUOUS'])
+
+  # left singular vectors
+  fileo = open(lsvFile, "wb")
+  # write to beginning of file the extents of the matrix
+  numRows=np.int64(U.shape[0])
+  np.array([numRows]).tofile(fileo)
+  numCols=np.int64(U.shape[1])
+  np.array([numCols]).tofile(fileo)
+  '''
+  NOTE: tofile writes an array rowwise, REGARDLESS of the layout of the matrix.
+  So here we need to pass U.T to tofile so that tofile writes U in the proper
+  way required format for how we read these later
+  '''
+  UT = np.transpose(U)
+  UT.tofile(fileo)
+  fileo.close()
+  #outDir = os.path.dirname(lsvFile)
+  #np.savetxt(lsvFile+'.txt', U[:,:3])
+  # np.savetxt(outDir+'/timings.txt', timing)

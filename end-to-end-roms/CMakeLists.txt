@@ -6,6 +6,7 @@ add_subdirectory(
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../tpls/eigen/eigen3
   ${CMAKE_CURRENT_SOURCE_DIR}/../tpls/pressio-demoapps/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../tpls #this is needed to include the pressio_cmake_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/../tpls/pressio/include
   ${CMAKE_CURRENT_SOURCE_DIR}/../tpls/yaml-cpp-0.7.0/include)
 

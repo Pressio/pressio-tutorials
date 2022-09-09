@@ -94,7 +94,7 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
    :hidden:
    :caption: Self-contained tutorials using Eigen data types
 
-   ./comingsoon
+   ./using_eigen/ode1
 
 .. toctree::
    :maxdepth: 0

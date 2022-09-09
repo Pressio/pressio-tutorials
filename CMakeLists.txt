@@ -15,11 +15,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+enable_testing()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/end-to-end-roms)
-
-#===================================================
-# include_directories(
-#   ${CMAKE_CURRENT_SOURCE_DIR}/tpls/eigen/eigen3
-#   ${CMAKE_CURRENT_SOURCE_DIR}/tpls
-#   ${CMAKE_CURRENT_SOURCE_DIR}/tpls/pressio/include)
-# set(TUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/tutorials)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/ode-eigen)

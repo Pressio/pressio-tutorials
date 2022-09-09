@@ -28,40 +28,6 @@ def _validate_wf_offlinerom_section(wfDic, customModule):
   assert 'useTrainingRuns' in statePodDic, "cannot find subfield: useTrainingRuns"
   #assert 'policy' in statePodDic, "cannot find subfield: policy"
 
-# -------------------------------------------------------------------
-def _do_svd(mymatrix, lsvFile, svaFile):
-  timing = np.zeros(1)
-  start = time.time()
-  U,S,_ = scipyla.svd(mymatrix, full_matrices=False, lapack_driver='gesdd')
-  end = time.time()
-  elapsed = end - start
-  timing[0] = elapsed
-  #print("elapsed ", elapsed)
-
-  #singular values
-  #print("Writing sing values to file: {}".format(svaFile))
-  np.savetxt(svaFile, S)
-
-  assert(U.flags['F_CONTIGUOUS'])
-
-  # left singular vectors
-  fileo = open(lsvFile, "wb")
-  # write to beginning of file the extents of the matrix
-  numRows=np.int64(U.shape[0])
-  np.array([numRows]).tofile(fileo)
-  numCols=np.int64(U.shape[1])
-  np.array([numCols]).tofile(fileo)
-  '''
-  NOTE: tofile writes an array rowwise, REGARDLESS of the layout of the matrix.
-  So here we need to pass U.T to tofile so that tofile writes U in the proper
-  way required format for how we read these later
-  '''
-  UT = np.transpose(U)
-  UT.tofile(fileo)
-  fileo.close()
-  #outDir = os.path.dirname(lsvFile)
-  #np.savetxt(lsvFile+'.txt', U[:,:3])
-  # np.savetxt(outDir+'/timings.txt', timing)
 
 # -------------------------------------------------------------------
 def _default_snapshots_and_pod(outDir, customModule, dataDirs, \
@@ -83,7 +49,7 @@ def _default_snapshots_and_pod(outDir, customModule, dataDirs, \
     # need to do SVD on M.T because M.T has the correct shape,
     # i.e. each column is an instance of state or rhs
     # so that the columns of M represent the snapshots taken
-    _do_svd(M.T, lsvFile, svaFile)
+    do_svd(M.T, lsvFile, svaFile)
 
   elif stateDataOrRhsData == "rhsData":
     print("\n")
@@ -96,7 +62,7 @@ def _default_snapshots_and_pod(outDir, customModule, dataDirs, \
     # need to do SVD on M.T because M.T has the correct shape,
     # i.e. each column is an instance of state or rhs
     # so that the columns of M represent the snapshots taken
-    _do_svd(M.T, lsvFile, svaFile)
+    do_svd(M.T, lsvFile, svaFile)
 
   else:
     print("Invalid case = ", stateDataOrRhsData)
@@ -266,10 +232,10 @@ if __name__== "__main__":
     # -----------
     # do sample mesh
     # -----------
-    print("\n")
-    print("-------- computing sample meshes --------")
     pdaRepoFullPath = ptutRepoFullPath + '/tpls/pressio-demoapps'
     if "sampleMesh" in wfDic['offlineRom']:
+      print("\n")
+      print("-------- computing sample meshes --------")
       smDic = wfDic['offlineRom']['sampleMesh']
       for key, valueOrList in smDic.items():
         if key == "random":
