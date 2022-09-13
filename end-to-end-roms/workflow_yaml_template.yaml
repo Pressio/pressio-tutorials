@@ -126,7 +126,7 @@ fom:
 # example:
 #
 # constraints:
-#              - the training run IDs specified for useTrainingRUns must be a
+#              - the training run IDs specified for useTrainingRuns must be a
 #                valid subset of the run IDs specified in the fom section.
 #                You don't necessarily have to use all fom training runs.
 # comments:
