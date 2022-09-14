@@ -17,6 +17,7 @@ target_compile_options(${exename} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-march=nativ
 
 add_subdirectory(2d_swe_default_galerkin)
 add_subdirectory(2d_swe_gappy_galerkin)
+add_subdirectory(2d_swe_default_lspg)
 
 if(PRESSIOTUTORIALS_ENABLE_TESTS)
   add_subdirectory(tests)

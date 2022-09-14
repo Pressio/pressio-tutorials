@@ -88,6 +88,7 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
    ./endtoend/templateyaml
    ./endtoend/swe_galerkin_default
    ./endtoend/swe_galerkin_gappy
+   ./endtoend/swe_lspg_default
 
 .. toctree::
    :maxdepth: 0

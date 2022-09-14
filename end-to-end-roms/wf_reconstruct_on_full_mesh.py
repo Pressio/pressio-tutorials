@@ -80,7 +80,7 @@ if __name__== "__main__":
 
   # loop over all rom runs
   romDirs = [workDirFullPath+'/'+d for d in os.listdir(workDirFullPath) \
-             if "galerkin" in d]
+             if "galerkin" in d or "lspg" in d]
   for runDirIt in romDirs:
     # load pod modes
     fullMeshPodFile = extract_from_rom_input_file(runDirIt, "fullMeshPodFile")

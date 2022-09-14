@@ -30,9 +30,8 @@ void lspg_pick_solver_and_run(const ParserType & parser,
     auto solver = pnlins::create_gauss_newton(problem, linearSolver);
     solver.setStoppingCriterion(pnlins::Stop::WhenGradientAbsoluteNormBelowTolerance);
     solver.setTolerance(parser.nonlinearSolverTolerance());
-    //solver.setUpdatingCriterion(pnlins::Update::Armijo);
 
-    pode::advance_n_steps(problem, reducedState, 0.,
+    pode::advance_n_steps(problem, reducedState, startTime,
 			  parser.timeStepSize(), numSteps,
 			  observer, solver);
   }
@@ -47,7 +46,7 @@ void lspg_pick_solver_and_run(const ParserType & parser,
     solver.setStoppingCriterion(pnlins::Stop::WhenGradientAbsoluteNormBelowTolerance);
     solver.setTolerance(parser.nonlinearSolverTolerance());
 
-    pode::advance_n_steps(problem, reducedState, 0.,
+    pode::advance_n_steps(problem, reducedState, startTime,
 			  parser.timeStepSize(), numSteps,
 			  observer, solver);
   }
@@ -64,7 +63,7 @@ void lspg_pick_solver_and_run(const ParserType & parser,
     solver.setStoppingCriterion(pnlins::Stop::WhenGradientAbsoluteNormBelowTolerance);
     solver.setTolerance(parser.nonlinearSolverTolerance());
 
-    pode::advance_n_steps(problem, reducedState, 0.,
+    pode::advance_n_steps(problem, reducedState, startTime,
 			  parser.timeStepSize(), numSteps,
 			  observer, solver);
   }

@@ -10,7 +10,7 @@ cppExecutableName = "pdaWfExe"
 def is_valid_odescheme(scheme):
   if scheme in ["RungeKutta4", "RK4", "rungekutta4", "rk4", \
                 "SSPRungeKutta3", "SSPRK3", "ssprungekutta3", "ssprk3",\
-                "EulerForward", "eulerforward"]:
+                "BDF1", "bdf1", "EulerForward", "eulerforward"]:
     return True
   else:
     print("invalid ode scheme selected: {}".format(scheme))
@@ -60,15 +60,14 @@ def link_if_needed_and_run_exe(whereToRun, exeDir, exeName, numThreads=1):
   link_exe(whereToRun, exeDir, exeName)
 
   my_env = os.environ.copy()
-  if (numThreads ==1):
-    my_env["OMP_NUM_THREADS"] = str(1)
-    my_env["OMP_PLACES"]="{0}"
-    my_env["OMP_PROC_BIND"]="true"
-
-  else:
-    my_env["OMP_NUM_THREADS"] = str(numThreads)
-    my_env["OMP_PLACES"]      ="threads"
-    my_env["OMP_PROC_BIND"]   ="spread"
+  # if (numThreads ==1):
+  #   my_env["OMP_NUM_THREADS"] = str(1)
+  #   my_env["OMP_PLACES"]="{0}"
+  #   my_env["OMP_PROC_BIND"]="true"
+  # else:
+  #   my_env["OMP_NUM_THREADS"] = str(numThreads)
+  #   my_env["OMP_PLACES"]      ="threads"
+  #   my_env["OMP_PROC_BIND"]   ="spread"
 
   args = ("./"+exeName, whereToRun+"/input.yaml")
 

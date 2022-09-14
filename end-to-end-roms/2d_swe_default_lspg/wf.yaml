@@ -1,0 +1,35 @@
+problem: 2d_swe
+
+parameterSpace:
+  names: ['coriolis', 'pulsemag', 'gravity']
+  trainPoints:
+    0: [-1.0, 0.125, 9.8]
+    1: [ 0.0, 0.125, 9.8]
+  testPoints:
+    0: [-0.5, 0.125, 9.8]
+
+fom:
+  meshSize: [65, 65]
+  inviscidFluxReconstruction: "Weno3"
+  odeScheme: "BDF1"
+  timeStepSize: 0.01
+  nonlinearSolverName: NewtonRaphson
+  nonlinearSolverTolerance: 1e-6
+  train:
+    finalTime: 5.0
+    stateSamplingFreq: 10
+  test:
+    finalTime: 5.0
+    stateSamplingFreq: 10
+
+offlineRom:
+  pod:
+    stateData:
+      useTrainingRuns: all
+
+lspgRom:
+  algorithm: defaultLspg
+  nonlinearSolverName: GaussNewton
+  nonlinearSolverTolerance: 1e-6
+  podTruncation:
+    energyBased: [99.999, 99.99999]
