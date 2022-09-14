@@ -16,14 +16,14 @@ void run_fom_explicit(const FomSystemType & fomSystem,
   state_t state = fomSystem.initialCondition();
   write_vector_to_binary(state, "initial_state.bin");
 
-  StateObserver stateObs(parser.stateSamplingFreq());
-  const auto startTime = static_cast<typename FomSystemType::scalar_type>(0);
-
   const auto odeScheme = parser.odeScheme();
+  assert(pressio::ode::is_explicit_scheme(odeScheme));
+  auto stepperObj = pode::create_explicit_stepper(odeScheme, fomSystem);
+
   using rhs_t = typename FomSystemType::right_hand_side_type;
   RhsObserver rhsObs(parser.rhsSamplingFreq());
-
-  auto stepperObj = pode::create_explicit_stepper(odeScheme, fomSystem);
+  StateObserver stateObs(parser.stateSamplingFreq());
+  const auto startTime = static_cast<typename FomSystemType::scalar_type>(0);
   pode::advance_n_steps(stepperObj, state, startTime,
 			parser.timeStepSize(),
 			pressio::ode::StepCount(parser.numSteps()),

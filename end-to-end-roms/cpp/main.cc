@@ -11,7 +11,7 @@
 #include "run_fom_implicit.hpp"
 #include "run_default_galerkin.hpp"
 #include "run_hypred_galerkin.hpp"
-// #include "run_lspg.hpp"
+#include "run_default_lspg.hpp"
 // #include "source.hpp"
 #include <chrono>
 
@@ -31,6 +31,10 @@ void dispatch(const AppObjType & fomSystem,
 
   else if (parser.romAlgorithm()=="defaultGalerkin"){
     run_galerkin_default(fomSystem, parser);
+  }
+
+  else if (parser.romAlgorithm()=="defaultLspg"){
+    run_lspg_default(fomSystem, parser);
   }
 
   else if (   parser.romAlgorithm()=="collocationGalerkin"

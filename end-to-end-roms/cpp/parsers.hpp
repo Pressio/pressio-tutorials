@@ -114,7 +114,7 @@ private:
     entry = "rhsSamplingFreq";
     if (node[entry]) rhsSamplingFreq_ = node[entry].as<int>();
 
-    entry = "nonlinearSolverType";
+    entry = "nonlinearSolverName";
     if (node[entry]){
       nonlinSolverStr_ = node[entry].as<std::string>();
     }
@@ -123,7 +123,7 @@ private:
       throw std::runtime_error("Input: missing solver name");
     }
 
-    entry = "nonlinearSolverTol";
+    entry = "nonlinearSolverTolerance";
     if (node[entry]){
       nonlinSolverTol_ = node[entry].as<ScalarType>();
     }
