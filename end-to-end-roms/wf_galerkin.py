@@ -273,9 +273,10 @@ if __name__== "__main__":
   _validate_wf_galerkin_section(wfDic, customModule)
   romDic = wfDic['galerkinRom']
 
-  # figure out which galerkin we want and run
-  if romDic['algorithm'].lower() == "defaultgalerkin":
-    _main_default_impl(workDirFullPath, romDic)
+  if not dryRun:
+    # figure out which galerkin we want and run
+    if romDic['algorithm'].lower() == "defaultgalerkin":
+      _main_default_impl(workDirFullPath, romDic)
 
-  elif romDic['algorithm'].lower() == "gappygalerkin":
-    _main_gappy_impl(workDirFullPath, romDic, customModule.numDofsPerCell)
+    elif romDic['algorithm'].lower() == "gappygalerkin":
+      _main_gappy_impl(workDirFullPath, romDic, customModule.numDofsPerCell)
