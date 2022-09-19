@@ -32,6 +32,6 @@ offlineRom:
     random: 0.1
 
 galerkinRom:
-  algorithm: gappyGalerkin
+  algorithm: hyperreducedGalerkin
   podTruncation:
     energyBased: [99.999, 99.99999]

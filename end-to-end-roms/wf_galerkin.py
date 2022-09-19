@@ -156,14 +156,7 @@ def _main_default_impl(workDir, romDic):
                           fomInputs, fomTestDir, "defaultGalerkin")
 
 # -------------------------------------------------------------------
-def string_identifier_from_sample_mesh_dir(sampleMeshDir):
-  if "sample_mesh_random" in sampleMeshDir:
-    return "sample_mesh_random_"+sampleMeshDir[-5:]
-  elif "sample_mesh_psampling" in sampleMeshDir:
-    return "sample_mesh_psampling_"+sampleMeshDir[-5:]
-
-# -------------------------------------------------------------------
-def _main_gappy_impl(workDir, romDic, numDofsPerCell):
+def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell):
   # location of the offline stuff
   offlineRomDir = workDir + "/offline_rom"
 
@@ -210,13 +203,13 @@ def _main_gappy_impl(workDir, romDic, numDofsPerCell):
             runId = get_run_id(fomTestDir)
 
             # make name of the output rom directory
-            romDir = workDir + "/gappy_galerkin_truncation_energybased"
+            romDir = workDir + "/hyperreduced_galerkin_truncation_energybased"
             romDir += "_"+str(energy)
             romDir += "_" + strIdSm
             romDir += "_runid_"+str(runId)
             print(romDir)
             _run_single_rom(romDir, offlineRomDir, numModes, fomInputs,\
-                            fomTestDir, "gappyGalerkin",\
+                            fomTestDir, "hyperreducedGalerkin",\
                             sampleMeshDir = sampleMeshDir,\
                             hypRedOpDir = hypRedPath)
 
@@ -277,5 +270,5 @@ if __name__== "__main__":
   if romDic['algorithm'].lower() == "defaultgalerkin":
     _main_default_impl(workDirFullPath, romDic)
 
-  elif romDic['algorithm'].lower() == "gappygalerkin":
-    _main_gappy_impl(workDirFullPath, romDic, customModule.numDofsPerCell)
+  elif romDic['algorithm'].lower() == "hyperreducedgalerkin":
+    _main_hyperreduced_impl(workDirFullPath, romDic, customModule.numDofsPerCell)

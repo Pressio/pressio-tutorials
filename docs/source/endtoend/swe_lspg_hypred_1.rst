@@ -1,9 +1,7 @@
-.. include:: ../mydefs.rst
+Hyper-reduced LSPG for 2D SWE (example 1)
+=========================================
 
-Gappy Galerkin for 2D SWE
-=========================
-
-- ROM technique: gappy Galerkin
+- ROM technique: hyper-reduced LSPG
 
 - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
@@ -24,36 +22,39 @@ Prerequisites
 
 .. code-block:: bash
 
-   cd $BUILDDIR/end-to-end-roms/2d_swe_gappy_galerkin
+   cd $BUILDDIR/end-to-end-roms/2d_swe_lspg_hypred_1
 
 
 Workflow File
 -------------
 
-The `workflow file <../../../end-to-end-roms/2d_swe_gappy_galerkin/wf.yaml>`_
+The `workflow file <../../../end-to-end-roms/2d_swe_lspg_hypred_1/wf.yaml>`_
 is shown below for exposition purposes, but it is automatically copied to the
 build directory, so you don't need to do anything:
 
-.. literalinclude:: ../../../end-to-end-roms/2d_swe_gappy_galerkin/wf.yaml
+.. literalinclude:: ../../../end-to-end-roms/2d_swe_lspg_hypred_1/wf.yaml
    :language: yaml
    :lines: 1-37
    :linenos:
 
-Step 1: run FOMs
-----------------
 
-.. code-block:: py
+Step 1: execute FOMs
+--------------------
 
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_hypred_1
    python3 $REPOSRC/wf_foms.py --wf wf.yaml
 
-The FOM stage is the same as `here <swe_galerkin_default.html>`_.
 
+The FOM stage is the same as `here <swe_lspg_default.html>`_.
 
 Step 2: offline rom
 -------------------
 
-.. code-block:: py
+.. code-block:: bash
 
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_hypred_1
    python3 $REPOSRC/wf_offline_rom.py --wf wf.yaml
 
 The offline rom takes care of using the FOM training data to compute the POD modes,
@@ -63,9 +64,6 @@ computing samples meshes, and puts everything into an "offline_rom" subdirectory
 
    offline_rom/
    ├── pod_input.yaml
-   ├── rhs_left_singular_vectors.bin
-   ├── rhs_singular_values.txt
-   ├── rhs_snapshots.bin
    ├── sample_mesh_random_0.100
    ├── state_left_singular_vectors.bin
    ├── state_singular_values.txt
@@ -88,24 +86,30 @@ your plot might look slightly different):
 which shows a plot like the following (yellow cells denote the "sample mesh",
 white cells denote the "stencil mesh"):
 
-.. image:: ../../../end-to-end-roms/2d_swe_gappy_galerkin/mesh.png
+.. image:: ../../../end-to-end-roms/2d_swe_lspg_hypred_1/mesh.png
   :width: 50 %
   :alt: Sample mesh
   :align: center
 
 
-Step 3: galerkin rom
+Step 3: lspg rom
 --------------------
 
-.. code-block:: py
+.. code-block:: bash
 
-   python3 $REPOSRC/wf_galerkin.py --wf wf.yaml
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_hypred_1
+   python3 $REPOSRC/wf_lspg.py --wf wf.yaml
 
-Running the Galerkin driver means the following C++ code is being executed:
+The following C++ code is being executed:
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_hypred_galerkin.hpp
+.. literalinclude:: ../../../end-to-end-roms/cpp/run_hyperreduced_lspg.hpp
    :language: cpp
-   :lines: 40-77
+   :lines: 82-111
+   :linenos:
+
+.. literalinclude:: ../../../end-to-end-roms/cpp/lspg_pick_solver_and_run.hpp
+   :language: cpp
+   :lines: 23-37
    :linenos:
 
 At the end, you should have the following directory structure:
@@ -116,18 +120,15 @@ At the end, you should have the following directory structure:
    ├── CMakeFiles
    ├── Makefile
    ├── cmake_install.cmake
+   ├── hyperreduced_lspg_truncation_energybased_99.99999_runid_0
+   ├── hyperreduced_lspg_truncation_energybased_99.999_runid_0
    ├── fom_mesh
    ├── fom_test_runid_0
    ├── fom_train_runid_0
    ├── fom_train_runid_1
-   ├── gappy_galerkin_truncation_energybased_99.99999_sample_mesh_random_0.100_runid_0
-   ├── gappy_galerkin_truncation_energybased_99.999_sample_mesh_random_0.100_runid_0
-   ├── hyperreducer_99.99999_sample_mesh_random_0.100
-   ├── hyperreducer_99.999_sample_mesh_random_0.100
    ├── offline_rom
    ├── plot.py
    └── wf.yaml
-
 
 Step 4: process results
 -----------------------
@@ -137,19 +138,20 @@ Accuracy
 
 .. code-block:: bash
 
-   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_hypred_1
    python3 $REPOSRC/wf_reconstruct_on_full_mesh.py
    python3 plot.py
 
-.. image:: ../../../end-to-end-roms/2d_swe_gappy_galerkin/FOM.png
+.. image:: ../../../end-to-end-roms/2d_swe_lspg_hypred_1/FOM.png
   :width: 32 %
   :alt: FOM
-.. image:: ../../../end-to-end-roms/2d_swe_gappy_galerkin/ROM_22.png
+.. image:: ../../../end-to-end-roms/2d_swe_lspg_hypred_1/ROM_18.png
   :width: 32 %
   :alt: ROM, 22 modes
-.. image:: ../../../end-to-end-roms/2d_swe_gappy_galerkin/ROM_55.png
+.. image:: ../../../end-to-end-roms/2d_swe_lspg_hypred_1/ROM_36.png
   :width: 32 %
   :alt: ROM, 55 modes
+
 
 Runtime comparison
 ^^^^^^^^^^^^^^^^^^
@@ -163,26 +165,25 @@ If you do ``tail -n 2 fom_*/out.log``, you see something as follows:
 .. code-block:: text
 
    ==> fom_test_runid_0/out.log <==
-   elapsed 6.71033
-   [2022-09-07 22:37:04.546] [info] [1806179] Finalizing pressio logger
+   elapsed 102.308
+   [info] [1136219] Finalizing pressio logger
 
    ==> fom_train_runid_0/out.log <==
-   elapsed 6.86063
-   [2022-09-07 22:36:51.028] [info] [1805967] Finalizing pressio logger
+   elapsed 99.1657
+   [info] [1133529] Finalizing pressio logger
 
    ==> fom_train_runid_1/out.log <==
-   elapsed 6.75992
-   [2022-09-07 22:36:57.812] [info] [1806103] Finalizing pressio logger
+   elapsed 99.8976
+   [info] [1134515] Finalizing pressio logger
 
-
-Then do ``tail -n 2 gappy_*/out.log``, you will see:
+Then do ``tail -n 2 hyperreduced_*/out.log``, you should see something as:
 
 .. code-block:: text
 
-   ==> gappy_galerkin_truncation_energybased_99.999_sample_mesh_random_0.100_runid_0/out.log <==
-   elapsed 0.854369
-   [info] [1812457] Finalizing pressio logger
+   ==> hyperreduced_lspg_truncation_energybased_99.999_sample_mesh_random_0.100_runid_0/out.log <==
+   elapsed 5.53887
+   [info] [1138950] Finalizing pressio logger
 
-   ==> gappy_galerkin_truncation_energybased_99.99999_sample_mesh_random_0.100_runid_0/out.log <==
-   elapsed 1.01332
-   [info] [1812527] Finalizing pressio logger
+   ==> hyperreduced_lspg_truncation_energybased_99.99999_sample_mesh_random_0.100_runid_0/out.log <==
+   elapsed 6.52652
+   [info] [1139027] Finalizing pressio logger

@@ -360,3 +360,10 @@ def do_svd(mymatrix, lsvFile, svaFile):
   #outDir = os.path.dirname(lsvFile)
   #np.savetxt(lsvFile+'.txt', U[:,:3])
   # np.savetxt(outDir+'/timings.txt', timing)
+
+# -------------------------------------------------------------------
+def string_identifier_from_sample_mesh_dir(sampleMeshDir):
+  if "sample_mesh_random" in sampleMeshDir:
+    return "sample_mesh_random_"+sampleMeshDir[-5:]
+  elif "sample_mesh_psampling" in sampleMeshDir:
+    return "sample_mesh_psampling_"+sampleMeshDir[-5:]

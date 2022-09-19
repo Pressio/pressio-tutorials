@@ -207,7 +207,11 @@ private:
       isRom_ = true;
 
       std::string entry = "algorithm";
-      if (romNode[entry]) romAlgoName_ = romNode[entry].as<std::string>();
+      if (romNode[entry]){
+	romAlgoName_ = romNode[entry].as<std::string>();
+	std::transform(romAlgoName_.begin(), romAlgoName_.end(), romAlgoName_.begin(),
+		       [](int c){ return std::tolower(c); });
+      }
       else throw std::runtime_error("Input: ROM: missing " + entry);
 
       entry = "numModes";

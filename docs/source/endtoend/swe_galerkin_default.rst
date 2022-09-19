@@ -22,17 +22,17 @@ Prerequisites
 
 .. code-block:: bash
 
-   cd $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
 
 
 Workflow File
 -------------
 
-The `workflow file <../../../end-to-end-roms/2d_swe_default_galerkin/wf.yaml>`_
+The `workflow file <../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml>`_
 is shown below for exposition purposes, but it is automatically copied to the
 build directory, so you don't need to do anything:
 
-.. literalinclude:: ../../../end-to-end-roms/2d_swe_default_galerkin/wf.yaml
+.. literalinclude:: ../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml
    :language: yaml
    :lines: 1-35
    :linenos:
@@ -43,7 +43,7 @@ Step 1: execute FOMs
 
 .. code-block:: bash
 
-   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_foms.py --wf wf.yaml
 
 When we run the FOM driver, the following C++ code is being executed:
@@ -73,7 +73,7 @@ Step 2: offline rom
 
 .. code-block:: bash
 
-   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_offline_rom.py --wf wf.yaml
 
 The offline rom takes care of using the FOM training data to compute the POD modes,
@@ -96,7 +96,7 @@ Step 3: galerkin rom
 
 .. code-block:: bash
 
-   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_galerkin.py --wf wf.yaml
 
 The following C++ code is being executed:
@@ -132,16 +132,16 @@ Step 4: process results
 
 .. code-block:: bash
 
-   # from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_reconstruct_on_full_mesh.py
    python3 plot.py
 
-.. image:: ../../../end-to-end-roms/2d_swe_default_galerkin/FOM.png
+.. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/FOM.png
   :width: 32 %
   :alt: FOM
-.. image:: ../../../end-to-end-roms/2d_swe_default_galerkin/ROM_22.png
+.. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/ROM_22.png
   :width: 32 %
   :alt: ROM, 22 modes
-.. image:: ../../../end-to-end-roms/2d_swe_default_galerkin/ROM_55.png
+.. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/ROM_55.png
   :width: 32 %
   :alt: ROM, 55 modes

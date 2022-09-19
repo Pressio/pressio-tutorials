@@ -22,7 +22,7 @@ def _validate_wf_lspg_section(wfDic, customModule):
 def _run_single_rom(romDir, offlineRomDir, numModes, \
                     romDic, inputsDic, \
                     fomRunDir, algoString, \
-                    sampleMeshDir = None, hypRedOpDir = None):
+                    sampleMeshDir = None):
 
   if os.path.exists(romDir):
     print('{} already exists'.format(romDir))
@@ -56,6 +56,11 @@ def _run_single_rom(romDir, offlineRomDir, numModes, \
     romSpecifics['algorithm'] = algoString
     romSpecifics['numModes'] = numModes
     romSpecifics['romInitialStateFile'] = romInitStateFile
+
+    if sampleMeshDir!= None:
+      inputsDic['meshDir'] = sampleMeshDir
+      romSpecifics["stencilMeshGidsFile"] = sampleMeshDir +"/stencil_mesh_gids.dat"
+      romSpecifics["sampleMeshGidsFile"]  = sampleMeshDir +"/sample_mesh_gids.txt"
 
     inputsDic['rom'] = romSpecifics
 
@@ -109,6 +114,46 @@ def _main_default_impl(workDir, romDic):
           romDir += "_runid_"+str(runId)
           _run_single_rom(romDir, offlineRomDir, numModes, \
                           romDic, fomInputs, fomTestDir, "defaultLspg")
+
+# -------------------------------------------------------------------
+def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell):
+  # location of the offline stuff
+  offlineRomDir = workDir + "/offline_rom"
+
+  # find all sample meshes
+  sampleMeshes = [offlineRomDir +'/'+d for d in os.listdir(offlineRomDir) \
+                  if "sample_mesh_" in d[0:15]]
+  print(sampleMeshes)
+  assert len(sampleMeshes) >= 1, "sampleMeshes cannot be empty"
+  for sampleMeshDir in sampleMeshes:
+    strIdSm = string_identifier_from_sample_mesh_dir(sampleMeshDir)
+
+    truncationDic = romDic['podTruncation']
+    for truncPolicy, truncValues in truncationDic.items():
+      print (truncPolicy, truncValues)
+      if (truncPolicy.lower() == "energybased"):
+        for energy in truncValues:
+          singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
+          numModes = compute_cumulative_energy(singValues, energy)
+          print(numModes)
+
+          for fomTestDir in find_all_fom_test_dirs(workDir):
+            # read the yaml file used for that FOM run
+            fomInputs = read_yaml_file(fomTestDir + "/input.yaml")
+
+            # extract from fom dir the identifier so that
+            # we know which test point it refers to
+            runId = get_run_id(fomTestDir)
+
+            # make name of the output rom directory
+            romDir = workDir + "/hyperreduced_lspg_truncation_energybased"
+            romDir += "_"+str(energy)
+            romDir += "_" + strIdSm
+            romDir += "_runid_"+str(runId)
+            print(romDir)
+            _run_single_rom(romDir, offlineRomDir, numModes, \
+                            romDic, fomInputs, fomTestDir, "hyperreducedLspg",
+                            sampleMeshDir = sampleMeshDir)
 
 #==============================================================
 # main
@@ -164,3 +209,6 @@ if __name__== "__main__":
 
   if romDic['algorithm'].lower() == "defaultlspg":
     _main_default_impl(workDirFullPath, romDic)
+
+  elif romDic['algorithm'].lower() == "hyperreducedlspg":
+    _main_hyperreduced_impl(workDirFullPath, romDic, customModule.numDofsPerCell)
