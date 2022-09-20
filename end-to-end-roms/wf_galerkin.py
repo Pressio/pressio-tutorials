@@ -65,7 +65,7 @@ def compute_hypreducer_matrix_operator(outDir, offlineRomDir, \
 
 
 def _run_single_rom(romDir, offlineRomDir, numModes, inputsDic, \
-                    fomRunDir, algoString, \
+                    fomRunDir, algoString, dryRun,
                     sampleMeshDir = None, hypRedOpDir = None):
 
   if os.path.exists(romDir):
@@ -85,15 +85,16 @@ def _run_single_rom(romDir, offlineRomDir, numModes, inputsDic, \
     fullMeshPodFile = offlineRomDir +"/state_left_singular_vectors.bin"
     romSpecifics['fullMeshPodFile'] = fullMeshPodFile
 
-    # compute rom initial state using the basis
-    myPhi = load_pod_basis(fullMeshPodFile)[:, 0:numModes]
-    fomIc = load_fom_initial_condition(fomRunDir+"/initial_state.bin")
-    romIc = np.dot(myPhi.transpose(), fomIc)
-    romInitStateFile = romDir+"/rom_initial_state.txt"
-    np.savetxt(romInitStateFile, romIc)
+    romInitStateFile = romDir + "/rom_initial_state.txt"
+    if not dryRun:
+      # compute rom initial state using the basis
+      myPhi = load_pod_basis(fullMeshPodFile)[:, 0:numModes]
+      fomIc = load_fom_initial_condition(fomRunDir+"/initial_state.bin")
+      romIc = np.dot(myPhi.transpose(), fomIc)
+      np.savetxt(romInitStateFile, romIc)
 
-    # deal with affine shift
-    np.savetxt(romDir+"/optional_affine_shift.txt", np.zeros(len(fomIc)))
+      # deal with affine shift
+      np.savetxt(romDir+"/optional_affine_shift.txt", np.zeros(len(fomIc)))
     romSpecifics['affineShiftFile'] = romDir +"/optional_affine_shift.txt"
     romSpecifics['isAffine'] = False
 
@@ -131,7 +132,9 @@ def _main_default_impl(workDir, romDic, dryRun=False):
 
     if (truncPolicy.lower() == "energybased"):
       for energy in truncValues:
-        if not dryRun:
+        if dryRun:
+          numModes = 22
+        else:
           singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
           numModes = compute_cumulative_energy(singValues, energy)
           print(numModes)
@@ -153,9 +156,8 @@ def _main_default_impl(workDir, romDic, dryRun=False):
           romDir = workDir + "/default_galerkin_truncation_energybased"
           romDir += "_"+str(energy)
           romDir += "_runid_"+str(runId)
-          if not dryRun:
-            _run_single_rom(romDir, offlineRomDir, numModes, \
-                            fomInputs, fomTestDir, "defaultGalerkin")
+          _run_single_rom(romDir, offlineRomDir, numModes, \
+                          fomInputs, fomTestDir, "defaultGalerkin", dryRun)
 
 # -------------------------------------------------------------------
 def string_identifier_from_sample_mesh_dir(sampleMeshDir):
@@ -182,7 +184,9 @@ def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell, dryRun=False):
       print (truncPolicy, truncValues)
       if (truncPolicy.lower() == "energybased"):
         for energy in truncValues:
-          if not dryRun:
+          if dryRun:
+            numModes = 22
+          else:
             singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
             numModes = compute_cumulative_energy(singValues, energy)
             print(numModes)
@@ -219,11 +223,10 @@ def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell, dryRun=False):
             romDir += "_" + strIdSm
             romDir += "_runid_"+str(runId)
             print(romDir)
-            if not dryRun:
-              _run_single_rom(romDir, offlineRomDir, numModes, fomInputs,\
-                              fomTestDir, "hyperreducedGalerkin",\
-                              sampleMeshDir = sampleMeshDir,\
-                              hypRedOpDir = hypRedPath)
+            _run_single_rom(romDir, offlineRomDir, numModes, fomInputs,\
+                            fomTestDir, "hyperreducedGalerkin", dryRun,
+                            sampleMeshDir = sampleMeshDir,\
+                            hypRedOpDir = hypRedPath)
 
 
 #==============================================================
@@ -278,9 +281,8 @@ if __name__== "__main__":
   _validate_wf_galerkin_section(wfDic, customModule)
   romDic = wfDic['galerkinRom']
 
-  if not dryRun:
-    # figure out which galerkin we want and run
-    if romDic['algorithm'].lower() == "defaultgalerkin":
-      _main_default_impl(workDirFullPath, romDic, dryRun)
-    elif romDic['algorithm'].lower() == "hyperreducedgalerkin":
-      _main_hyperreduced_impl(workDirFullPath, romDic, customModule.numDofsPerCell, dryRun)
+  # figure out which galerkin we want and run
+  if romDic['algorithm'].lower() == "defaultgalerkin":
+    _main_default_impl(workDirFullPath, romDic, dryRun)
+  elif romDic['algorithm'].lower() == "hyperreducedgalerkin":
+    _main_hyperreduced_impl(workDirFullPath, romDic, customModule.numDofsPerCell, dryRun)
