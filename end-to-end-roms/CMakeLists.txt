@@ -15,8 +15,10 @@ add_executable(${exename} ${CMAKE_CURRENT_SOURCE_DIR}/cpp/main.cc)
 target_link_libraries(${exename} PRIVATE yaml-cpp)
 target_compile_options(${exename} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-march=native>)
 
-add_subdirectory(2d_swe_default_galerkin)
-add_subdirectory(2d_swe_gappy_galerkin)
+add_subdirectory(2d_swe_galerkin_default)
+add_subdirectory(2d_swe_galerkin_hypred_1)
+add_subdirectory(2d_swe_lspg_default)
+add_subdirectory(2d_swe_lspg_hypred_1)
 
 if(PRESSIOTUTORIALS_ENABLE_TESTS)
   add_subdirectory(tests)

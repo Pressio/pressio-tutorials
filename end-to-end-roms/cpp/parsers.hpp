@@ -114,7 +114,7 @@ private:
     entry = "rhsSamplingFreq";
     if (node[entry]) rhsSamplingFreq_ = node[entry].as<int>();
 
-    entry = "nonlinearSolverType";
+    entry = "nonlinearSolverName";
     if (node[entry]){
       nonlinSolverStr_ = node[entry].as<std::string>();
     }
@@ -123,7 +123,7 @@ private:
       throw std::runtime_error("Input: missing solver name");
     }
 
-    entry = "nonlinearSolverTol";
+    entry = "nonlinearSolverTolerance";
     if (node[entry]){
       nonlinSolverTol_ = node[entry].as<ScalarType>();
     }
@@ -207,7 +207,11 @@ private:
       isRom_ = true;
 
       std::string entry = "algorithm";
-      if (romNode[entry]) romAlgoName_ = romNode[entry].as<std::string>();
+      if (romNode[entry]){
+	romAlgoName_ = romNode[entry].as<std::string>();
+	std::transform(romAlgoName_.begin(), romAlgoName_.end(), romAlgoName_.begin(),
+		       [](int c){ return std::tolower(c); });
+      }
       else throw std::runtime_error("Input: ROM: missing " + entry);
 
       entry = "numModes";

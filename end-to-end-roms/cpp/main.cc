@@ -10,9 +10,9 @@
 #include "run_fom_explicit.hpp"
 #include "run_fom_implicit.hpp"
 #include "run_default_galerkin.hpp"
-#include "run_hypred_galerkin.hpp"
-// #include "run_lspg.hpp"
-// #include "source.hpp"
+#include "run_hyperreduced_galerkin.hpp"
+#include "run_default_lspg.hpp"
+#include "run_hyperreduced_lspg.hpp"
 #include <chrono>
 
 template<class AppObjType, class ParserType>
@@ -29,14 +29,21 @@ void dispatch(const AppObjType & fomSystem,
     }
   }
 
-  else if (parser.romAlgorithm()=="defaultGalerkin"){
+  else if (parser.romAlgorithm()=="defaultgalerkin"){
     run_galerkin_default(fomSystem, parser);
   }
 
-  else if (   parser.romAlgorithm()=="collocationGalerkin"
-	   || parser.romAlgorithm()=="gappyGalerkin")
+  else if (parser.romAlgorithm()=="defaultlspg"){
+    run_lspg_default(fomSystem, parser);
+  }
+
+  else if (   parser.romAlgorithm()=="hyperreducedgalerkin")
   {
     run_galerkin_hyperreduced(fomSystem, parser);
+  }
+
+  else if (parser.romAlgorithm()=="hyperreducedlspg"){
+    run_lspg_hyperreduced(fomSystem, parser);
   }
 
   else{

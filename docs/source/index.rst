@@ -21,13 +21,13 @@ Working on ROMs means inevitably touching multiple fields, ranging from, e.g.,
 linear algebra, nonlinear solvers and optimization, to distributed computing, HPC and time integration.
 This is clearly reflected in the structure of pressio, where several components
 (all usable independently) offer different capabilities, but as a whole
-constitute the pyramidal foundation of the ``pressio/rom`` component.
+constitute the stack foundation of the ``pressio/rom`` component.
 Describing how to use pressio for ROMs cannot be simply boiled down to presenting the API.
 Several steps are involved, and the best way to understand them is via
 examples showing the logical progression.
 Therefore, we have organized this website in two main parts: one the one hand
 we have short, independent tutorials on the foundational capabilities that
-can are easily explained in a self-contained fashion, for example nonlinear
+are easily explained in a self-contained fashion, for example nonlinear
 solvers and ODE integration; on the other hand, we have more
 `complete workflow-based end-to-end demos <endtoend/readthisfirst.html>`__
 to demonstrate in practice what pressio offers for ROMs.
@@ -87,7 +87,9 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
    ./endtoend/readthisfirst
    ./endtoend/templateyaml
    ./endtoend/swe_galerkin_default
-   ./endtoend/swe_galerkin_gappy
+   ./endtoend/swe_galerkin_hypred_1
+   ./endtoend/swe_lspg_default
+   ./endtoend/swe_lspg_hypred_1
 
 .. toctree::
    :maxdepth: 0

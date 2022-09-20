@@ -68,7 +68,6 @@ def plotHeight(romDirs):
 
 if __name__== "__main__":
   # find all rom RUNs
-  romDirs = [d for d in os.listdir(".") if "gappy_galerkin" in d]
+  romDirs = [d for d in os.listdir(".") if "hyperreduced_lspg" in d]
   assert len(romDirs)==2, "for this demo, should only have two runs"
-
   plotHeight(romDirs)

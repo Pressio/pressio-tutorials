@@ -1,24 +1,58 @@
 Start reading here
 ==================
 
-This section offers severals end-to-end tutorials for pressio.
+This section offers severals end-to-end tutorials/demos covering
+some of the key ROM methods implemented in pressio.
 
-Our goals are:
+Why doing this?
+---------------
 
-- to provide something that can be easily run
+Describing how to use pressio for ROMs cannot be simply
+boiled down to presenting the API, because setting up, running
+and processing a ROM involves several steps.
+We believe the best way to understand these steps and also
+what pressio offers in this context is via demos where the logical sequence
+of steps is presented and explained.
+To this end, we have developed a workflow-based framework where
+one can *express* what to do, and the framework helps
+automating (to some extent) the execution.
+
+Key features
+------------
+
+- all driver scripts are written in Python
+
+- each workflow is encoded via a `yaml file <templateyaml.html>`__
+  organized into several section where each has a specific scope
+
+- easy to run: the `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__
+  are intended
+  to be simple, and each demo is fully documented in a
+  step by step manner (see `here for example <swe_galerkin_default.html>`__)
+  to show how to run each step
+
+- one can easily extend the framework by adding new ROM methods
+  in pressio or account for variations
+  in how each step is run
+
+- pressio-demoapps: for the end-to-end demos we rely on pressio-demoapps,
+  which have built-in support for the sample mesh.
+  While we adopt a specific problem (2d Shallow water equations), one can easily
+  setup and run similar workflows for any other problem in pressio-demoapps.
+  This would only require minimal work.
 
 
-Since this is an end-to-end, we show how to run the following steps:
-generating the FOM training data, constructing the POD modes,
-setting up and running the target ROM problem, and processing the results.
+Outcomes
+--------
 
-Note that while the SWE are used here, one can easily setup and
-run the same workflow for any other problem in pressio-demoapps.
+- by reading these end-to-end demos you should be able to understand
+  the various steps and how these steps map to pressio code
 
-To simplify things and actually make this tutorials useful,
-we are going to use the workflow codes inside pressio-demoapps
-which enable one to easily setup ROMs for any of those problems.
-Using those codes, this complete tutorial can be encoded via the
-following yaml file, which will show below how to run.
+- you can easily explore the impact of changing the parameter spaces,
+  or the basis size by just changing the workflow file and rerunning
 
-FINISH
+- while the workflow driver scripts and code are tailored to
+  pressio-demoapps running in shared memory mode, one can easily
+  recycle these scripts/code and adapt them to another code.
+  Because the steps involved would NOT change, but how you implement
+  each step does change and can be application specific.

@@ -15,63 +15,19 @@ from all import *
 #==============================================================
 # functions
 #==============================================================
-def _validate_wf_galerkin_section(wfDic, customModule):
-  assert 'galerkinRom' in wfDic, "galerkinRom section not found"
-  subDic = wfDic['galerkinRom']
+def _validate_wf_lspg_section(wfDic, customModule):
+  assert 'lspgRom' in wfDic, "lspgRom section not found"
+  subDic = wfDic['lspgRom']
 
-
-def compute_hypreducer_matrix_operator(outDir, offlineRomDir, \
-                                       numStateModes, sampleMeshDir, \
-                                       numDofsPerCell):
-  # load my full phi
-  myFullPhiFile = offlineRomDir + "/state_left_singular_vectors.bin"
-  myFullPhi     = load_pod_basis(myFullPhiFile)[:,0:numStateModes]
-
-  # indexing info
-  myFile2      = sampleMeshDir + "/sample_mesh_gids.txt"
-  mySmMeshGids = np.loadtxt(myFile2, dtype=int)
-  mySmCount    = len(mySmMeshGids)
-
-  K = numStateModes*3 + 1
-  if mySmCount*numDofsPerCell < K:
-    print("Cannot have K > mySmCount*numDofsPerCell, using K")
-    K = mySmCount*numDofsPerCell - 1
-
-  # K should be larger than numStateModes
-  if K < numStateModes:
-    print("Cannot have K < myNumStatePodModes, using K")
-    K = numStateModes + 1
-
-  fullRhsPodFile = offlineRomDir + "/rhs_left_singular_vectors.bin"
-  theta = load_pod_basis(fullRhsPodFile)[:,0:K]
-  slicedTheta = np.zeros((mySmCount*numDofsPerCell, theta.shape[1]), order='F')
-  for j in range(numDofsPerCell):
-    slicedTheta[j::numDofsPerCell, :] = theta[numDofsPerCell*mySmMeshGids + j, :]
-
-  A = myFullPhi.transpose() @ theta
-  hypRedOp = A @ scipyla.pinv(slicedTheta)
-  print(" hyperReductionOperatorShape = {}".format(hypRedOp.shape))
-
-  numRows = np.int64(hypRedOp.shape[1])
-  numCols = np.int64(hypRedOp.shape[0])
-  print("numRows = ", numRows)
-  print("numCols = ", numCols)
-  fileo = open(outDir+'/hyperReductionOperator.bin', "wb")
-  np.array([numRows]).tofile(fileo)
-  np.array([numCols]).tofile(fileo)
-  hypRedOp.tofile(fileo)
-  fileo.close()
-  #np.savetxt(outDir+'/hyperReductionOperator.txt', hypRedOp.T)
-
-
-def _run_single_rom(romDir, offlineRomDir, numModes, inputsDic, \
+def _run_single_rom(romDir, offlineRomDir, numModes, \
+                    romDic, inputsDic, \
                     fomRunDir, algoString, \
-                    sampleMeshDir = None, hypRedOpDir = None):
+                    sampleMeshDir = None):
 
   if os.path.exists(romDir):
     print('{} already exists'.format(romDir))
   else:
-    print("Running galerkin rom in {}".format(os.path.basename(romDir)))
+    print("Running LSPG rom in {}".format(os.path.basename(romDir)))
     os.system('mkdir -p ' + romDir)
 
     # write some info to run directory
@@ -101,13 +57,18 @@ def _run_single_rom(romDir, offlineRomDir, numModes, inputsDic, \
     romSpecifics['numModes'] = numModes
     romSpecifics['romInitialStateFile'] = romInitStateFile
 
-    if sampleMeshDir!= None and hypRedOpDir != None:
+    if sampleMeshDir!= None:
       inputsDic['meshDir'] = sampleMeshDir
-      romSpecifics["galerkinHypRedOperatorFile"] = hypRedOpDir+"/hyperReductionOperator.bin"
       romSpecifics["stencilMeshGidsFile"] = sampleMeshDir +"/stencil_mesh_gids.dat"
       romSpecifics["sampleMeshGidsFile"]  = sampleMeshDir +"/sample_mesh_gids.txt"
 
     inputsDic['rom'] = romSpecifics
+
+    # since we are doing lspg, we need to overwrite the solver
+    # to use what is specified in the workflow file
+    for s in ['nonlinearSolverName', 'nonlinearSolverTolerance']:
+      inputsDic[s] = romDic[s]
+
     # now we can write to file
     write_dic_to_yaml_file(romDir+"/input.yaml", inputsDic)
 
@@ -118,7 +79,7 @@ def _run_single_rom(romDir, offlineRomDir, numModes, inputsDic, \
       link_if_needed_and_run_exe(romDir,  exeDirFullPath, cppExecutableName)
 
 
-def _main_default_impl(workDir, romDic, dryRun=False):
+def _main_default_impl(workDir, romDic):
   # location of the offline stuff
   offlineRomDir = workDir + "/offline_rom"
 
@@ -131,10 +92,9 @@ def _main_default_impl(workDir, romDic, dryRun=False):
 
     if (truncPolicy.lower() == "energybased"):
       for energy in truncValues:
-        if not dryRun:
-          singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
-          numModes = compute_cumulative_energy(singValues, energy)
-          print(numModes)
+        singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
+        numModes = compute_cumulative_energy(singValues, energy)
+        print("numModes = ", numModes)
 
         #
         # for a given num of modes, find all FOM test runs
@@ -143,29 +103,20 @@ def _main_default_impl(workDir, romDic, dryRun=False):
         for fomTestDir in find_all_fom_test_dirs(workDir):
           # read the yaml file used for that FOM run
           fomInputs = read_yaml_file(fomTestDir + "/input.yaml")
-          print(fomInputs)
 
           # extract from fom dir the identifier so that
           # we know which test point it refers to
           runId = get_run_id(fomTestDir)
 
           # make name of the output rom directory
-          romDir = workDir + "/default_galerkin_truncation_energybased"
+          romDir = workDir + "/default_lspg_truncation_energybased"
           romDir += "_"+str(energy)
           romDir += "_runid_"+str(runId)
-          if not dryRun:
-            _run_single_rom(romDir, offlineRomDir, numModes, \
-                            fomInputs, fomTestDir, "defaultGalerkin")
+          _run_single_rom(romDir, offlineRomDir, numModes, \
+                          romDic, fomInputs, fomTestDir, "defaultLspg")
 
 # -------------------------------------------------------------------
-def string_identifier_from_sample_mesh_dir(sampleMeshDir):
-  if "sample_mesh_random" in sampleMeshDir:
-    return "sample_mesh_random_"+sampleMeshDir[-5:]
-  elif "sample_mesh_psampling" in sampleMeshDir:
-    return "sample_mesh_psampling_"+sampleMeshDir[-5:]
-
-# -------------------------------------------------------------------
-def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell, dryRun=False):
+def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell):
   # location of the offline stuff
   offlineRomDir = workDir + "/offline_rom"
 
@@ -182,28 +133,9 @@ def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell, dryRun=False):
       print (truncPolicy, truncValues)
       if (truncPolicy.lower() == "energybased"):
         for energy in truncValues:
-          if not dryRun:
-            singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
-            numModes = compute_cumulative_energy(singValues, energy)
-            print(numModes)
-
-          s1 = workDir + "/hyperreducer"
-          if energy != None:
-            s2 = str(energy)
-          sep = "_"
-          hypRedPath = s1 + sep + s2 + sep + strIdSm
-          print(hypRedPath)
-
-          if os.path.exists(hypRedPath):
-            logging.info('{} already exists'.format(os.path.basename(hypRedPath)))
-          else:
-            logging.info('Generating {}'.format(os.path.basename(hypRedPath)))
-            os.system('mkdir -p ' + hypRedPath)
-
-          if not dryRun:
-            compute_hypreducer_matrix_operator(hypRedPath, offlineRomDir, \
-                                               numModes, sampleMeshDir, \
-                                               numDofsPerCell)
+          singValues = np.loadtxt(offlineRomDir+'/state_singular_values.txt')
+          numModes = compute_cumulative_energy(singValues, energy)
+          print(numModes)
 
           for fomTestDir in find_all_fom_test_dirs(workDir):
             # read the yaml file used for that FOM run
@@ -214,17 +146,14 @@ def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell, dryRun=False):
             runId = get_run_id(fomTestDir)
 
             # make name of the output rom directory
-            romDir = workDir + "/hyperreduced_galerkin_truncation_energybased"
+            romDir = workDir + "/hyperreduced_lspg_truncation_energybased"
             romDir += "_"+str(energy)
             romDir += "_" + strIdSm
             romDir += "_runid_"+str(runId)
             print(romDir)
-            if not dryRun:
-              _run_single_rom(romDir, offlineRomDir, numModes, fomInputs,\
-                              fomTestDir, "hyperreducedGalerkin",\
-                              sampleMeshDir = sampleMeshDir,\
-                              hypRedOpDir = hypRedPath)
-
+            _run_single_rom(romDir, offlineRomDir, numModes, \
+                            romDic, fomInputs, fomTestDir, "hyperreducedLspg",
+                            sampleMeshDir = sampleMeshDir)
 
 #==============================================================
 # main
@@ -275,12 +204,11 @@ if __name__== "__main__":
   # ======================================================================
 
   # for this driver to be valid, we need to ensure this:
-  _validate_wf_galerkin_section(wfDic, customModule)
-  romDic = wfDic['galerkinRom']
+  _validate_wf_lspg_section(wfDic, customModule)
+  romDic = wfDic['lspgRom']
 
-  if not dryRun:
-    # figure out which galerkin we want and run
-    if romDic['algorithm'].lower() == "defaultgalerkin":
-      _main_default_impl(workDirFullPath, romDic, dryRun)
-    elif romDic['algorithm'].lower() == "hyperreducedgalerkin":
-      _main_hyperreduced_impl(workDirFullPath, romDic, customModule.numDofsPerCell, dryRun)
+  if romDic['algorithm'].lower() == "defaultlspg":
+    _main_default_impl(workDirFullPath, romDic)
+
+  elif romDic['algorithm'].lower() == "hyperreducedlspg":
+    _main_hyperreduced_impl(workDirFullPath, romDic, customModule.numDofsPerCell)
