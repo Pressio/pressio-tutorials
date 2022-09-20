@@ -218,16 +218,16 @@ if __name__== "__main__":
           trainRunIndices = podDic[s]['useTrainingRuns']
           trainDirsToUse = find_fom_train_dirs_for_target_set_of_indices(workDirFullPath, \
                                                                          trainRunIndices)
-
-        # figure out the policy
-        # if missing, that means use default
-        if 'policy' not in podDic[s]:
-          _default_snapshots_and_pod(offlineRomDir, customModule, trainDirsToUse, fomMeshPath, s)
-        else:
-          if policy == "default":
+        if not dryRun:
+          # figure out the policy
+          # if missing, that means use default
+          if 'policy' not in podDic[s]:
             _default_snapshots_and_pod(offlineRomDir, customModule, trainDirsToUse, fomMeshPath, s)
           else:
-            print("invalid or unsupported pod policy {}".format(policy))
+            if policy == "default":
+              _default_snapshots_and_pod(offlineRomDir, customModule, trainDirsToUse, fomMeshPath, s)
+            else:
+              print("invalid or unsupported pod policy {}".format(policy))
 
     # -----------
     # do sample mesh
