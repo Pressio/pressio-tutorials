@@ -22,46 +22,49 @@ def _validate_wf_galerkin_section(wfDic, customModule):
 
 def compute_hypreducer_matrix_operator(outDir, offlineRomDir, \
                                        numStateModes, sampleMeshDir, \
-                                       numDofsPerCell):
-  # load my full phi
+                                       numDofsPerCell, dryRun):
+
   myFullPhiFile = offlineRomDir + "/state_left_singular_vectors.bin"
-  myFullPhi     = load_pod_basis(myFullPhiFile)[:,0:numStateModes]
-
-  # indexing info
-  myFile2      = sampleMeshDir + "/sample_mesh_gids.txt"
-  mySmMeshGids = np.loadtxt(myFile2, dtype=int)
-  mySmCount    = len(mySmMeshGids)
-
-  K = numStateModes*3 + 1
-  if mySmCount*numDofsPerCell < K:
-    print("Cannot have K > mySmCount*numDofsPerCell, using K")
-    K = mySmCount*numDofsPerCell - 1
-
-  # K should be larger than numStateModes
-  if K < numStateModes:
-    print("Cannot have K < myNumStatePodModes, using K")
-    K = numStateModes + 1
-
+  myFile2 = sampleMeshDir + "/sample_mesh_gids.txt"
   fullRhsPodFile = offlineRomDir + "/rhs_left_singular_vectors.bin"
-  theta = load_pod_basis(fullRhsPodFile)[:,0:K]
-  slicedTheta = np.zeros((mySmCount*numDofsPerCell, theta.shape[1]), order='F')
-  for j in range(numDofsPerCell):
-    slicedTheta[j::numDofsPerCell, :] = theta[numDofsPerCell*mySmMeshGids + j, :]
+  K = numStateModes*3 + 1
 
-  A = myFullPhi.transpose() @ theta
-  hypRedOp = A @ scipyla.pinv(slicedTheta)
-  print(" hyperReductionOperatorShape = {}".format(hypRedOp.shape))
+  if not dryRun:
+    # load my full phi
+    myFullPhi     = load_pod_basis(myFullPhiFile)[:,0:numStateModes]
 
-  numRows = np.int64(hypRedOp.shape[1])
-  numCols = np.int64(hypRedOp.shape[0])
-  print("numRows = ", numRows)
-  print("numCols = ", numCols)
-  fileo = open(outDir+'/hyperReductionOperator.bin', "wb")
-  np.array([numRows]).tofile(fileo)
-  np.array([numCols]).tofile(fileo)
-  hypRedOp.tofile(fileo)
-  fileo.close()
-  #np.savetxt(outDir+'/hyperReductionOperator.txt', hypRedOp.T)
+    # indexing info
+    mySmMeshGids = np.loadtxt(myFile2, dtype=int)
+    mySmCount    = len(mySmMeshGids)
+
+    if mySmCount*numDofsPerCell < K:
+      print("Cannot have K > mySmCount*numDofsPerCell, using K")
+      K = mySmCount*numDofsPerCell - 1
+
+    # K should be larger than numStateModes
+    if K < numStateModes:
+      print("Cannot have K < myNumStatePodModes, using K")
+      K = numStateModes + 1
+
+    theta = load_pod_basis(fullRhsPodFile)[:,0:K]
+    slicedTheta = np.zeros((mySmCount*numDofsPerCell, theta.shape[1]), order='F')
+    for j in range(numDofsPerCell):
+      slicedTheta[j::numDofsPerCell, :] = theta[numDofsPerCell*mySmMeshGids + j, :]
+
+    A = myFullPhi.transpose() @ theta
+    hypRedOp = A @ scipyla.pinv(slicedTheta)
+    print(" hyperReductionOperatorShape = {}".format(hypRedOp.shape))
+
+    numRows = np.int64(hypRedOp.shape[1])
+    numCols = np.int64(hypRedOp.shape[0])
+    print("numRows = ", numRows)
+    print("numCols = ", numCols)
+    fileo = open(outDir+'/hyperReductionOperator.bin', "wb")
+    np.array([numRows]).tofile(fileo)
+    np.array([numCols]).tofile(fileo)
+    hypRedOp.tofile(fileo)
+    fileo.close()
+    #np.savetxt(outDir+'/hyperReductionOperator.txt', hypRedOp.T)
 
 
 def _run_single_rom(romDir, offlineRomDir, numModes, inputsDic, \
@@ -204,10 +207,9 @@ def _main_hyperreduced_impl(workDir, romDic, numDofsPerCell, dryRun=False):
             logging.info('Generating {}'.format(os.path.basename(hypRedPath)))
             os.system('mkdir -p ' + hypRedPath)
 
-          if not dryRun:
-            compute_hypreducer_matrix_operator(hypRedPath, offlineRomDir, \
-                                               numModes, sampleMeshDir, \
-                                               numDofsPerCell)
+          compute_hypreducer_matrix_operator(hypRedPath, offlineRomDir, \
+                                             numModes, sampleMeshDir, \
+                                             numDofsPerCell, dryRun)
 
           for fomTestDir in find_all_fom_test_dirs(workDir):
             # read the yaml file used for that FOM run
