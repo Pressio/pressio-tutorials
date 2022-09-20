@@ -11,9 +11,11 @@ you ONLY need CMake > 3.18.0 and a C++14 compliant compiler.
 
    export CXX=<fullpath-to-your-CXX-compiler>
    git clone --recursive git@github.com:Pressio/pressio-tutorials.git
-   cd pressio-tutorials && mkdir build && cd build
-   cmake -DCMAKE_BUILD_TYPE=Release ..
-   make -j4
+
+   export BUILDDIR=$HOME/tutorialBuild
+   mkdir $BUILDDIR
+   cmake -DCMAKE_BUILD_TYPE=Release -S <path-to-your-tutorials-repo> -B $BUILDDIR
+   cd $BUILDDIR && make -j4
 
 Individual executables for all tutorials are built inside the build subdirectory.
 
