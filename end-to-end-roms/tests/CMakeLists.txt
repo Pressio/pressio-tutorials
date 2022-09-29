@@ -1,4 +1,3 @@
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../cpp)
 
 configure_file(fake_basis.bin ${CMAKE_CURRENT_BINARY_DIR}/fake_basis.bin COPYONLY)
@@ -15,3 +14,10 @@ set_tests_properties(
   PASS_REGULAR_EXPRESSION "PASS"
   FAIL_REGULAR_EXPRESSION "FAILED"
 )
+
+include(FindPythonInterp)
+set (python_file "end2end_test.py")
+execute_process(
+                  COMMAND ${PYTHON_EXECUTABLE} ${python_file}
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/end2end_dry
+               )
