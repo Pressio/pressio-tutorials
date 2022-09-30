@@ -72,7 +72,7 @@ void test4(std::string & output)
 void test5(std::string & output)
 {
   const auto sampleMeshGids = create_cell_gids_vector_and_fill_from_ascii("fake_sample_mesh_gids.txt");
-  Eigen::VectorXi gold(5);
+  Eigen::VectorXi gold(3);
   gold << 2,3,6;
   if (!gold.isApprox(sampleMeshGids)){ output = "FAILED"; }
 }
