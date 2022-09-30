@@ -107,7 +107,7 @@ void run_lspg_hyperreduced(const FomSystemType & fomSystem,
   combiner_t combiner(parser);
   auto problem = plspg::create_unsteady_problem(odeScheme, trialSpace, fomSystem, combiner);
 
-  lspg_pick_solver_and_run(parser, problem, reducedState);
+  lspg_pick_solver_and_run(parser, problem.lspgStepper(), reducedState);
 }
 
 #endif
