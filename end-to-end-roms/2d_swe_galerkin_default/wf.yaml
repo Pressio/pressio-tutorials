@@ -29,7 +29,7 @@ offlineRom:
     rhsData:
       useTrainingRuns: all
 
-galerkinRom:
+onlineRom:
   algorithm: defaultGalerkin
   podTruncation:
     energyBased: [99.999, 99.99999]

@@ -1,4 +1,0 @@
-general options
-===============
-
-something

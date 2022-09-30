@@ -20,10 +20,9 @@ automating (to some extent) the execution.
 Key features
 ------------
 
-- all driver scripts are written in Python
+- a workflow is encoded by a yaml file, organized into several section each with a specific scope
 
-- each workflow is encoded via a `yaml file <templateyaml.html>`__
-  organized into several section where each has a specific scope
+- all driver scripts are written in Python
 
 - easy to run: the `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__
   are intended

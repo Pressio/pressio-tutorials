@@ -1,30 +1,28 @@
 .. include:: ../mydefs.rst
 
-Hyper-reduced Galerkin for 2D SWE (example 1)
-=============================================
+2D SWE: hyper-reduced Galerkin (example 1)
+==========================================
 
-- ROM technique: Hyper-reduced Galerkin with gappy POD
+  - ROM technique: Hyper-reduced Galerkin with gappy POD
 
-- problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
+  - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
 
 Prerequisites
 -------------
 
-- A valid build of the tutorials, see `here <../build.html>`__
+- A valid build of the tutorials, see `here <../build.html>`__, and the following env variables set:
 
-- The following env variables set:
+  .. code-block:: bash
 
-.. code-block:: bash
-
-   export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
-   export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
+     export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
+     export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
 
 - To run all scripts below, you MUST be in the correct end-to-end directory:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_hypred_1
+     cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_hypred_1
 
 
 Workflow File

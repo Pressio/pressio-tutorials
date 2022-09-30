@@ -31,7 +31,7 @@ offlineRom:
   sampleMesh:
     random: 0.1
 
-galerkinRom:
+onlineRom:
   algorithm: hyperreducedGalerkin
   podTruncation:
     energyBased: [99.999, 99.99999]

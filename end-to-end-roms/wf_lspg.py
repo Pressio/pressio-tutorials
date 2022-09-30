@@ -16,8 +16,8 @@ from all import *
 # functions
 #==============================================================
 def _validate_wf_lspg_section(wfDic, customModule):
-  assert 'lspgRom' in wfDic, "lspgRom section not found"
-  subDic = wfDic['lspgRom']
+  assert 'onlineRom' in wfDic, "onlineRom section not found"
+  subDic = wfDic['onlineRom']
 
 def _run_single_rom(romDir, offlineRomDir, numModes, \
                     romDic, inputsDic, \
@@ -213,7 +213,7 @@ if __name__== "__main__":
 
   # for this driver to be valid, we need to ensure this:
   _validate_wf_lspg_section(wfDic, customModule)
-  romDic = wfDic['lspgRom']
+  romDic = wfDic['onlineRom']
 
   if romDic['algorithm'].lower() == "defaultlspg":
     _main_default_impl(workDirFullPath, romDic, dryRun)

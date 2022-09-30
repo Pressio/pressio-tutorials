@@ -29,7 +29,7 @@ offlineRom:
   sampleMesh:
     random: 0.1
 
-lspgRom:
+onlineRom:
   algorithm: hyperreducedLspg
   nonlinearSolverName: GaussNewton
   nonlinearSolverTolerance: 1e-6

@@ -27,7 +27,7 @@ offlineRom:
     stateData:
       useTrainingRuns: all
 
-lspgRom:
+onlineRom:
   algorithm: defaultLspg
   nonlinearSolverName: GaussNewton
   nonlinearSolverTolerance: 1e-6

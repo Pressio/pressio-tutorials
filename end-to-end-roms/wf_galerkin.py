@@ -16,8 +16,8 @@ from all import *
 # functions
 #==============================================================
 def _validate_wf_galerkin_section(wfDic, customModule):
-  assert 'galerkinRom' in wfDic, "galerkinRom section not found"
-  subDic = wfDic['galerkinRom']
+  assert 'onlineRom' in wfDic, "onlineRom section not found"
+  subDic = wfDic['onlineRom']
 
 
 def compute_hypreducer_matrix_operator(outDir, offlineRomDir, \
@@ -281,7 +281,7 @@ if __name__== "__main__":
 
   # for this driver to be valid, we need to ensure this:
   _validate_wf_galerkin_section(wfDic, customModule)
-  romDic = wfDic['galerkinRom']
+  romDic = wfDic['onlineRom']
 
   # figure out which galerkin we want and run
   if romDic['algorithm'].lower() == "defaultgalerkin":

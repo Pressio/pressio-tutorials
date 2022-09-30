@@ -1,4 +1,0 @@
-Implicit Stepping
-=================
-
-to do

@@ -1,28 +1,28 @@
-Default Galerkin for 2D SWE
-===========================
+.. include:: ../mydefs.rst
 
-- ROM technique: default Galerkin
+2D SWE: default Galerkin
+========================
 
-- problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
+  - ROM technique: default Galerkin
+
+  - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
 
 Prerequisites
 -------------
 
-- A valid build of the tutorials, see `here <../build.html>`__
+- A valid build of the tutorials, see `here <../build.html>`__, and the following env variables set:
 
-- The following env variables set:
+  .. code-block:: bash
 
-.. code-block:: bash
-
-   export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
-   export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
+     export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
+     export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
 
 - To run all scripts below, you MUST be in the correct end-to-end directory:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+     cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
 
 
 Workflow File

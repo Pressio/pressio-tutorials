@@ -10,28 +10,32 @@ Tutorials suite for the `pressio C++ library <https://pressio.github.io/pressio/
 Scope and Motivation
 --------------------
 
-These tutorials are intended to show users how to *integrate* together various
-capabilities of pressio to do something meaningful, as well as unveil some details
-that might not be obvious.
+These tutorials aim to show how to *integrate* together various
+capabilities of pressio to do something meaningful, as well as unveil
+some details that might not be obvious.
 
 We believe such an approach on writing tutorials is useful in general,
 but even more so for pressio. Pressio was started with a focus on projection-based
 reduced-order models (ROMs), which is a strongly multidisciplinary topic.
-Working on ROMs means inevitably touching multiple fields, ranging from, e.g.,
-linear algebra, nonlinear solvers and optimization, to distributed computing, HPC and time integration.
+Working on a production-level ROM capability inevitably means touching multiple fields,
+ranging from, e.g., linear algebra, nonlinear solvers and optimization, to distributed computing,
+HPC and time integration.
 This is clearly reflected in the structure of pressio, where several components
 (all usable independently) offer different capabilities, but as a whole
 constitute the stack foundation of the ``pressio/rom`` component.
-Describing how to use pressio for ROMs cannot be simply boiled down to presenting the API.
-Several steps are involved, and the best way to understand them is via
-examples showing the logical progression.
-Therefore, we have organized this website in two main parts: one the one hand
-we have short, independent tutorials on the foundational capabilities that
-are easily explained in a self-contained fashion, for example nonlinear
-solvers and ODE integration; on the other hand, we have more
-`complete workflow-based end-to-end demos <endtoend/readthisfirst.html>`__
-to demonstrate in practice what pressio offers for ROMs.
 
+Describing how to use pressio for ROMs cannot be simply reduced to presenting the API.
+Several steps are involved, and the best way to understand them is via examples.
+Therefore, we have organized this website into these sections:
+
+1. contains `complete workflow-based end-to-end demos <endtoend/readthisfirst.html>`__
+   to demonstrate in practice what pressio offers for ROMs.
+
+2. contains a collection of short, independent tutorials on the foundational
+   capabilities that are easily explained in a self-contained fashion,
+   for example ODE integration and nonlinear solvers
+
+3. `advance topics <advanced/comingsoon.html>`__
 
 .. admonition:: This is work-in-progress
    :class: caution
@@ -82,10 +86,9 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
 .. toctree::
    :maxdepth: 0
    :hidden:
-   :caption: End-to-end ROMs using pressio-demoapps
+   :caption: 1. End-to-end ROMs using pressio-demoapps
 
    ./endtoend/readthisfirst
-   ./endtoend/templateyaml
    ./endtoend/swe_galerkin_default
    ./endtoend/swe_galerkin_hypred_1
    ./endtoend/swe_lspg_default
@@ -94,13 +97,13 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
 .. toctree::
    :maxdepth: 0
    :hidden:
-   :caption: Self-contained tutorials using Eigen data types
+   :caption: 2. self-contained tutorials using Eigen data types
 
    ./using_eigen/ode1
 
 .. toctree::
    :maxdepth: 0
    :hidden:
-   :caption: Advanced Topics
+   :caption: 3. Advanced Topics
 
-   ./comingsoon
+   ./advanced/comingsoon

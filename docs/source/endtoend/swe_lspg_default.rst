@@ -1,28 +1,28 @@
-Default LSPG for 2D SWE
-=======================
+.. include:: ../mydefs.rst
 
-- ROM technique: default LSPG
+2D SWE: default LSPG
+====================
 
-- problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
+  - ROM technique: default LSPG
+
+  - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
 
 Prerequisites
 -------------
 
-- A valid build of the tutorials, see `here <../build.html>`__
+- A valid build of the tutorials, see `here <../build.html>`__, and the following env variables set:
 
-- The following env variables set:
+  .. code-block:: bash
 
-.. code-block:: bash
-
-   export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
-   export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
+     export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
+     export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
 
 - To run all scripts below, you MUST be in the correct end-to-end directory:
 
-.. code-block:: bash
+  .. code-block:: bash
 
-   cd $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
+     cd $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
 
 
 Workflow File
@@ -45,6 +45,10 @@ Step 1: execute FOMs
 
    # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
    python3 $REPOSRC/wf_foms.py --wf wf.yaml
+
+.. warning::
+
+   This might take a few mins to run, be patient!
 
 When we run the FOM driver, the following C++ code is being executed:
 
