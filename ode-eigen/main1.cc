@@ -21,9 +21,9 @@ public:
     return v;
   };
 
-  void rightHandSide(const state_type & state,
-                const independent_variable_type timeIn,
-                right_hand_side_type & rhs) const
+  void operator()(const state_type & state,
+		  const independent_variable_type timeIn,
+		  right_hand_side_type & rhs) const
   {
     constexpr ScalarType ten{10};
     rhs(0) = ten * state(0);
