@@ -1,7 +1,7 @@
 Start reading here
 ==================
 
-This section offers severals end-to-end tutorials/demos covering
+This section offers a suite of end-to-end tutorials/demos covering
 some of the key ROM methods implemented in pressio.
 
 Why doing this?
@@ -20,15 +20,13 @@ automating (to some extent) the execution.
 Key features
 ------------
 
-- a workflow is encoded by a yaml file, organized into several section each with a specific scope
+- each demo is fully documented in a step by step manner (see `here for example <swe_galerkin_default.html>`__) to show how to run each step
 
-- all driver scripts are written in Python
+- each demo has an associated yaml workflow file,
+  organized into several section each with a specific scope
 
-- easy to run: the `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__
-  are intended
-  to be simple, and each demo is fully documented in a
-  step by step manner (see `here for example <swe_galerkin_default.html>`__)
-  to show how to run each step
+- all `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__
+  are written in Python and are designed to be easy to run
 
 - one can easily extend the framework by adding new ROM methods
   in pressio or account for variations

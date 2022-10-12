@@ -10,32 +10,34 @@ Tutorials suite for the `pressio C++ library <https://pressio.github.io/pressio/
 Scope and Motivation
 --------------------
 
-These tutorials aim to show how to *integrate* together various
-capabilities of pressio to do something meaningful, as well as unveil
-some details that might not be obvious.
-
-We believe such an approach on writing tutorials is useful in general,
-but even more so for pressio. Pressio was started with a focus on projection-based
+Pressio was started with a focus on projection-based
 reduced-order models (ROMs), which is a strongly multidisciplinary topic.
-Working on a production-level ROM capability inevitably means touching multiple fields,
-ranging from, e.g., linear algebra, nonlinear solvers and optimization, to distributed computing,
-HPC and time integration.
-This is clearly reflected in the structure of pressio, where several components
-(all usable independently) offer different capabilities, but as a whole
-constitute the stack foundation of the ``pressio/rom`` component.
+Working on a production-level ROM capability inevitably means touching
+multiple fields, ranging from, e.g., linear algebra, nonlinear solvers
+and optimization, to distributed computing, HPC and time integration.
+This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio/html/index.html>`__,
+where several components (all usable independently) offer different capabilities,
+but as a whole constitute the stack foundation of the ``pressio/rom`` component.
 
 Describing how to use pressio for ROMs cannot be simply reduced to presenting the API.
 Several steps are involved, and the best way to understand them is via examples.
-Therefore, we have organized this website into these sections:
+Therefore, these tutorials are designed to show how to *integrate* various
+capabilities of pressio to do something meaningful, as well as unveil
+some details that might not be obvious, and are organized into these sections:
 
-1. contains `complete workflow-based end-to-end demos <endtoend/readthisfirst.html>`__
-   to demonstrate in practice what pressio offers for ROMs.
+1. `complete workflow-based end-to-end demos <endtoend/readthisfirst.html>`__
+   to demonstrate in practice what pressio offers for ROMs, and to allow you to easily
+   experiment with it
 
-2. contains a collection of short, independent tutorials on the foundational
+2. collection of short, independent tutorials on the foundational
    capabilities that are easily explained in a self-contained fashion,
    for example ODE integration and nonlinear solvers
 
-3. `advance topics <advanced/comingsoon.html>`__
+3. advance topics
+
+
+Disclaimer
+----------
 
 .. admonition:: This is work-in-progress
    :class: caution

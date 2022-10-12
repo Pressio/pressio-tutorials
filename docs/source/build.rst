@@ -21,9 +21,8 @@ can be found inside the build directory.
 
 .. tip::
 
-   If you want to verify your build, you can enable the tests via
-   the Cmake variable ``-DPRESSIOTUTORIALS_ENABLE_TESTS=ON``,
-   and then run the tests as:
+   To verify the build, you can enable the tests using ``-DPRESSIOTUTORIALS_ENABLE_TESTS=ON``,
+   and then do:
 
    .. code-block:: cpp
 
@@ -31,13 +30,13 @@ can be found inside the build directory.
       ctest
 
 The Python requirements can be found `here <../../end-to-end-roms/requirements.txt>`__
-and can be installed via ``pip3 install requirements.txt``
+and can be installed via ``pip3 install end-to-end-roms/requirements.txt``
 
 
 Dependencies
 ------------
 
-If you are interested, these tutorials have the following dependencies:
+The tutorials have the following dependencies:
 
 - pressio: contains the C++ code that this tutorials repo convers
 - pressio-demoapps: provides a suite of physics problems that are used in the tutorials to demonstrate the functionalities of pressio

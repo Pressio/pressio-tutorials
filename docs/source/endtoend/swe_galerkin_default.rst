@@ -105,7 +105,6 @@ The following C++ code is being executed:
    :language: cpp
    :lines: 10-43
    :linenos:
-   :emphasize-lines: 28
 
 
 At the end, you should have the following directory structure:
@@ -145,3 +144,42 @@ Step 4: process results
 .. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/ROM_55.png
   :width: 32 %
   :alt: ROM, 55 modes
+
+
+Step 5: things you can try
+--------------------------
+
+This section suggests a few things you can experiment with.
+Note: before you run a new experiment in the same directory, to avoid conflicts
+you need to cleanup all the existing content, which can you easily do as follows:
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+   python3 clean.py
+
+
+- you can try to use a different simulation time for the train and test
+  so that you can assess how the ROM performs in a time extrapolation regime:
+
+  .. code-block:: yaml
+
+     fom:
+       # ...
+       train:
+	 finalTime: 5.0
+
+       test:
+	 finalTime: 6.0
+
+- you can edit the ``parameterSpace`` section of the workflow file to
+  add new test points for example as follows:
+
+  .. code-block:: yaml
+
+     parameterSpace:
+       # ...
+       testPoints:
+	 0: [-0.5, 0.125, 9.8]
+	 1: [-0.9, 0.125, 9.8]
+	 2: [ 0.1, 0.125, 9.8] # this test point is outside of training range
