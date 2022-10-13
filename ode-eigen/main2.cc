@@ -40,46 +40,21 @@ int main(int argc, char *argv[])
   SimpleSystem<scalar_type> problem;
 
   auto y = problem.createState();
+  y(0) = 1.; y(1) = 2.; y(2) = 3.;
 
   namespace pode = pressio::ode;
   constexpr auto scheme = pode::StepScheme::ForwardEuler;
   auto stepperObj = pode::create_explicit_stepper(scheme, problem);
 
-  {
-    /*
-      run a fixed number of steps
-    */
-    y(0) = 1.; y(1) = 2.; y(2) = 3.;
-    const scalar_type dt{0.1};
-    const scalar_type startTime{0.0};
-    pode::advance_n_steps(stepperObj, y, startTime, dt, pode::StepCount{1});
-    // check solution
-    std::cout << "Computed solution: ["
-	      << y(0) << " " << y(1) << " " << y(2) << "] "
-	      << "Expected solution: [2,4,6] \n";
-  }
-  std::cout << std::endl;
+  const scalar_type dt{0.1};
+  const scalar_type startTime{0.0};
+  pode::advance_n_steps(stepperObj, y, startTime, dt, pode::StepCount{1});
 
-  {
-    /*
-      run until target time
-    */
-    y(0) = 1.; y(1) = 2.; y(2) = 3.;
-    const scalar_type startTime{0.0};
-    const scalar_type finalTime{1.0};
-    pode::advance_to_target_point(stepperObj, y, startTime, finalTime,
-				  [](
-				     const pode::StepCount & /*unused*/,
-				     const pode::StepStartAt<scalar_type> & /*unused*/,
-				     pode::StepSize<scalar_type> & dt)
-				  {
-				    dt = 0.1;
-				  });
-    // check solution
-    std::cout << "Computed solution: ["
-	      << y(0) << " " << y(1) << " " << y(2) << "] "
-	      << "Expected solution: [1024, 2048, 3074] \n";
-  }
+  // check solution
+  std::cout << "Computed solution: ["
+            << y(0) << " " << y(1) << " " << y(2) << "] "
+            << "Expected solution: [2,4,6] "
+            << std::endl;
 
   pressio::log::finalize();
   return 0;
