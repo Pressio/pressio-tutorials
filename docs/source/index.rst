@@ -15,9 +15,10 @@ reduced-order models (ROMs), which is a strongly multidisciplinary topic.
 Working on a production-level ROM capability inevitably means touching
 multiple fields, ranging from, e.g., linear algebra, nonlinear solvers
 and optimization, to distributed computing, HPC and time integration.
-This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio/html/index.html>`__,
-where several components (all usable independently) offer different capabilities,
-but as a whole constitute the stack foundation of the ``pressio/rom`` component.
+This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio/html/index.html>`__
+which display a "stacked" design: each component handles a specific capability and depends
+on the ones below it such that you can use it directly, but, as a whole, the stack constitutes
+the foundation of the top-level ``pressio/rom`` component.
 
 Describing how to use pressio for ROMs cannot be simply reduced to presenting the API.
 Several steps are involved, and the best way to understand them is via examples.
@@ -102,6 +103,8 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
    :caption: 2. self-contained tutorials using Eigen data types
 
    ./using_eigen/ode1
+   ./using_eigen/ode2
+   ./using_eigen/ode3
    ./using_eigen/nonlinsolvers1
 
 .. toctree::

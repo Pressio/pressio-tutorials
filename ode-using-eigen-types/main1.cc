@@ -3,12 +3,12 @@
 #include <Eigen/Core>
 
 template<class ScalarType>
-struct SimpleSystem{
+class SimpleSystem{
+public:
   using independent_variable_type = ScalarType;
   using state_type                = Eigen::Matrix<ScalarType,-1,1>;
   using right_hand_side_type      = state_type;
 
-public:
   state_type createState() const{
     auto s = state_type(3);
     s.setConstant(0);
@@ -40,21 +40,45 @@ int main(int argc, char *argv[])
   SimpleSystem<scalar_type> problem;
 
   auto y = problem.createState();
-  y(0) = 1.; y(1) = 2.; y(2) = 3.;
 
   namespace pode = pressio::ode;
   constexpr auto scheme = pode::StepScheme::ForwardEuler;
   auto stepperObj = pode::create_explicit_stepper(scheme, problem);
 
-  const scalar_type dt{0.1};
-  const scalar_type startTime{0.0};
-  pode::advance_n_steps(stepperObj, y, startTime, dt, pode::StepCount{1});
+  {
+    /*
+      run a fixed number of steps
+    */
+    y(0) = 1.; y(1) = 2.; y(2) = 3.;
+    const scalar_type dt{0.1};
+    const scalar_type startTime{0.0};
+    pode::advance_n_steps(stepperObj, y, startTime, dt, pode::StepCount{1});
+    // check solution
+    std::cout << "Computed solution: ["
+	      << y(0) << " " << y(1) << " " << y(2) << "] "
+	      << "Expected solution: [2,4,6] \n";
+  }
+  std::cout << std::endl;
 
-  // check solution
-  std::cout << "Computed solution: ["
-            << y(0) << " " << y(1) << " " << y(2) << "] "
-            << "Expected solution: [2,4,6] "
-            << std::endl;
+  {
+    /*
+      run until target time
+    */
+    y(0) = 1.; y(1) = 2.; y(2) = 3.;
+    const scalar_type startTime{0.0};
+    const scalar_type finalTime{1.0};
+    pode::advance_to_target_point(stepperObj, y, startTime, finalTime,
+				  [](const pode::StepCount & /*unused*/,
+				     const pode::StepStartAt<scalar_type> & /*unused*/,
+				     pode::StepSize<scalar_type> & dt)
+				  {
+				    dt = 0.1;
+				  });
+    // check solution
+    std::cout << "Computed solution: ["
+	      << y(0) << " " << y(1) << " " << y(2) << "] "
+	      << "Expected solution: [1024, 2048, 3074] \n";
+  }
 
   pressio::log::finalize();
   return 0;

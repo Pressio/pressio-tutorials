@@ -4,6 +4,6 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../tpls
   ${CMAKE_CURRENT_SOURCE_DIR}/../tpls/pressio/include)
 
-set(EXENAMEROOT ode_eigen)
-
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/runall_for_ci.sh runall_for_ci.sh COPYONLY)
+set(EXENAMEROOT nonlinear_solvers_eigen)
 add_executable(${EXENAMEROOT}_exe1 main1.cc)

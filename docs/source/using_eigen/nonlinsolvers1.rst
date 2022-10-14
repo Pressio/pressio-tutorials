@@ -1,7 +1,7 @@
-nonlinear solvers tutorial 1
-============================
+nonlinear solvers: tutorial 1
+=============================
 
-.. literalinclude:: ../../../solvers-eigen/main1.cc
+.. literalinclude:: ../../../nonlinearsolvers-using-eigen-types/main1.cc
    :language: cpp
-   :lines: 1-100
+   :lines: 1-99
    :linenos:

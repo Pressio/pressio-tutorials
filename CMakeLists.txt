@@ -17,5 +17,5 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 enable_testing()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/end-to-end-roms)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/ode-eigen)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/solvers-eigen)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/ode-using-eigen-types)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/nonlinearsolvers-using-eigen-types)

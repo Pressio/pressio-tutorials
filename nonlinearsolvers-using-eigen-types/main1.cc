@@ -78,18 +78,18 @@ int main()
   auto gnSolver = pnonls::create_gauss_newton(problem, linearSolver);
   gnSolver.setTolerance(1e-5);
 
-  auto state = problem.createState();
-  state(0) = -0.05; state(1) = 1.1; state(2) = 1.2; state(3) = 1.5;
-  gnSolver.solve(problem, state);
+  auto x = problem.createState();
+  x(0) = -0.05; x(1) = 1.1; x(2) = 1.2; x(3) = 1.5;
+  gnSolver.solve(problem, x);
 
   // check solution
   std::cout << "Computed solution: \n "
 	    << "["
 	    << std::setprecision(14)
-	    << state(0) << " "
-	    << state(1) << " "
-	    << state(2) << " "
-	    << state(3) << " " << "] \n"
+	    << x(0) << " "
+	    << x(1) << " "
+	    << x(2) << " "
+	    << x(3) << " " << "] \n"
 	    << "Expected solution: \n "
 	    << "[1.0000000156741, 0.99999999912477, 0.99999999651993, 0.99999998889888]"
 	    << std::endl;
