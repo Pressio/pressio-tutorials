@@ -4,7 +4,7 @@
 Pressio Tutorials
 =====================
 
-Tutorials suite for the `pressio C++ library <https://pressio.github.io/pressio/html/index.html>`_.
+Tutorials suite for the `pressio C++ library <https://pressio.github.io/pressio>`_.
 
 
 Scope and Motivation
@@ -15,7 +15,7 @@ reduced-order models (ROMs), which is a strongly multidisciplinary topic.
 Working on a production-level ROM capability inevitably means touching
 multiple fields, ranging from, e.g., linear algebra, nonlinear solvers
 and optimization, to distributed computing, HPC and time integration.
-This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio/html/index.html>`__
+This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio>`__
 which display a "stacked" design: each component handles a specific capability and depends
 on the ones below it such that you can use it directly, but, as a whole, the stack constitutes
 the foundation of the top-level ``pressio/rom`` component.
@@ -67,7 +67,7 @@ Disclaimer
 License and Citation
 --------------------
 
-The BSD-3 license is available `here <https://pressio.github.io/various/license/>`_.
+The BSD-3 license is available `here <https://pressio.github.io/license.html>`_.
 
 We are working on publishing this: you can find our arXiv preprint at: https://arxiv.org/abs/2003.07798
 
