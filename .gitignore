@@ -1,0 +1,5 @@
+docs/generated_docs
+build
+end-to-end-roms/__pycache__/
+end-to-end-roms/customizations_2d_swe/__pycache__/
+.idea

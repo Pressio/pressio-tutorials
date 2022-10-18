@@ -1,3 +1,0 @@
-Galerkin: masked: time explicit
-===============================
-
