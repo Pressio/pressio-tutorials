@@ -1,22 +1,53 @@
+/*
+//@HEADER
+// ************************************************************************
+//
+// run_hyperreduced_galerkin.hpp
+//                     		  Pressio
+//                             Copyright 2019
+//    National Technology & Engineering Solutions of Sandia, LLC (NTESS)
+//
+// Under the terms of Contract DE-NA0003525 with NTESS, the
+// U.S. Government retains certain rights in this software.
+//
+// Pressio is licensed under BSD-3-Clause terms of use:
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+// notice, this list of conditions and the following disclaimer in the
+// documentation and/or other materials provided with the distribution.
+//
+// 3. Neither the name of the copyright holder nor the names of its
+// contributors may be used to endorse or promote products derived
+// from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+// IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+//
+// Questions? Contact Francesco Rizzi (fnrizzi@sandia.gov)
+//
+// ************************************************************************
+//@HEADER
+*/
 
 #ifndef RUN_HYPRED_GALERKIN_HPP_
 #define RUN_HYPRED_GALERKIN_HPP_
-
-/* NOTE:
-   1. the formatting here matters because the rst docs
-      use literalincludes so if you change somehting below
-      it is likely you impact the documentation
-
-   2. the comments below are used by the rst documentaion
-      in non contiguous literalinclude statetements so that
-      we can make the documentation more clear
-
-   3. do NOT erase these comments, and do NOT move them
-      or you impact the rst docs
-
-   // branch taken in this demo
-   // branch not used in this demo
-*/
 
 #include "pressio/rom_subspaces.hpp"
 #include "pressio/rom_galerkin_unsteady.hpp"
@@ -24,7 +55,7 @@
 #include "rom_shared.hpp"
 
 template<class ScalarType, class FomRhsType>
-class MyExplicitGalerkinHyperReducer
+class ExplicitGalerkinHyperReducer
 {
   static_assert(pressio::is_vector_eigen<FomRhsType>::value,
 		"FomRhsType must be an Eigen vector");
@@ -36,9 +67,8 @@ public:
   using time_type = ScalarType;
   using right_hand_side_operand_type = FomRhsType;
 
-  MyExplicitGalerkinHyperReducer() = delete;
-  MyExplicitGalerkinHyperReducer(const std::string & projFile,
-				  const int numModes){
+  ExplicitGalerkinHyperReducer(const std::string & projFile,
+			       const int numModes){
     P_ = create_colmajor_eigen_matrix_and_load_from_binary_with_extents<
       ScalarType>(projFile, numModes);
   }
@@ -66,11 +96,11 @@ void run_galerkin_hyperreduced(const FomSystemType & fomSystem,
 
   const auto modeCount   = parser.romModeCount();
   const auto & basisFile = parser.romFullMeshPodBasisFile();
-  auto basisFull      = create_basis_and_read_from_file<scalar_type>(basisFile, modeCount);
-  auto basisOnStencil = create_basis_on_stencil_mesh(basisFull, parser);
-  auto affineShift    = create_affine_shift_on_stencil_mesh<scalar_type>(parser);
-  auto trialSpace     = prom::create_trial_column_subspace<
-         reduced_state_type>(std::move(basisOnStencil), std::move(affineShift), parser.romIsAffine());
+  auto basisFull         = create_basis_and_read_from_file<scalar_type>(basisFile, modeCount);
+  auto basisOnStencil    = create_basis_on_stencil_mesh(basisFull, parser);
+  auto affineShift       = create_affine_shift_on_stencil_mesh<scalar_type>(parser);
+  const auto trialSpace  = prom::create_trial_column_subspace<
+     reduced_state_type>(std::move(basisOnStencil), std::move(affineShift), parser.romIsAffine());
 
   auto reducedState = trialSpace.createReducedState();
   fill_rom_state_from_ascii(parser.romInitialStateFile(), reducedState);
@@ -79,16 +109,16 @@ void run_galerkin_hyperreduced(const FomSystemType & fomSystem,
   const auto odeScheme = parser.odeScheme();
   if (pressio::ode::is_explicit_scheme(odeScheme))
   {
-    using fom_rhs_type = typename FomSystemType::right_hand_side_type;
-    using hr_op_t = MyExplicitGalerkinHyperReducer<scalar_type, fom_rhs_type>;
-    hr_op_t H(parser.romGalerkinHypRedOperatorFile(), modeCount);
+  using fom_rhs_type = typename FomSystemType::right_hand_side_type;
+  using hr_op_t = ExplicitGalerkinHyperReducer<scalar_type, fom_rhs_type>;
+  hr_op_t H(parser.romGalerkinHypRedOperatorFile(), modeCount);
 
-    auto problem = pgal::create_unsteady_explicit_problem(odeScheme, trialSpace, fomSystem, H);
+  auto problem = pgal::create_unsteady_explicit_problem(odeScheme, trialSpace, fomSystem, H);
 
-    typename FomSystemType::time_type startTime{0};
-    const auto numSteps = pode::StepCount{parser.numSteps()};
-    pode::advance_n_steps(problem, reducedState, startTime,
-			  parser.timeStepSize(), numSteps, observer);
+  typename FomSystemType::time_type startTime{0};
+  const auto numSteps = pode::StepCount{parser.numSteps()};
+  pode::advance_n_steps(problem, reducedState, startTime,
+			parser.timeStepSize(), numSteps, observer);
   }
   else{
     throw std::runtime_error("Hyper-reduced implicit galerkin not impl yet");

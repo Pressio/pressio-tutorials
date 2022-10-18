@@ -29,8 +29,8 @@ Workflow File
 -------------
 
 The `workflow file <../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml>`_
-is shown below for exposition purposes, but it is automatically copied to the
-build directory, so you don't need to do anything:
+for this demo is shown below for exposition purposes, but it is automatically
+copied to the build directory, so you don't need to do anything:
 
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml
    :language: yaml
@@ -49,7 +49,7 @@ When we run the FOM driver, the following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
    :language: cpp
-   :lines: 15-35
+   :lines: 56-76
 
 At the end, doing ``tree -L 1 .`` should produce:
 
@@ -101,7 +101,7 @@ The following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
    :language: cpp
-   :lines: 26-58, 18-18, 60-62
+   :lines: 57-79, 82-87, 92
 
 At the end, you should have the following directory structure:
 

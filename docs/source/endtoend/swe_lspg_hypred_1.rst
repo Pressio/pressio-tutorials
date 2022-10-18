@@ -27,8 +27,8 @@ Workflow File
 -------------
 
 The `workflow file <../../../end-to-end-roms/2d_swe_lspg_hypred_1/wf.yaml>`_
-is shown below for exposition purposes, but it is automatically copied to the
-build directory, so you don't need to do anything:
+for this demo is shown below for exposition purposes, but it is automatically
+copied to the build directory, so you don't need to do anything:
 
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_lspg_hypred_1/wf.yaml
    :language: yaml
@@ -106,13 +106,11 @@ The following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_hyperreduced_lspg.hpp
    :language: cpp
-   :lines: 82-111
-   :linenos:
+   :lines: 58-155
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/lspg_pick_solver_and_run.hpp
    :language: cpp
-   :lines: 23-37
-   :linenos:
+   :lines: 52-64, 67-78, 111
 
 At the end, you should have the following directory structure:
 

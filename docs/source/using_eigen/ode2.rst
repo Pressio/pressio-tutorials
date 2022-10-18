@@ -1,9 +1,11 @@
 ode: tutorial 2
 ===============
 
+This tutorial shows how to integrate the `original Lorenz system <https://en.wikipedia.org/wiki/Lorenz_system>`__ using explicit time integration.
+
 .. literalinclude:: ../../../ode-using-eigen-types/tutorial2/main.cc
    :language: cpp
-   :lines: 1-96
+   :lines: 48-143
 
 
 Process results

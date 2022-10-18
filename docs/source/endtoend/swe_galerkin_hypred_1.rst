@@ -29,8 +29,8 @@ Workflow File
 -------------
 
 The `workflow file <../../../end-to-end-roms/2d_swe_galerkin_hypred_1/wf.yaml>`_
-is shown below for exposition purposes, but it is automatically copied to the
-build directory, so you don't need to do anything:
+for this demo is shown below for exposition purposes, but it is automatically
+copied to the build directory, so you don't need to do anything:
 
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_galerkin_hypred_1/wf.yaml
    :language: yaml
@@ -104,7 +104,7 @@ Running the Galerkin driver means the following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_hyperreduced_galerkin.hpp
    :language: cpp
-   :lines: 26-94, 18-18, 96-97
+   :lines: 57-109, 112-121, 126
 
 At the end, you should have the following directory structure:
 

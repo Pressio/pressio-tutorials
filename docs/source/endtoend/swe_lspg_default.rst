@@ -29,8 +29,8 @@ Workflow File
 -------------
 
 The `workflow file <../../../end-to-end-roms/2d_swe_lspg_default/wf.yaml>`_
-is shown below for exposition purposes, but it is automatically copied to the
-build directory, so you don't need to do anything:
+for this demo is shown below for exposition purposes, but it is automatically
+copied to the build directory, so you don't need to do anything:
 
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_lspg_default/wf.yaml
    :language: yaml
@@ -53,7 +53,7 @@ When we run the FOM driver, the following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_implicit.hpp
    :language: cpp
-   :lines: 15-49
+   :lines: 56-90
 
 At the end, doing ``tree -L 1 .`` should produce:
 
@@ -102,11 +102,11 @@ The following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_lspg.hpp
    :language: cpp
-   :lines: 22-46
+   :lines: 58-82
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/lspg_pick_solver_and_run.hpp
    :language: cpp
-   :lines: 21-35, 36-51, 18-18, 62-65, 18-18, 79-80
+   :lines: 52-64, 67-78, 111
 
 At the end, you should have the following directory structure:
 
