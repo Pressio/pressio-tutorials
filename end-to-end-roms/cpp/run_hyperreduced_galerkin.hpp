@@ -2,6 +2,22 @@
 #ifndef RUN_HYPRED_GALERKIN_HPP_
 #define RUN_HYPRED_GALERKIN_HPP_
 
+/* NOTE:
+   1. the formatting here matters because the rst docs
+      use literalincludes so if you change somehting below
+      it is likely you impact the documentation
+
+   2. the comments below are used by the rst documentaion
+      in non contiguous literalinclude statetements so that
+      we can make the documentation more clear
+
+   3. do NOT erase these comments, and do NOT move them
+      or you impact the rst docs
+
+   // branch taken in this demo
+   // branch not used in this demo
+*/
+
 #include "pressio/rom_subspaces.hpp"
 #include "pressio/rom_galerkin_unsteady.hpp"
 #include "observer.hpp"
@@ -45,17 +61,16 @@ void run_galerkin_hyperreduced(const FomSystemType & fomSystem,
   namespace prom = pressio::rom;
   namespace pgal = pressio::rom::galerkin;
 
-  using scalar_t = typename FomSystemType::scalar_type;
-  using reduced_state_type = Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>;
+  using scalar_type = typename FomSystemType::scalar_type;
+  using reduced_state_type = Eigen::Matrix<scalar_type, Eigen::Dynamic, 1>;
 
   const auto modeCount   = parser.romModeCount();
   const auto & basisFile = parser.romFullMeshPodBasisFile();
-  auto phiFull      = create_basis_and_read_from_file<scalar_t>(basisFile, modeCount);
-  auto phiOnStencil = create_basis_on_stencil_mesh(phiFull, parser);
-  auto affineShift  = create_affine_shift_on_stencil_mesh<scalar_t>(parser);
-  auto trialSpace   = prom::create_trial_column_subspace<reduced_state_type>(std::move(phiOnStencil),
-								     affineShift,
-								     parser.romIsAffine());
+  auto basisFull      = create_basis_and_read_from_file<scalar_type>(basisFile, modeCount);
+  auto basisOnStencil = create_basis_on_stencil_mesh(basisFull, parser);
+  auto affineShift    = create_affine_shift_on_stencil_mesh<scalar_type>(parser);
+  auto trialSpace     = prom::create_trial_column_subspace<
+         reduced_state_type>(std::move(basisOnStencil), std::move(affineShift), parser.romIsAffine());
 
   auto reducedState = trialSpace.createReducedState();
   fill_rom_state_from_ascii(parser.romInitialStateFile(), reducedState);
@@ -65,7 +80,7 @@ void run_galerkin_hyperreduced(const FomSystemType & fomSystem,
   if (pressio::ode::is_explicit_scheme(odeScheme))
   {
     using fom_rhs_type = typename FomSystemType::right_hand_side_type;
-    using hr_op_t = MyExplicitGalerkinHyperReducer<scalar_t, fom_rhs_type>;
+    using hr_op_t = MyExplicitGalerkinHyperReducer<scalar_type, fom_rhs_type>;
     hr_op_t H(parser.romGalerkinHypRedOperatorFile(), modeCount);
 
     auto problem = pgal::create_unsteady_explicit_problem(odeScheme, trialSpace, fomSystem, H);

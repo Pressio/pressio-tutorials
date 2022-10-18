@@ -104,8 +104,7 @@ Running the Galerkin driver means the following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_hyperreduced_galerkin.hpp
    :language: cpp
-   :lines: 40-77
-   :linenos:
+   :lines: 26-94, 18-18, 96-97
 
 At the end, you should have the following directory structure:
 

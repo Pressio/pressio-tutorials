@@ -3,8 +3,7 @@ ode: tutorial 3
 
 .. literalinclude:: ../../../ode-using-eigen-types/tutorial3/main.cc
    :language: cpp
-   :lines: 1-158
-
+   :lines: 1-157
 
 Process results
 ---------------

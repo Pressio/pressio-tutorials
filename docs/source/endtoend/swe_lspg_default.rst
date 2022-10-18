@@ -35,7 +35,6 @@ build directory, so you don't need to do anything:
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_lspg_default/wf.yaml
    :language: yaml
    :lines: 1-35
-   :linenos:
 
 
 Step 1: execute FOMs
@@ -54,8 +53,7 @@ When we run the FOM driver, the following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_implicit.hpp
    :language: cpp
-   :lines: 9-45
-   :linenos:
+   :lines: 15-49
 
 At the end, doing ``tree -L 1 .`` should produce:
 
@@ -93,7 +91,7 @@ and creates all data into an "offline_rom" subdirectory:
 
 
 Step 3: lspg rom
---------------------
+----------------
 
 .. code-block:: bash
 
@@ -104,13 +102,11 @@ The following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_lspg.hpp
    :language: cpp
-   :lines: 10-37
-   :linenos:
+   :lines: 22-46
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/lspg_pick_solver_and_run.hpp
    :language: cpp
-   :lines: 23-37
-   :linenos:
+   :lines: 21-35, 36-51, 18-18, 62-65, 18-18, 79-80
 
 At the end, you should have the following directory structure:
 

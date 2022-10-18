@@ -133,7 +133,6 @@ int main(int argc, char *argv[])
   y(0) = 0.5; y(1) = 1.0; y(2) = 1.;
   const scalar_type startTime{0.0};
   const scalar_type finalTime{40.0};
-  const int stateSampleFreq = 1;
   std::ofstream myfile("state_snapshots.bin",  std::ios::out | std::ios::binary);
   pode::advance_to_target_point(stepper, y, startTime, finalTime,
 				// lambda to set the time step

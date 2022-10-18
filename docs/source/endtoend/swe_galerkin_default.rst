@@ -35,7 +35,6 @@ build directory, so you don't need to do anything:
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml
    :language: yaml
    :lines: 1-35
-   :linenos:
 
 
 Step 1: execute FOMs
@@ -50,8 +49,7 @@ When we run the FOM driver, the following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
    :language: cpp
-   :lines: 9-31
-   :linenos:
+   :lines: 15-35
 
 At the end, doing ``tree -L 1 .`` should produce:
 
@@ -103,9 +101,7 @@ The following C++ code is being executed:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
    :language: cpp
-   :lines: 10-43
-   :linenos:
-
+   :lines: 26-58, 18-18, 60-62
 
 At the end, you should have the following directory structure:
 

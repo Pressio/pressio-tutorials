@@ -2,6 +2,22 @@
 #ifndef RUN_HYPER_REDUCED_LSPG_HPP_
 #define RUN_HYPER_REDUCED_LSPG_HPP_
 
+/* NOTE:
+   1. the formatting here matters because the rst docs
+      use literalincludes so if you change somehting below
+      it is likely you impact the documentation
+
+   2. the comments below are used by the rst documentaion
+      in non contiguous literalinclude statetements so that
+      we can make the documentation more clear
+
+   3. do NOT erase these comments, and do NOT move them
+      or you impact the rst docs
+
+   // branch taken in this demo
+   // branch not used in this demo
+*/
+
 #include "pressio/rom_subspaces.hpp"
 #include "pressio/rom_lspg_unsteady.hpp"
 #include "observer.hpp"
@@ -87,14 +103,14 @@ void run_lspg_hyperreduced(const FomSystemType & fomSystem,
   namespace prom = pressio::rom;
   namespace plspg = pressio::rom::lspg;
 
-  using scalar_t = typename FomSystemType::scalar_type;
-  using reduced_state_type = Eigen::Matrix<scalar_t, Eigen::Dynamic, 1>;
+  using scalar_type = typename FomSystemType::scalar_type;
+  using reduced_state_type = Eigen::Matrix<scalar_type, Eigen::Dynamic, 1>;
 
   const auto modeCount   = parser.romModeCount();
   const auto & basisFile = parser.romFullMeshPodBasisFile();
-  auto phiFull      = create_basis_and_read_from_file<scalar_t>(basisFile, modeCount);
+  auto phiFull      = create_basis_and_read_from_file<scalar_type>(basisFile, modeCount);
   auto phiOnStencil = create_basis_on_stencil_mesh(phiFull, parser);
-  auto affineShift  = create_affine_shift_on_stencil_mesh<scalar_t>(parser);
+  auto affineShift  = create_affine_shift_on_stencil_mesh<scalar_type>(parser);
   auto trialSpace   = prom::create_trial_column_subspace<reduced_state_type>(std::move(phiOnStencil),
 								     affineShift,
 								     parser.romIsAffine());
@@ -103,8 +119,7 @@ void run_lspg_hyperreduced(const FomSystemType & fomSystem,
   fill_rom_state_from_ascii(parser.romInitialStateFile(), reducedState);
 
   const auto odeScheme = parser.odeScheme();
-  using combiner_t = HypRedUpdater<scalar_t>;
-  combiner_t combiner(parser);
+  HypRedUpdater<scalar_type> combiner(parser);
   auto problem = plspg::create_unsteady_problem(odeScheme, trialSpace, fomSystem, combiner);
 
   lspg_pick_solver_and_run(parser, problem.lspgStepper(), reducedState);

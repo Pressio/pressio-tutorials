@@ -13,7 +13,7 @@
 # constraints:
 #              must be supported: this means there MUST
 #              be a subdirectory in source repo as follows:
-#              pressio-tutorials/end-to-end-roms/customizations_<problem-string>
+#              pressio-tutorials/end-to-end-roms/<problem-string>_customizations
 # ----------------------------------------------------
 problem: <string>
 

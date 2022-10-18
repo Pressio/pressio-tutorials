@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     const auto problemNode = node["problem"];
     if (!problemNode){ throw std::runtime_error("Missing problem in yaml input!"); }
     const auto problemName = problemNode.as<std::string>();
-    std::cout << problemName << std::endl;
+    std::cout << "Running: " << problemName << std::endl;
 
     // start timer
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
       using scalar_t = double;
       ParserTwoDimShallowWater<scalar_t> parser(node);
       const auto meshObj = pda::load_cellcentered_uniform_mesh_eigen<scalar_t>(parser.meshDir());
-      const auto probId  = pda::Swe2d::SlipWall;
       const auto invScheme = string_to_inviscid_flux_scheme(parser.inviscidFluxReconstruction());
       const auto gravity   = parser.gravity();
       const auto coriolis  = parser.coriolis();
@@ -104,36 +103,3 @@ int main(int argc, char *argv[])
   pressio::log::finalize();
   return 0;
 }
-
-  // if (problem == "2d_rd")
-  // {
-  //   namespace pda  = pressiodemoapps;
-  //   ParserTwoDimReacDiff<scalar_t> parser(node);
-  //   const auto meshObj   = pda::load_cellcentered_uniform_mesh_eigen<scalar_t>(parser.meshDir());
-  //   const auto diffusion = parser.diffusion();
-  //   const auto reaction  = parser.reaction();
-  //   const auto scheme    = pda::ViscousFluxReconstruction::FirstOrder;
-  //   const auto probId    = pda::DiffusionReaction2d::ProblemA;
-  //   auto fomSystem = pda::create_problem_eigen(meshObj, probId, scheme,
-  // 					    mySource, diffusion, reaction);
-  //   dispatch(fomSystem, parser);
-  // }
-
-
-  // if (problem == "2d_gs")
-  // {
-  //   namespace pda  = pressiodemoapps;
-  //   ParserTwoDimGrayScott<scalar_t> parser(node);
-  //   const auto meshObj = pda::load_cellcentered_uniform_mesh_eigen<scalar_t>(parser.meshDir());
-  //   const auto probId  = pda::DiffusionReaction2d::GrayScott;
-  //   const auto scheme  = pda::ViscousFluxReconstruction::FirstOrder;
-
-  //   const auto diffusionA = parser.diffusionA();
-  //   const auto diffusionB = parser.diffusionB();
-  //   const auto feedRate   = parser.feedRate();
-  //   const auto killRate   = parser.killRate();
-  //   auto fomSystem = pda::create_problem_eigen(meshObj, probId, scheme,
-  // 			    diffusionA, diffusionB,
-  // 			    feedRate, killRate);
-  //   dispatch(fomSystem, parser);
-  // }

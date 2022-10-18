@@ -1,4 +1,5 @@
 
+
 #ifndef PRESSIO_TUTORIALS_ENDTOEND_WORKFLOW_RUN_FOM_EXPLICIT_HPP_
 #define PRESSIO_TUTORIALS_ENDTOEND_WORKFLOW_RUN_FOM_EXPLICIT_HPP_
 
@@ -12,15 +13,13 @@ void run_fom_explicit(const FomSystemType & fomSystem,
 {
   namespace pode = pressio::ode;
 
-  using state_t = typename FomSystemType::state_type;
-  state_t state = fomSystem.initialCondition();
+  auto state = fomSystem.initialCondition();
   write_vector_to_binary(state, "initial_state.bin");
 
   const auto odeScheme = parser.odeScheme();
   assert(pressio::ode::is_explicit_scheme(odeScheme));
   auto stepperObj = pode::create_explicit_stepper(odeScheme, fomSystem);
 
-  using rhs_t = typename FomSystemType::right_hand_side_type;
   RhsObserver rhsObs(parser.rhsSamplingFreq());
   StateObserver stateObs(parser.stateSamplingFreq());
   const auto startTime = static_cast<typename FomSystemType::scalar_type>(0);

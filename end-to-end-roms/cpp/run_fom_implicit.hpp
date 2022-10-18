@@ -14,8 +14,7 @@ void run_fom_implicit(const FomSystemType & appObj,
   namespace plins  = pressio::linearsolvers;
   namespace pnlins = pressio::nonlinearsolvers;
 
-  using state_t = typename FomSystemType::state_type;
-  state_t state = appObj.initialCondition();
+  auto state = appObj.initialCondition();
   write_vector_to_binary(state, "initial_state.bin");
 
   // stepper
@@ -32,8 +31,7 @@ void run_fom_implicit(const FomSystemType & appObj,
   const auto nonlinSolverType = parser.nonlinearSolver();
   assert(nonlinSolverType == "NewtonRaphson");
   auto nonLinearSolver = pnlins::create_newton_raphson(stepperObj, linearSolver);
-  const auto tol = parser.nonlinearSolverTolerance();
-  nonLinearSolver.setTolerance(tol);
+  nonLinearSolver.setTolerance(parser.nonlinearSolverTolerance());
 
   // advance in time
   StateObserver stateObs(parser.stateSamplingFreq());

@@ -22,7 +22,6 @@ auto create_colmajor_eigen_matrix_and_load_from_binary_with_extents(const std::s
   }
 
   matrix_type M;
-  using int_t = typename matrix_type::Index;
   using sc_t  = typename matrix_type::Scalar;
   std::ifstream fin(fileName, std::ios::in | std::ios::binary);
   fin.exceptions(std::ifstream::failbit | std::ifstream::badbit);

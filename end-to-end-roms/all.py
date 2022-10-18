@@ -26,7 +26,7 @@ def assert_valid_and_supported_problem(wfDic, ptutRepoEndToEndFullPath):
   assert('problem' in wfDic)
 
   problemName = find_problem_name_from_wf_dic(wfDic)
-  moduleName  = 'customizations_'+problemName
+  moduleName = problemName+'_customizations'
   modulePath  = os.path.realpath(ptutRepoEndToEndFullPath+'/'+moduleName)
   if not os.path.exists(modulePath):
     print("\n")

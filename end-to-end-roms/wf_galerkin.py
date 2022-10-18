@@ -267,7 +267,7 @@ if __name__== "__main__":
 
   # import customizations from target problem
   # we can do this safely because we already asserted customization exists
-  moduleName = 'customizations_'+problemName
+  moduleName = problemName+'_customizations'
   sys.path.append(os.path.realpath(ptutRepoEndToEndFullPath+'/'+moduleName))
   print("Loading customizations from {}".format(moduleName))
   customModule = importlib.import_module(moduleName)

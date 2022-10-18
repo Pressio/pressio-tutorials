@@ -77,8 +77,6 @@ auto create_affine_shift_on_stencil_mesh(const ParserType & parser)
 {
   const auto affineShiftFile = parser.romAffineShiftFile();
   auto affineShiftTmp = create_affine_shift_and_read_from_file<ScalarType>(affineShiftFile);
-
-  const auto numDofsPerCell = parser.numDofsPerCell();
   const auto stencilMeshGids = create_cell_gids_vector_and_fill_from_ascii(parser.romStencilMeshGidsFile());
   return create_and_reduce_on_stencil_mesh(affineShiftTmp, stencilMeshGids,
 					   parser.numDofsPerCell());
