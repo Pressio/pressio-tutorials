@@ -1,0 +1,181 @@
+.. include:: ../mydefs.rst
+
+2D SWE: default Galerkin
+========================
+
+  - ROM technique: default Galerkin
+
+  - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
+
+
+Prerequisites
+-------------
+
+- A valid build of the tutorials, see `here <../build.html>`__, and the following env variables set:
+
+  .. code-block:: bash
+
+     export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
+     export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
+
+- To run all scripts below, you MUST be in the correct end-to-end directory:
+
+  .. code-block:: bash
+
+     cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+
+
+Workflow File
+-------------
+
+The `workflow file <../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml>`_
+for this demo is shown below for exposition purposes, but it is automatically
+copied to the build directory, so you don't need to do anything:
+
+.. literalinclude:: ../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml
+   :language: yaml
+   :lines: 1-35
+
+
+Step 1: execute FOMs
+--------------------
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+   python3 $REPOSRC/wf_foms.py --wf wf.yaml
+
+When we run the FOM driver, the following C++ code is being executed:
+
+.. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
+   :language: cpp
+   :lines: 56-76
+
+At the end, doing ``tree -L 1 .`` should produce:
+
+.. code-block:: bash
+
+   .
+   ├── CMakeFiles
+   ├── Makefile
+   ├── cmake_install.cmake
+   ├── fom_mesh
+   ├── fom_test_runid_0
+   ├── fom_train_runid_0
+   ├── fom_train_runid_1
+   ├── plot.py
+   └── wf.yaml
+
+Step 2: offline rom
+-------------------
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+   python3 $REPOSRC/wf_offline_rom.py --wf wf.yaml
+
+The offline rom takes care of using the FOM training data to compute the POD modes,
+and creates all data into an "offline_rom" subdirectory:
+
+.. code-block:: bash
+
+   ./offline_rom/
+   ├── pod_input.yaml
+   ├── rhs_left_singular_vectors.bin
+   ├── rhs_singular_values.txt
+   ├── rhs_snapshots.bin
+   ├── state_left_singular_vectors.bin
+   ├── state_singular_values.txt
+   └── state_snapshots.bin
+
+
+Step 3: galerkin rom
+--------------------
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+   python3 $REPOSRC/wf_galerkin.py --wf wf.yaml
+
+The following C++ code is being executed:
+
+.. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
+   :language: cpp
+   :lines: 57-79, 82-87, 92
+
+At the end, you should have the following directory structure:
+
+.. code-block:: bash
+
+   .
+   ├── CMakeFiles
+   ├── Makefile
+   ├── cmake_install.cmake
+   ├── default_galerkin_truncation_energybased_99.99999_runid_0
+   ├── default_galerkin_truncation_energybased_99.999_runid_0
+   ├── fom_mesh
+   ├── fom_test_runid_0
+   ├── fom_train_runid_0
+   ├── fom_train_runid_1
+   ├── offline_rom
+   ├── plot.py
+   └── wf.yaml
+
+
+Step 4: process results
+-----------------------
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+   python3 $REPOSRC/wf_reconstruct_on_full_mesh.py
+   python3 plot.py
+
+.. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/FOM.png
+  :width: 32 %
+  :alt: FOM
+.. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/ROM_22.png
+  :width: 32 %
+  :alt: ROM, 22 modes
+.. image:: ../../../end-to-end-roms/2d_swe_galerkin_default/ROM_55.png
+  :width: 32 %
+  :alt: ROM, 55 modes
+
+
+Step 5: things you can try
+--------------------------
+
+This section suggests a few things you can experiment with.
+Note: before you run a new experiment in the same directory, to avoid conflicts
+you need to cleanup all the existing content, which can you easily do as follows:
+
+.. code-block:: bash
+
+   # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+   python3 clean.py
+
+
+- you can try to use a different simulation time for the train and test
+  so that you can assess how the ROM performs in a time extrapolation regime:
+
+  .. code-block:: yaml
+
+     fom:
+       # ...
+       train:
+	 finalTime: 5.0
+
+       test:
+	 finalTime: 6.0
+
+- you can edit the ``parameterSpace`` section of the workflow file to
+  add new test points for example as follows:
+
+  .. code-block:: yaml
+
+     parameterSpace:
+       # ...
+       testPoints:
+	 0: [-0.5, 0.125, 9.8]
+	 1: [-0.9, 0.125, 9.8]
+	 2: [ 0.1, 0.125, 9.8] # this test point is outside of training range
