@@ -45,7 +45,11 @@ Step 1: execute FOMs
    # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_foms.py --wf wf.yaml
 
-When we run the FOM driver, the following C++ code is being executed:
+This driver script automates this first stage by creating input files,
+generating run directories and running the C++ executable
+to generate all the FOM train and test data at the points specified
+in the yaml file. For exposition purposes, we show below the actual
+C++ code executed during this stage to run a single FOM:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
    :language: cpp
@@ -66,6 +70,8 @@ At the end, doing ``tree -L 1 .`` should produce:
    ├── plot.py
    └── wf.yaml
 
+Where we see the run train and test directories and their corresponding IDs.
+
 Step 2: offline rom
 -------------------
 
@@ -74,8 +80,10 @@ Step 2: offline rom
    # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_offline_rom.py --wf wf.yaml
 
-The offline rom takes care of using the FOM training data to compute the POD modes,
-and creates all data into an "offline_rom" subdirectory:
+The offline rom takes care of using the FOM training data to compute
+the POD modes, and creates all data into an "offline_rom" subdirectory.
+Specifically, in this case the demo specifies that *all* the training
+runs should be used to compute POD modes.
 
 .. code-block:: bash
 
@@ -88,7 +96,6 @@ and creates all data into an "offline_rom" subdirectory:
    ├── state_singular_values.txt
    └── state_snapshots.bin
 
-
 Step 3: galerkin rom
 --------------------
 
@@ -97,11 +104,30 @@ Step 3: galerkin rom
    # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 $REPOSRC/wf_galerkin.py --wf wf.yaml
 
-The following C++ code is being executed:
+This driver script automates all the Galerkin runs.
+Specifically, it creates all the run directories, writes all input files,
+prepares initial conditions and runs the actual Galerkin run at every test point.
+For exposition purposes, we show below the actual
+C++ code executed during this stage to run a single Galerkin run:
 
 .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
    :language: cpp
    :lines: 57-79, 82-87, 92
+
+More specifically, what happens here is the following:
+
+- the total number of modes used varies and is computed by truncating
+  the basis using the energy values specified in the workflow file
+  at the top: the higher the target energy, the more modes it uses
+  (the code doing this computes the energy of the singular
+  values of the POD modes and truncate based on the target energy,
+  and again this is done automatically by our driver script)
+
+- the reduced initial condition is read from file but here simply
+  corresponds to the projection of the FOM initial condition onto the basis
+
+- note that we also monitor the evolution of the reduced state and
+  store its history into file (this will be used for the postprocessing)
 
 At the end, you should have the following directory structure:
 
@@ -154,9 +180,9 @@ you need to cleanup all the existing content, which can you easily do as follows
    # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
    python3 clean.py
 
-
-- you can try to use a different simulation time for the train and test
-  so that you can assess how the ROM performs in a time extrapolation regime:
+- a different simulation time for the train and test runs
+  so that you can assess how the ROM performs in a time extrapolation regime.
+  This can easily be done by just replacing:
 
   .. code-block:: yaml
 
@@ -164,12 +190,12 @@ you need to cleanup all the existing content, which can you easily do as follows
        # ...
        train:
 	 finalTime: 5.0
-
+       # ...
        test:
 	 finalTime: 6.0
 
-- you can edit the ``parameterSpace`` section of the workflow file to
-  add new test points for example as follows:
+- add new test points to the ``parameterSpace`` section of the workflow
+  file to as follows:
 
   .. code-block:: yaml
 
