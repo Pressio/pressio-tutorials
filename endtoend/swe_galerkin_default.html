@@ -287,7 +287,11 @@ copied to the build directory, so you don’t need to do anything:</p>
 python3 <span class="nv">$REPOSRC</span>/wf_foms.py --wf wf.yaml
 </pre></div>
 </div>
-<p>When we run the FOM driver, the following C++ code is being executed:</p>
+<p>This driver script automates this first stage by creating input files,
+generating run directories and running the C++ executable
+to generate all the FOM train and test data at the points specified
+in the yaml file. For exposition purposes, we show below the actual
+C++ code executed during this stage to run a single FOM:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ParserType</span><span class="o">&gt;</span><span class="w"></span>
 <span class="kt">void</span><span class="w"> </span><span class="n">run_fom_explicit</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FomSystemType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">,</span><span class="w"></span>
 <span class="w">		      </span><span class="k">const</span><span class="w"> </span><span class="n">ParserType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parser</span><span class="p">)</span><span class="w"></span>
@@ -324,6 +328,7 @@ python3 <span class="nv">$REPOSRC</span>/wf_foms.py --wf wf.yaml
 └── wf.yaml
 </pre></div>
 </div>
+<p>Where we see the run train and test directories and their corresponding IDs.</p>
 </section>
 <section id="step-2-offline-rom">
 <h2>Step 2: offline rom<a class="headerlink" href="#step-2-offline-rom" title="Permalink to this heading">#</a></h2>
@@ -331,8 +336,10 @@ python3 <span class="nv">$REPOSRC</span>/wf_foms.py --wf wf.yaml
 python3 <span class="nv">$REPOSRC</span>/wf_offline_rom.py --wf wf.yaml
 </pre></div>
 </div>
-<p>The offline rom takes care of using the FOM training data to compute the POD modes,
-and creates all data into an “offline_rom” subdirectory:</p>
+<p>The offline rom takes care of using the FOM training data to compute
+the POD modes, and creates all data into an “offline_rom” subdirectory.
+Specifically, in this case the demo specifies that <em>all</em> the training
+runs should be used to compute POD modes.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./offline_rom/
 ├── pod_input.yaml
 ├── rhs_left_singular_vectors.bin
@@ -350,7 +357,11 @@ and creates all data into an “offline_rom” subdirectory:</p>
 python3 <span class="nv">$REPOSRC</span>/wf_galerkin.py --wf wf.yaml
 </pre></div>
 </div>
-<p>The following C++ code is being executed:</p>
+<p>This driver script automates all the Galerkin runs.
+Specifically, it creates all the run directories, writes all input files,
+prepares initial conditions and runs the actual Galerkin run at every test point.
+For exposition purposes, we show below the actual
+C++ code executed during this stage to run a single Galerkin run:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ParserType</span><span class="o">&gt;</span><span class="w"></span>
 <span class="kt">void</span><span class="w"> </span><span class="n">run_galerkin_default</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FomSystemType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">,</span><span class="w"></span>
 <span class="w">			  </span><span class="k">const</span><span class="w"> </span><span class="n">ParserType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parser</span><span class="p">)</span><span class="w"></span>
@@ -383,6 +394,19 @@ python3 <span class="nv">$REPOSRC</span>/wf_galerkin.py --wf wf.yaml
 <span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
+<p>More specifically, what happens here is the following:</p>
+<ul class="simple">
+<li><p>the total number of modes used varies and is computed by truncating
+the basis using the energy values specified in the workflow file
+at the top: the higher the target energy, the more modes it uses
+(the code doing this computes the energy of the singular
+values of the POD modes and truncate based on the target energy,
+and again this is done automatically by our driver script)</p></li>
+<li><p>the reduced initial condition is read from file but here simply
+corresponds to the projection of the FOM initial condition onto the basis</p></li>
+<li><p>note that we also monitor the evolution of the reduced state and
+store its history into file (this will be used for the postprocessing)</p></li>
+</ul>
 <p>At the end, you should have the following directory structure:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.
 ├── CMakeFiles
@@ -421,20 +445,21 @@ python3 clean.py
 </pre></div>
 </div>
 <ul>
-<li><p>you can try to use a different simulation time for the train and test
-so that you can assess how the ROM performs in a time extrapolation regime:</p>
+<li><p>a different simulation time for the train and test runs
+so that you can assess how the ROM performs in a time extrapolation regime.
+This can easily be done by just replacing:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">fom</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
 <span class="w">  </span><span class="nt">train</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w"></span>
-
+<span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
 <span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6.0</span><span class="w"></span>
 </pre></div>
 </div>
 </li>
-<li><p>you can edit the <code class="docutils literal notranslate"><span class="pre">parameterSpace</span></code> section of the workflow file to
-add new test points for example as follows:</p>
+<li><p>add new test points to the <code class="docutils literal notranslate"><span class="pre">parameterSpace</span></code> section of the workflow
+file to as follows:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">parameterSpace</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
 <span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span><span class="w"></span>
@@ -483,7 +508,7 @@ add new test points for example as follows:</p>
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Oct 18, 2022</div>
+              Last updated on Oct 19, 2022</div>
           </div>
           <div class="right-details">
             <div class="icons">
