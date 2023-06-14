@@ -9,41 +9,40 @@ What you need
 
 - **CMake > 3.18.0**
 
-- **C++14 compiler**: `our CI <https://github.com/Pressio/pressio-tutorials/blob/develop/.github/workflows/test-all.yml>`__ is currently testing both GCC and Clang
+- **C++17 compiler**: GCC or Clang are tested in our CI
 
-- Python 3.x with specific packages listed `here <../../py_requirements.txt>`__
+- Python 3.x
 
 Steps
 -----
 
 .. code-block:: bash
 
-   git clone --recursive git@github.com:Pressio/pressio-tutorials.git
+   git clone git@github.com:Pressio/pressio-tutorials.git
 
    export CXX=<fullpath-to-your-CXX-compiler>
    export BUILDDIR=$HOME/tutorialBuild
    mkdir $BUILDDIR
-   cmake -DCMAKE_BUILD_TYPE=Release -S <path-to-your-cloned-repo> -B $BUILDDIR
+   cmake -DPRESSIOTUTORIALS_ENABLE_TESTS=ON \
+         -DCMAKE_BUILD_TYPE=Release -S <path-to-your-cloned-repo> -B $BUILDDIR
    cd $BUILDDIR && make -j4
 
-   # if needed, the Python packages can be installed as
+   # ensure you have all required Python packages installed
    pip3 install <path-to-your-cloned-repo>/py_requirements.txt
 
+
+Verify the build
+----------------
+
+.. code-block:: cpp
+
+   cd $BUIlDDIR
+   ctest
 
 Then what?
 ----------
 
 Individual executables and the end-to-end demos can be found inside the build directory.
-
-.. tip::
-
-   If you want to verify the build, you can enable tests via ``-DPRESSIOTUTORIALS_ENABLE_TESTS=ON``,
-   and then do:
-
-   .. code-block:: cpp
-
-      cd $BUIlDDIR
-      ctest
 
 
 More details on dependencies

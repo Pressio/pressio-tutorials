@@ -62,7 +62,7 @@ class Lorenz3{
 public:
   using independent_variable_type = ScalarType;
   using state_type                = Eigen::Matrix<ScalarType,-1,1>;
-  using right_hand_side_type      = state_type;
+  using rhs_type		  = state_type;
   // since the Jacobain of Lorenz3 is fairly dens,
   // we could use a dense matrix for it, but we use a sparse one
   // here for demonstration purposes
@@ -78,8 +78,8 @@ public:
     return s;
   };
 
-  right_hand_side_type createRightHandSide() const{
-    right_hand_side_type v(N_);
+  rhs_type createRhs() const{
+    rhs_type v(N_);
     v.setConstant(0);
     return v;
   };
@@ -90,11 +90,10 @@ public:
     return J;
   };
 
-  void operator()(const state_type & state,
-		  const independent_variable_type timeIn,
-		  right_hand_side_type & rhs,
-		  jacobian_type & J,
-		  bool computeJac) const
+  void rhsAndJacobian(const state_type & state,
+		      const independent_variable_type timeIn,
+		      rhs_type & rhs,
+		      std::optional<jacobian_type*> Jopt) const
   {
     const auto x = state(0);
     const auto y = state(1);
@@ -104,8 +103,9 @@ public:
     rhs(1) = x * (rho_ - z) - y;
     rhs(2) = x * y - beta_ * z;
 
-    if (computeJac)
+    if (Jopt)
     {
+      auto & J = *Jopt.value();
       tripletList_[0] = {0, 0, -sigma_};
       tripletList_[1] = {0, 1,  sigma_};
 
@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
 
   namespace pode = pressio::ode;
   namespace plins  = pressio::linearsolvers;
-  namespace pnlins = pressio::nonlinearsolvers;
 
   // create stepper
   constexpr auto scheme = pode::StepScheme::BDF2;
@@ -156,8 +155,8 @@ int main(int argc, char *argv[])
   using linear_solver_t = plins::Solver<plins::iterative::Bicgstab, fom_jacobian_t>;
   linear_solver_t linearSolver;
 
-  auto nonLinearSolver = pnlins::create_newton_raphson(stepper, linearSolver);
-  nonLinearSolver.setTolerance(1e-13);
+  auto nonLinearSolver = pressio::create_newton_solver(stepper, linearSolver);
+  nonLinearSolver.setStopTolerance(1e-13);
 
   auto y = problem.createState();
   y(0) = 0.5; y(1) = 1.0; y(2) = 1.;
@@ -166,9 +165,9 @@ int main(int argc, char *argv[])
   std::ofstream myfile("state_snapshots.bin",  std::ios::out | std::ios::binary);
   pode::advance_to_target_point(stepper, y, startTime, finalTime,
 				// lambda to set the time step
-				[=](const pode::StepCount & /*unused*/,
-				    const pode::StepStartAt<scalar_type> & /*unused*/,
-				    pode::StepSize<scalar_type> & dt)
+				[](const pode::StepCount & /*unused*/,
+				   const pode::StepStartAt<scalar_type> & /*unused*/,
+				   pode::StepSize<scalar_type> & dt)
 				{ dt = 0.01; },
 				// lambda to observe and write to file the state
 				[&](pressio::ode::StepCount step,

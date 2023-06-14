@@ -77,8 +77,8 @@ void run_fom_implicit(const FomSystemType & fomSystem,
   // nonlinear solver
   const auto nonlinSolverType = parser.nonlinearSolver();
   assert(nonlinSolverType == "NewtonRaphson");
-  auto nonLinearSolver = pnlins::create_newton_raphson(stepperObj, linearSolver);
-  nonLinearSolver.setTolerance(parser.nonlinearSolverTolerance());
+  auto nonLinearSolver = pressio::create_newton_solver(stepperObj, linearSolver);
+  nonLinearSolver.setStopTolerance(parser.nonlinearSolverTolerance());
 
   // advance in time
   StateObserver observer(parser.stateSamplingFreq());
