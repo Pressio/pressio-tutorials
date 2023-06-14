@@ -18,7 +18,7 @@ Steps
 
 .. code-block:: bash
 
-   git clone --recursive git@github.com:Pressio/pressio-tutorials.git
+   git clone git@github.com:Pressio/pressio-tutorials.git
 
    export CXX=<fullpath-to-your-CXX-compiler>
    export BUILDDIR=$HOME/tutorialBuild
