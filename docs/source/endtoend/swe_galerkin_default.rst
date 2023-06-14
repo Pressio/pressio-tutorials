@@ -3,26 +3,29 @@
 2D SWE: default Galerkin
 ========================
 
-  - ROM technique: default Galerkin
+- ROM technique: default Galerkin
 
-  - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
+- problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
 
 Prerequisites
 -------------
 
-- A valid build of the tutorials, see `here <../build.html>`__, and the following env variables set:
+- A valid build of the tutorials, see `here <../build.html>`__
+
+- The following env variables MUST be set:
 
   .. code-block:: bash
 
      export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
      export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
 
-- To run all scripts below, you MUST be in the correct end-to-end directory:
+.. admonition:: To run the demo scripts below, you MUST be inside the correct directory:
+   :class: important
 
-  .. code-block:: bash
+   .. code-block:: bash
 
-     cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
+      cd $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
 
 
 Workflow File
@@ -35,7 +38,7 @@ copied to the build directory, so you don't need to do anything:
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml
    :language: yaml
    :lines: 1-35
-
+   :linenos:
 
 Step 1: execute FOMs
 --------------------
@@ -48,12 +51,15 @@ Step 1: execute FOMs
 This driver script automates this first stage by creating input files,
 generating run directories and running the C++ executable
 to generate all the FOM train and test data at the points specified
-in the yaml file. For exposition purposes, we show below the actual
-C++ code executed during this stage to run a single FOM:
+in the yaml file.
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
-   :language: cpp
-   :lines: 56-76
+..
+   For exposition purposes, we show below the actual
+   C++ code executed during this stage to run a single FOM:
+
+   .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_explicit.hpp
+      :language: cpp
+      :lines: 56-76
 
 At the end, doing ``tree -L 1 .`` should produce:
 
@@ -107,12 +113,14 @@ Step 3: galerkin rom
 This driver script automates all the Galerkin runs.
 Specifically, it creates all the run directories, writes all input files,
 prepares initial conditions and runs the actual Galerkin run at every test point.
-For exposition purposes, we show below the actual
-C++ code executed during this stage to run a single Galerkin run:
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
-   :language: cpp
-   :lines: 57-79, 82-87, 92
+..
+   For exposition purposes, we show below the actual
+   C++ code executed during this stage to run a single Galerkin run:
+
+   .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_galerkin.hpp
+      :language: cpp
+      :lines: 57-79, 82-87, 92
 
 More specifically, what happens here is the following:
 

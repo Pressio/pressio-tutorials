@@ -69,9 +69,9 @@ void lspg_pick_solver_and_run(const ParserType & parser,
   using linear_solver_t = pressio::linearsolvers::Solver<solver_tag, hessian_t>;
   linear_solver_t linearSolver;
 
-  auto solver = pnlins::create_gauss_newton(lspgStepper, linearSolver);
-  solver.setStoppingCriterion(pnlins::Stop::WhenGradientAbsoluteNormBelowTolerance);
-  solver.setTolerance(parser.nonlinearSolverTolerance());
+  auto solver = pressio::create_gauss_newton_solver(lspgStepper, linearSolver);
+  solver.setStopCriterion(pnlins::Stop::WhenAbsolutel2NormOfGradientBelowTolerance);
+  solver.setStopTolerance(parser.nonlinearSolverTolerance());
 
   pode::advance_n_steps(lspgStepper, reducedState, startTime,
 			parser.timeStepSize(), numSteps,
@@ -83,9 +83,9 @@ void lspg_pick_solver_and_run(const ParserType & parser,
   using mat_t = typename LspgStepperType::jacobian_type;
   using qr_solver_t = pressio::qr::QRSolver<mat_t, pressio::qr::Householder>;
   qr_solver_t qrSolver;
-  auto solver = pnlins::create_gauss_newtonQR(lspgStepper, qrSolver);
-  solver.setStoppingCriterion(pnlins::Stop::WhenGradientAbsoluteNormBelowTolerance);
-  solver.setTolerance(parser.nonlinearSolverTolerance());
+  auto solver = pressio::experimental::create_gauss_newton_qr_solver(lspgStepper, qrSolver);
+  solver.setStopCriterion(pnlins::Stop::WhenAbsolutel2NormOfGradientBelowTolerance);
+  solver.setStopTolerance(parser.nonlinearSolverTolerance());
 
   pode::advance_n_steps(lspgStepper, reducedState, startTime,
 			parser.timeStepSize(), numSteps,
@@ -99,10 +99,10 @@ void lspg_pick_solver_and_run(const ParserType & parser,
   using linear_solver_t = pressio::linearsolvers::Solver<solver_tag, hessian_t>;
   linear_solver_t linearSolver;
 
-  auto solver = pnlins::create_levenberg_marquardt(lspgStepper, linearSolver);
-  solver.setUpdatingCriterion(pnlins::Update::LMSchedule2);
-  solver.setStoppingCriterion(pnlins::Stop::WhenGradientAbsoluteNormBelowTolerance);
-  solver.setTolerance(parser.nonlinearSolverTolerance());
+  auto solver = pressio::create_levenberg_marquardt_solver(lspgStepper, linearSolver);
+  solver.setUpdateCriterion(pnlins::Update::LMSchedule2);
+  solver.setStopCriterion(pnlins::Stop::WhenAbsolutel2NormOfGradientBelowTolerance);
+  solver.setStopTolerance(parser.nonlinearSolverTolerance());
 
   pode::advance_n_steps(lspgStepper, reducedState, startTime,
 			parser.timeStepSize(), numSteps,

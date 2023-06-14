@@ -3,26 +3,29 @@
 2D SWE: default LSPG
 ====================
 
-  - ROM technique: default LSPG
+- ROM technique: basic LSPG
 
-  - problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
+- problem: `2D shallow water equations (SWE) <https://pressio.github.io/pressio-demoapps/swe_2d.html>`_
 
 
 Prerequisites
 -------------
 
-- A valid build of the tutorials, see `here <../build.html>`__, and the following env variables set:
+- A valid build of the tutorials, see `here <../build.html>`__,
+
+- The following env variables MUST be set:
 
   .. code-block:: bash
 
      export REPOSRC=<full-path-to-the-pressio-tutorials-source-repo>/end-to-end-roms
      export BUILDDIR=<full-path-to-where-you-built-the-tutorials>
 
-- To run all scripts below, you MUST be in the correct end-to-end directory:
+.. admonition:: To run the demo scripts below, you MUST be inside the correct directory:
+   :class: important
 
-  .. code-block:: bash
+   .. code-block:: bash
 
-     cd $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
+      cd $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
 
 
 Workflow File
@@ -35,6 +38,7 @@ copied to the build directory, so you don't need to do anything:
 .. literalinclude:: ../../../end-to-end-roms/2d_swe_lspg_default/wf.yaml
    :language: yaml
    :lines: 1-35
+   :linenos:
 
 
 Step 1: execute FOMs
@@ -49,11 +53,12 @@ Step 1: execute FOMs
 
    This might take a few mins to run, be patient!
 
-When we run the FOM driver, the following C++ code is being executed:
+..
+   When we run the FOM driver, the following C++ code is being executed:
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_implicit.hpp
-   :language: cpp
-   :lines: 56-90
+   .. literalinclude:: ../../../end-to-end-roms/cpp/run_fom_implicit.hpp
+      :language: cpp
+      :lines: 56-90
 
 At the end, doing ``tree -L 1 .`` should produce:
 
@@ -98,15 +103,16 @@ Step 3: lspg rom
    # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
    python3 $REPOSRC/wf_lspg.py --wf wf.yaml
 
-The following C++ code is being executed:
+..
+   The following C++ code is being executed:
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/run_default_lspg.hpp
-   :language: cpp
-   :lines: 58-82
+   .. literalinclude:: ../../../end-to-end-roms/cpp/run_default_lspg.hpp
+      :language: cpp
+      :lines: 58-82
 
-.. literalinclude:: ../../../end-to-end-roms/cpp/lspg_pick_solver_and_run.hpp
-   :language: cpp
-   :lines: 52-64, 67-78, 111
+   .. literalinclude:: ../../../end-to-end-roms/cpp/lspg_pick_solver_and_run.hpp
+      :language: cpp
+      :lines: 52-64, 67-78, 111
 
 At the end, you should have the following directory structure:
 

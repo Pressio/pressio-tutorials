@@ -1,19 +1,21 @@
 ode: tutorial 2
 ===============
 
-This tutorial shows how to integrate the `original Lorenz system <https://en.wikipedia.org/wiki/Lorenz_system>`__ using explicit time integration.
+Integrate the `original Lorenz system <https://en.wikipedia.org/wiki/Lorenz_system>`__ via explicit time integration.
 
 .. literalinclude:: ../../../ode-using-eigen-types/tutorial2/main.cc
    :language: cpp
-   :lines: 48-143
+   :lines: 48-
 
 
 Process results
 ---------------
 
+Move to ``<your-build-dir>/ode-using-eigen-types/tutorial2`` and run:
+
 .. code-block:: bash
 
-   # from within $BUILDDIR/ode-using-eigen-types/tutorial2
+   ./ode_eigen_exe2
    python3 plot.py
 
 .. image:: ../../../ode-using-eigen-types/tutorial2/plot.png

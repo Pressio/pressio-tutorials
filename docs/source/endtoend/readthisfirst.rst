@@ -1,12 +1,6 @@
 Start reading here
 ==================
 
-This section offers a suite of end-to-end tutorials/demos covering
-some of the key ROM methods implemented in pressio.
-
-Why doing this?
----------------
-
 Describing how to use pressio for ROMs cannot be simply
 boiled down to presenting the API, because setting up, running
 and processing a ROM involves several steps.
@@ -20,17 +14,13 @@ automating (to some extent) the execution.
 Key features
 ------------
 
-- each demo is fully documented in a step by step manner (see `here for example <swe_galerkin_default.html>`__) to show how to run each step
+- each demo is documented in a step-by-step manner (see `example <swe_galerkin_default.html>`__)
 
-- each demo has an associated yaml workflow file,
-  organized into several section each with a specific scope
+- each demo is defined via a yaml workflow file (`example <swe_galerkin_default.html#workflow-file>`__),
+  which is used by the `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__ we provide to execute that demo
 
-- all `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__
-  are written in Python and are designed to be easy to run
-
-- one can easily extend the framework by adding new ROM methods
-  in pressio or account for variations
-  in how each step is run
+- one can easily extend the framework by adding new ROM methods in pressio or account
+  for variations in how each step is run
 
 - pressio-demoapps: for the end-to-end demos we rely on pressio-demoapps,
   which have built-in support for the sample mesh.

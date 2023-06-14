@@ -54,7 +54,7 @@ class SimpleSystem{
 public:
   using independent_variable_type = ScalarType;
   using state_type                = Eigen::Matrix<ScalarType,-1,1>;
-  using right_hand_side_type      = state_type;
+  using rhs_type	          = state_type;
 
   state_type createState() const{
     auto s = state_type(3);
@@ -62,15 +62,15 @@ public:
     return s;
   };
 
-  right_hand_side_type createRightHandSide() const{
-    auto v = right_hand_side_type(3);
+  rhs_type createRhs() const{
+    auto v = rhs_type(3);
     v.setConstant(0);
     return v;
   };
 
-  void operator()(const state_type & state,
-		  const independent_variable_type timeIn,
-		  right_hand_side_type & rhs) const
+  void rhs(const state_type & state,
+	   const independent_variable_type timeIn,
+	   rhs_type & rhs) const
   {
     constexpr ScalarType ten{10};
     rhs(0) = ten * state(0);
