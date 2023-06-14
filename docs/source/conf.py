@@ -45,7 +45,7 @@ master_doc = "index"
 project = "pressio-tutorials"
 copyright = u"2021, National Technology & Engineering Solutions of Sandia, LLC (NTESS)"
 
-version = "0.13.0"
+version = "0.14.0"
 
 # The full version, including alpha/beta/rc tags.
 release = version

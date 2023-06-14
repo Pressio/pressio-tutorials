@@ -5,7 +5,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/clean.py clean.py COPYONLY)
 
 execute_process(
   COMMAND
-  ln -s
+  ln -sf
   ${CMAKE_CURRENT_BINARY_DIR}/../${exename}
   ${CMAKE_CURRENT_BINARY_DIR}
   OUTPUT_VARIABLE OUTP)

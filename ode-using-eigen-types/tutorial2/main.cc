@@ -59,7 +59,7 @@ class Lorenz3{
 public:
   using independent_variable_type = ScalarType;
   using state_type                = Eigen::Matrix<ScalarType,-1,1>;
-  using right_hand_side_type      = state_type;
+  using rhs_type      = state_type;
 
   state_type createState() const{
     auto s = state_type(N_);
@@ -67,15 +67,15 @@ public:
     return s;
   };
 
-  right_hand_side_type createRightHandSide() const{
-    auto v = right_hand_side_type(N_);
+  rhs_type createRhs() const{
+    auto v = rhs_type(N_);
     v.setConstant(0);
     return v;
   };
 
-  void operator()(const state_type & state,
-		  const independent_variable_type timeIn,
-		  right_hand_side_type & rhs) const
+  void rhs(const state_type & state,
+	   const independent_variable_type timeIn,
+	   rhs_type & rhs) const
   {
     const auto x = state(0);
     const auto y = state(1);
@@ -103,7 +103,6 @@ public:
 		  const Eigen::Matrix<ScalarType,-1,1> & state)
   {
     if (step.get() % sampleFreq_ == 0){
-      std::cout << "saving state at step = " << step.get() << "\n";
       const std::size_t ext = state.size()*sizeof(ScalarType);
       myfile_.write(reinterpret_cast<const char*>(&state(0)), ext);
     }

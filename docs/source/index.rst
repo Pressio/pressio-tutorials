@@ -14,11 +14,11 @@ Pressio was started with a focus on projection-based
 reduced-order models (ROMs), which is a strongly multidisciplinary topic.
 Working on a production-level ROM capability inevitably means touching
 multiple fields, ranging from, e.g., linear algebra, nonlinear solvers
-and optimization, to distributed computing, HPC and time integration.
-This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio>`__
-which display a "stacked" design: each component handles a specific capability and depends
-on the ones below it such that you can use it directly, but, as a whole, the stack constitutes
-the foundation of the top-level ``pressio/rom`` component.
+and optimization, to time integration, generic programming, and distributed computing/HPC.
+This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio>`__:
+each component handles a specific capability and depends
+on the ones below it. This allows users to use a component directly, but, as a whole,
+the full stack constitutes the foundation of the top-level ``pressio/rom``.
 
 Describing how to use pressio for ROMs cannot be simply reduced to presenting the API.
 Several steps are involved, and the best way to understand them is via examples.
@@ -26,51 +26,33 @@ Therefore, these tutorials are designed to show how to *integrate* various
 capabilities of pressio to do something meaningful, as well as unveil
 some details that might not be obvious, and are organized into these sections:
 
-1. `complete workflow-based end-to-end demos <endtoend/readthisfirst.html>`__
-   to demonstrate in practice what pressio offers for ROMs, and to allow you to easily
-   experiment with it
+1. End-to-end ROMs using pressio-demoapps
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2. collection of short, independent tutorials on the foundational
-   capabilities that are easily explained in a self-contained fashion,
-   for example ODE integration and nonlinear solvers
+Complete workflow-based end-to-end demos to demonstrate *in practice* what
+pressio offers for ROMs, and to allow you to easily experiment with it
 
-3. advance topics
+2. Self-contained tutorials using Eigen data types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Collection of short, independent tutorials on the foundational capabilities
+that are easily explained in a self-contained fashion, for example ODE integration
+and nonlinear solvers
 
-Disclaimer
-----------
+3. Advance topics
+^^^^^^^^^^^^^^^^^
 
-.. admonition:: This is work-in-progress
-   :class: caution
+TBD
 
-   We are actively working on adding more.
-   If you don't find something, you can temporarily look at the `C++ tests
-   subdirectory <https://github.com/Pressio/pressio/tree/main/tests>`_,
-   which contains tests that are readable, but are obviously not formatted in a tutorial fashion.
+|
 
-..
-   This website has these main sections :red:`TBD`
+Miscellanea
+-----------
 
-   1. **C++ tutorials for data types that pressio already supports internally**
-
-      This section covers data types that pressio already knows how to operate (efficiently) on.
-      Currently, these data types include Eigen, Kokkos, and Trilinos. We will add more over time.
-
-      - **End-to-end ROM demos using pressio-demoapps**: Note that in here you can also find
-	end-to-end ROM demos/workflows using the miniapps inside pressio-demoapps.
-
-   2. **C++ tutorials for data types that pressio does not yet support**
-
-      This section covers arbitrary data types that pressio does not know how to manipulate or perform operations on, so you as a user are responsible to provide all the necessary operations and info to do so. This is actually an advantage from a certain viewpoint, since it gives you *full control* to make all the operations needed as efficient as possible.
-
-
-License and Citation
---------------------
-
+This is work-in-progress.
 The BSD-3 license is available `here <https://pressio.github.io/license.html>`_.
 
 We are working on publishing this: you can find our arXiv preprint at: https://arxiv.org/abs/2003.07798
-
 
 Questions?
 ----------
@@ -82,9 +64,11 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
    :hidden:
 
    build
+   Join our Slack <https://pressioteam.slack.com>
    GitHub Repo <https://github.com/Pressio/pressio-tutorials>
    Open an issue/feature req. <https://github.com/Pressio/pressio-tutorials/issues>
    license
+
 
 .. toctree::
    :maxdepth: 0
@@ -102,10 +86,11 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
    :hidden:
    :caption: 2. self-contained tutorials using Eigen data types
 
+   ./using_eigen/nonlinsolvers1
+   ./using_eigen/nonlinsolvers2
    ./using_eigen/ode1
    ./using_eigen/ode2
    ./using_eigen/ode3
-   ./using_eigen/nonlinsolvers1
 
 .. toctree::
    :maxdepth: 0

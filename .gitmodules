@@ -1,6 +1,0 @@
-[submodule "tpls/pressio"]
-	path = tpls/pressio
-	url = git@github.com:Pressio/pressio.git
-[submodule "tpls/pressio-demoapps"]
-	path = tpls/pressio-demoapps
-	url = git@github.com:Pressio/pressio-demoapps.git
