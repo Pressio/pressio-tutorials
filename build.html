@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="License" href="license.html" /><link rel="prev" title="Pressio Tutorials" href="index.html" />
 
     <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
-        <title>Build instructions - pressio-tutorials 0.13.0</title>
+        <title>Build instructions - pressio-tutorials 0.14.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -125,7 +125,7 @@
     </div>
     <div class="header-center">
       <a href="index.html"><div class="brand">pressio-tutorials
-0.13.0</div></a>
+0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
   
   
   <span class="sidebar-brand-text">pressio-tutorials
-0.13.0</span>
+0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -159,6 +159,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Build instructions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pressioteam.slack.com">Join our Slack</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials">GitHub Repo</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials/issues">Open an issue/feature req.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
@@ -173,10 +174,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. self-contained tutorials using Eigen data types</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_eigen/nonlinsolvers2.html">nonlinear solvers: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_eigen/ode1.html">ode: tutorial 1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_eigen/ode2.html">ode: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_eigen/ode3.html">ode: tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">3. Advanced Topics</span></p>
 <ul>
@@ -221,37 +223,36 @@
 <h2>What you need<a class="headerlink" href="#what-you-need" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>CMake &gt; 3.18.0</strong></p></li>
-<li><p><strong>C++14 compiler</strong>: <a class="reference external" href="https://github.com/Pressio/pressio-tutorials/blob/develop/.github/workflows/test-all.yml">our CI</a> is currently testing both GCC and Clang</p></li>
-<li><p>Python 3.x with specific packages listed <a class="reference external" href="../../py_requirements.txt">here</a></p></li>
+<li><p><strong>C++17 compiler</strong>: GCC or Clang are tested in our CI</p></li>
+<li><p>Python 3.x</p></li>
 </ul>
 </section>
 <section id="steps">
 <h2>Steps<a class="headerlink" href="#steps" title="Permalink to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone --recursive git@github.com:Pressio/pressio-tutorials.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:Pressio/pressio-tutorials.git
 
-<span class="nb">export</span> <span class="nv">CXX</span><span class="o">=</span>&lt;fullpath-to-your-CXX-compiler&gt;
-<span class="nb">export</span> <span class="nv">BUILDDIR</span><span class="o">=</span><span class="nv">$HOME</span>/tutorialBuild
-mkdir <span class="nv">$BUILDDIR</span>
-cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -S &lt;path-to-your-cloned-repo&gt; -B <span class="nv">$BUILDDIR</span>
-<span class="nb">cd</span> <span class="nv">$BUILDDIR</span> <span class="o">&amp;&amp;</span> make -j4
+<span class="nb">export</span><span class="w"> </span><span class="nv">CXX</span><span class="o">=</span>&lt;fullpath-to-your-CXX-compiler&gt;
+<span class="nb">export</span><span class="w"> </span><span class="nv">BUILDDIR</span><span class="o">=</span><span class="nv">$HOME</span>/tutorialBuild
+mkdir<span class="w"> </span><span class="nv">$BUILDDIR</span>
+cmake<span class="w"> </span>-DPRESSIOTUTORIALS_ENABLE_TESTS<span class="o">=</span>ON<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-S<span class="w"> </span>&lt;path-to-your-cloned-repo&gt;<span class="w"> </span>-B<span class="w"> </span><span class="nv">$BUILDDIR</span>
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$BUILDDIR</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>-j4
 
-<span class="c1"># if needed, the Python packages can be installed as</span>
-pip3 install &lt;path-to-your-cloned-repo&gt;/py_requirements.txt
+<span class="c1"># ensure you have all required Python packages installed</span>
+pip3<span class="w"> </span>install<span class="w"> </span>&lt;path-to-your-cloned-repo&gt;/py_requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="verify-the-build">
+<h2>Verify the build<a class="headerlink" href="#verify-the-build" title="Permalink to this heading">#</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span><span class="w"> </span><span class="n">$BUIlDDIR</span>
+<span class="n">ctest</span>
 </pre></div>
 </div>
 </section>
 <section id="then-what">
 <h2>Then what?<a class="headerlink" href="#then-what" title="Permalink to this heading">#</a></h2>
 <p>Individual executables and the end-to-end demos can be found inside the build directory.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you want to verify the build, you can enable tests via <code class="docutils literal notranslate"><span class="pre">-DPRESSIOTUTORIALS_ENABLE_TESTS=ON</span></code>,
-and then do:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span><span class="w"> </span><span class="n">$BUIlDDIR</span><span class="w"></span>
-<span class="n">ctest</span><span class="w"></span>
-</pre></div>
-</div>
-</div>
 </section>
 <section id="more-details-on-dependencies">
 <h2>More details on dependencies<a class="headerlink" href="#more-details-on-dependencies" title="Permalink to this heading">#</a></h2>
@@ -300,7 +301,7 @@ and then do:</p>
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Oct 19, 2022</div>
+              Last updated on Jun 14, 2023</div>
           </div>
           <div class="right-details">
             <div class="icons">
@@ -326,6 +327,7 @@ and then do:</p>
 <li><a class="reference internal" href="#">Build instructions</a><ul>
 <li><a class="reference internal" href="#what-you-need">What you need</a></li>
 <li><a class="reference internal" href="#steps">Steps</a></li>
+<li><a class="reference internal" href="#verify-the-build">Verify the build</a></li>
 <li><a class="reference internal" href="#then-what">Then what?</a></li>
 <li><a class="reference internal" href="#more-details-on-dependencies">More details on dependencies</a></li>
 </ul>

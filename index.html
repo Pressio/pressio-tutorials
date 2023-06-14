@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Build instructions" href="build.html" />
 
     <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
-        <title>pressio-tutorials 0.13.0</title>
+        <title>pressio-tutorials 0.14.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -125,7 +125,7 @@
     </div>
     <div class="header-center">
       <a href="#"><div class="brand">pressio-tutorials
-0.13.0</div></a>
+0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
   
   
   <span class="sidebar-brand-text">pressio-tutorials
-0.13.0</span>
+0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -159,6 +159,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build instructions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pressioteam.slack.com">Join our Slack</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials">GitHub Repo</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials/issues">Open an issue/feature req.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
@@ -173,10 +174,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. self-contained tutorials using Eigen data types</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_eigen/nonlinsolvers2.html">nonlinear solvers: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_eigen/ode1.html">ode: tutorial 1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_eigen/ode2.html">ode: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="using_eigen/ode3.html">ode: tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">3. Advanced Topics</span></p>
 <ul>
@@ -223,39 +225,39 @@
 reduced-order models (ROMs), which is a strongly multidisciplinary topic.
 Working on a production-level ROM capability inevitably means touching
 multiple fields, ranging from, e.g., linear algebra, nonlinear solvers
-and optimization, to distributed computing, HPC and time integration.
-This is clearly reflected in the <a class="reference external" href="https://pressio.github.io/pressio">structure of pressio</a>
-which display a “stacked” design: each component handles a specific capability and depends
-on the ones below it such that you can use it directly, but, as a whole, the stack constitutes
-the foundation of the top-level <code class="docutils literal notranslate"><span class="pre">pressio/rom</span></code> component.</p>
+and optimization, to time integration, generic programming, and distributed computing/HPC.
+This is clearly reflected in the <a class="reference external" href="https://pressio.github.io/pressio">structure of pressio</a>:
+each component handles a specific capability and depends
+on the ones below it. This allows users to use a component directly, but, as a whole,
+the full stack constitutes the foundation of the top-level <code class="docutils literal notranslate"><span class="pre">pressio/rom</span></code>.</p>
 <p>Describing how to use pressio for ROMs cannot be simply reduced to presenting the API.
 Several steps are involved, and the best way to understand them is via examples.
 Therefore, these tutorials are designed to show how to <em>integrate</em> various
 capabilities of pressio to do something meaningful, as well as unveil
 some details that might not be obvious, and are organized into these sections:</p>
-<ol class="arabic simple">
-<li><p><a class="reference external" href="endtoend/readthisfirst.html">complete workflow-based end-to-end demos</a>
-to demonstrate in practice what pressio offers for ROMs, and to allow you to easily
-experiment with it</p></li>
-<li><p>collection of short, independent tutorials on the foundational
-capabilities that are easily explained in a self-contained fashion,
-for example ODE integration and nonlinear solvers</p></li>
-<li><p>advance topics</p></li>
-</ol>
+<section id="end-to-end-roms-using-pressio-demoapps">
+<h3>1. End-to-end ROMs using pressio-demoapps<a class="headerlink" href="#end-to-end-roms-using-pressio-demoapps" title="Permalink to this heading">#</a></h3>
+<p>Complete workflow-based end-to-end demos to demonstrate <em>in practice</em> what
+pressio offers for ROMs, and to allow you to easily experiment with it</p>
 </section>
-<section id="disclaimer">
-<h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this heading">#</a></h2>
-<div class="caution admonition">
-<p class="admonition-title">This is work-in-progress</p>
-<p>We are actively working on adding more.
-If you don’t find something, you can temporarily look at the <a class="reference external" href="https://github.com/Pressio/pressio/tree/main/tests">C++ tests
-subdirectory</a>,
-which contains tests that are readable, but are obviously not formatted in a tutorial fashion.</p>
+<section id="self-contained-tutorials-using-eigen-data-types">
+<h3>2. Self-contained tutorials using Eigen data types<a class="headerlink" href="#self-contained-tutorials-using-eigen-data-types" title="Permalink to this heading">#</a></h3>
+<p>Collection of short, independent tutorials on the foundational capabilities
+that are easily explained in a self-contained fashion, for example ODE integration
+and nonlinear solvers</p>
+</section>
+<section id="advance-topics">
+<h3>3. Advance topics<a class="headerlink" href="#advance-topics" title="Permalink to this heading">#</a></h3>
+<p>TBD</p>
+<div class="line-block">
+<div class="line"><br /></div>
 </div>
 </section>
-<section id="license-and-citation">
-<h2>License and Citation<a class="headerlink" href="#license-and-citation" title="Permalink to this heading">#</a></h2>
-<p>The BSD-3 license is available <a class="reference external" href="https://pressio.github.io/license.html">here</a>.</p>
+</section>
+<section id="miscellanea">
+<h2>Miscellanea<a class="headerlink" href="#miscellanea" title="Permalink to this heading">#</a></h2>
+<p>This is work-in-progress.
+The BSD-3 license is available <a class="reference external" href="https://pressio.github.io/license.html">here</a>.</p>
 <p>We are working on publishing this: you can find our arXiv preprint at: <a class="reference external" href="https://arxiv.org/abs/2003.07798">https://arxiv.org/abs/2003.07798</a></p>
 </section>
 <section id="questions">
@@ -297,7 +299,7 @@ which contains tests that are readable, but are obviously not formatted in a tut
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Oct 19, 2022</div>
+              Last updated on Jun 14, 2023</div>
           </div>
           <div class="right-details">
             <div class="icons">
@@ -321,9 +323,13 @@ which contains tests that are readable, but are obviously not formatted in a tut
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Pressio Tutorials</a><ul>
-<li><a class="reference internal" href="#scope-and-motivation">Scope and Motivation</a></li>
-<li><a class="reference internal" href="#disclaimer">Disclaimer</a></li>
-<li><a class="reference internal" href="#license-and-citation">License and Citation</a></li>
+<li><a class="reference internal" href="#scope-and-motivation">Scope and Motivation</a><ul>
+<li><a class="reference internal" href="#end-to-end-roms-using-pressio-demoapps">1. End-to-end ROMs using pressio-demoapps</a></li>
+<li><a class="reference internal" href="#self-contained-tutorials-using-eigen-data-types">2. Self-contained tutorials using Eigen data types</a></li>
+<li><a class="reference internal" href="#advance-topics">3. Advance topics</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#miscellanea">Miscellanea</a></li>
 <li><a class="reference internal" href="#questions">Questions?</a><ul>
 </ul>
 </li>

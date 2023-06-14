@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="2D SWE: hyper-reduced Galerkin (example 1)" href="swe_galerkin_hypred_1.html" /><link rel="prev" title="Start reading here" href="readthisfirst.html" />
 
     <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
-        <title>2D SWE: default Galerkin - pressio-tutorials 0.13.0</title>
+        <title>2D SWE: default Galerkin - pressio-tutorials 0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -125,7 +125,7 @@
     </div>
     <div class="header-center">
       <a href="../index.html"><div class="brand">pressio-tutorials
-0.13.0</div></a>
+0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
   
   
   <span class="sidebar-brand-text">pressio-tutorials
-0.13.0</span>
+0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -159,6 +159,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build.html">Build instructions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pressioteam.slack.com">Join our Slack</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials">GitHub Repo</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials/issues">Open an issue/feature req.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -173,10 +174,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. self-contained tutorials using Eigen data types</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_eigen/nonlinsolvers2.html">nonlinear solvers: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using_eigen/ode1.html">ode: tutorial 1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using_eigen/ode2.html">ode: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using_eigen/ode3.html">ode: tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">3. Advanced Topics</span></p>
 <ul>
@@ -216,116 +218,92 @@
         <article role="main">
           <section id="d-swe-default-galerkin">
 <h1>2D SWE: default Galerkin<a class="headerlink" href="#d-swe-default-galerkin" title="Permalink to this heading">#</a></h1>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p>ROM technique: default Galerkin</p></li>
 <li><p>problem: <a class="reference external" href="https://pressio.github.io/pressio-demoapps/swe_2d.html">2D shallow water equations (SWE)</a></p></li>
 </ul>
-</div></blockquote>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">#</a></h2>
 <ul>
-<li><p>A valid build of the tutorials, see <a class="reference external" href="../build.html">here</a>, and the following env variables set:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">REPOSRC</span><span class="o">=</span>&lt;full-path-to-the-pressio-tutorials-source-repo&gt;/end-to-end-roms
-<span class="nb">export</span> <span class="nv">BUILDDIR</span><span class="o">=</span>&lt;full-path-to-where-you-built-the-tutorials&gt;
-</pre></div>
-</div>
-</li>
-<li><p>To run all scripts below, you MUST be in the correct end-to-end directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$BUILDDIR</span>/end-to-end-roms/2d_swe_galerkin_default
+<li><p>A valid build of the tutorials, see <a class="reference external" href="../build.html">here</a></p></li>
+<li><p>The following env variables MUST be set:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">REPOSRC</span><span class="o">=</span>&lt;full-path-to-the-pressio-tutorials-source-repo&gt;/end-to-end-roms
+<span class="nb">export</span><span class="w"> </span><span class="nv">BUILDDIR</span><span class="o">=</span>&lt;full-path-to-where-you-built-the-tutorials&gt;
 </pre></div>
 </div>
 </li>
 </ul>
+<div class="important admonition">
+<p class="admonition-title">To run the demo scripts below, you MUST be inside the correct directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span><span class="nv">$BUILDDIR</span>/end-to-end-roms/2d_swe_galerkin_default
+</pre></div>
+</div>
+</div>
 </section>
 <section id="workflow-file">
 <h2>Workflow File<a class="headerlink" href="#workflow-file" title="Permalink to this heading">#</a></h2>
 <p>The <a class="reference external" href="../../../end-to-end-roms/2d_swe_galerkin_default/wf.yaml">workflow file</a>
 for this demo is shown below for exposition purposes, but it is automatically
 copied to the build directory, so you don’t need to do anything:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">problem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2d_swe</span><span class="w"></span>
-
-<span class="nt">parameterSpace</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;coriolis&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;pulsemag&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;gravity&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="nt">trainPoints</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-
-<span class="nt">fom</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">meshSize</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">65</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">65</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="nt">inviscidFluxReconstruction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Weno3&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">odeScheme</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RK4&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">timeStepSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.005</span><span class="w"></span>
-<span class="w">  </span><span class="nt">train</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
-<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-
-<span class="nt">offlineRom</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">pod</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateData</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rhsData</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
-
-<span class="nt">onlineRom</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">defaultGalerkin</span><span class="w"></span>
-<span class="w">  </span><span class="nt">podTruncation</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">energyBased</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">99.999</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">99.99999</span><span class="p p-Indicator">]</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">problem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2d_swe</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="nt">parameterSpace</span><span class="p">:</span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;coriolis&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;pulsemag&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;gravity&#39;</span><span class="p p-Indicator">]</span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="nt">trainPoints</span><span class="p">:</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="nt">fom</span><span class="p">:</span>
+<span class="linenos">12</span><span class="w">  </span><span class="nt">meshSize</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">65</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">65</span><span class="p p-Indicator">]</span>
+<span class="linenos">13</span><span class="w">  </span><span class="nt">inviscidFluxReconstruction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Weno3&quot;</span>
+<span class="linenos">14</span><span class="w">  </span><span class="nt">odeScheme</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RK4&quot;</span>
+<span class="linenos">15</span><span class="w">  </span><span class="nt">timeStepSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.005</span>
+<span class="linenos">16</span><span class="w">  </span><span class="nt">train</span><span class="p">:</span>
+<span class="linenos">17</span><span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+<span class="linenos">18</span><span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="linenos">19</span><span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="linenos">20</span><span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="linenos">21</span><span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+<span class="linenos">22</span><span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="linenos">23</span><span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="nt">offlineRom</span><span class="p">:</span>
+<span class="linenos">26</span><span class="w">  </span><span class="nt">pod</span><span class="p">:</span>
+<span class="linenos">27</span><span class="w">    </span><span class="nt">stateData</span><span class="p">:</span>
+<span class="linenos">28</span><span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="linenos">29</span><span class="w">    </span><span class="nt">rhsData</span><span class="p">:</span>
+<span class="linenos">30</span><span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="nt">onlineRom</span><span class="p">:</span>
+<span class="linenos">33</span><span class="w">  </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">defaultGalerkin</span>
+<span class="linenos">34</span><span class="w">  </span><span class="nt">podTruncation</span><span class="p">:</span>
+<span class="linenos">35</span><span class="w">    </span><span class="nt">energyBased</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">99.999</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">99.99999</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
 </section>
 <section id="step-1-execute-foms">
 <h2>Step 1: execute FOMs<a class="headerlink" href="#step-1-execute-foms" title="Permalink to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default</span>
-python3 <span class="nv">$REPOSRC</span>/wf_foms.py --wf wf.yaml
+python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_foms.py<span class="w"> </span>--wf<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>This driver script automates this first stage by creating input files,
 generating run directories and running the C++ executable
 to generate all the FOM train and test data at the points specified
-in the yaml file. For exposition purposes, we show below the actual
-C++ code executed during this stage to run a single FOM:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ParserType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">run_fom_explicit</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FomSystemType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">,</span><span class="w"></span>
-<span class="w">		      </span><span class="k">const</span><span class="w"> </span><span class="n">ParserType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parser</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">ode</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">.</span><span class="n">initialCondition</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">write_vector_to_binary</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;initial_state.bin&quot;</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">odeScheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">odeScheme</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">assert</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">is_explicit_scheme</span><span class="p">(</span><span class="n">odeScheme</span><span class="p">));</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">stepperObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">create_explicit_stepper</span><span class="p">(</span><span class="n">odeScheme</span><span class="p">,</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">RhsObserver</span><span class="w"> </span><span class="nf">rhsObs</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">rhsSamplingFreq</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">StateObserver</span><span class="w"> </span><span class="nf">stateObs</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">stateSamplingFreq</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">startTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="o">::</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"></span>
-<span class="w">			</span><span class="n">parser</span><span class="p">.</span><span class="n">timeStepSize</span><span class="p">(),</span><span class="w"></span>
-<span class="w">			</span><span class="n">pode</span><span class="o">::</span><span class="n">StepCount</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">numSteps</span><span class="p">()),</span><span class="w"></span>
-<span class="w">			</span><span class="n">stateObs</span><span class="p">,</span><span class="w"> </span><span class="n">rhsObs</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
-</pre></div>
-</div>
+in the yaml file.</p>
 <p>At the end, doing <code class="docutils literal notranslate"><span class="pre">tree</span> <span class="pre">-L</span> <span class="pre">1</span> <span class="pre">.</span></code> should produce:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.
-├── CMakeFiles
-├── Makefile
-├── cmake_install.cmake
-├── fom_mesh
-├── fom_test_runid_0
-├── fom_train_runid_0
-├── fom_train_runid_1
-├── plot.py
-└── wf.yaml
+├──<span class="w"> </span>CMakeFiles
+├──<span class="w"> </span>Makefile
+├──<span class="w"> </span>cmake_install.cmake
+├──<span class="w"> </span>fom_mesh
+├──<span class="w"> </span>fom_test_runid_0
+├──<span class="w"> </span>fom_train_runid_0
+├──<span class="w"> </span>fom_train_runid_1
+├──<span class="w"> </span>plot.py
+└──<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>Where we see the run train and test directories and their corresponding IDs.</p>
@@ -333,7 +311,7 @@ C++ code executed during this stage to run a single FOM:</p>
 <section id="step-2-offline-rom">
 <h2>Step 2: offline rom<a class="headerlink" href="#step-2-offline-rom" title="Permalink to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default</span>
-python3 <span class="nv">$REPOSRC</span>/wf_offline_rom.py --wf wf.yaml
+python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_offline_rom.py<span class="w"> </span>--wf<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>The offline rom takes care of using the FOM training data to compute
@@ -341,59 +319,25 @@ the POD modes, and creates all data into an “offline_rom” subdirectory.
 Specifically, in this case the demo specifies that <em>all</em> the training
 runs should be used to compute POD modes.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./offline_rom/
-├── pod_input.yaml
-├── rhs_left_singular_vectors.bin
-├── rhs_singular_values.txt
-├── rhs_snapshots.bin
-├── state_left_singular_vectors.bin
-├── state_singular_values.txt
-└── state_snapshots.bin
+├──<span class="w"> </span>pod_input.yaml
+├──<span class="w"> </span>rhs_left_singular_vectors.bin
+├──<span class="w"> </span>rhs_singular_values.txt
+├──<span class="w"> </span>rhs_snapshots.bin
+├──<span class="w"> </span>state_left_singular_vectors.bin
+├──<span class="w"> </span>state_singular_values.txt
+└──<span class="w"> </span>state_snapshots.bin
 </pre></div>
 </div>
 </section>
 <section id="step-3-galerkin-rom">
 <h2>Step 3: galerkin rom<a class="headerlink" href="#step-3-galerkin-rom" title="Permalink to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default</span>
-python3 <span class="nv">$REPOSRC</span>/wf_galerkin.py --wf wf.yaml
+python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_galerkin.py<span class="w"> </span>--wf<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>This driver script automates all the Galerkin runs.
 Specifically, it creates all the run directories, writes all input files,
-prepares initial conditions and runs the actual Galerkin run at every test point.
-For exposition purposes, we show below the actual
-C++ code executed during this stage to run a single Galerkin run:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ParserType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">run_galerkin_default</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FomSystemType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">,</span><span class="w"></span>
-<span class="w">			  </span><span class="k">const</span><span class="w"> </span><span class="n">ParserType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parser</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">ode</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">prom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">rom</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pgal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">rom</span><span class="o">::</span><span class="nn">galerkin</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="o">::</span><span class="n">scalar_type</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">reduced_state_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">basis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_basis_and_read_from_file</span><span class="o">&lt;</span><span class="w"></span>
-<span class="w">         </span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">romFullMeshPodBasisFile</span><span class="p">(),</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">romModeCount</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">affineShift</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_affine_shift_and_read_from_file</span><span class="o">&lt;</span><span class="w"></span>
-<span class="w">         </span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">romAffineShiftFile</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trialSpace</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">prom</span><span class="o">::</span><span class="n">create_trial_column_subspace</span><span class="o">&lt;</span><span class="w"></span>
-<span class="w">         </span><span class="n">reduced_state_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">basis</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">affineShift</span><span class="p">),</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">romIsAffine</span><span class="p">());</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">reducedState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">.</span><span class="n">createReducedState</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">fill_rom_state_from_ascii</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">romInitialStateFile</span><span class="p">(),</span><span class="w"> </span><span class="n">reducedState</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">StateObserver</span><span class="w"> </span><span class="nf">observer</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">stateSamplingFreq</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">odeScheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">odeScheme</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">problem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pgal</span><span class="o">::</span><span class="n">create_unsteady_explicit_problem</span><span class="p">(</span><span class="n">odeScheme</span><span class="p">,</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="o">::</span><span class="n">time_type</span><span class="w"> </span><span class="n">startTime</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">numSteps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepCount</span><span class="p">{</span><span class="n">parser</span><span class="p">.</span><span class="n">numSteps</span><span class="p">()};</span><span class="w"></span>
-<span class="w">  </span><span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span><span class="w"> </span><span class="n">reducedState</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"></span>
-<span class="w">			</span><span class="n">parser</span><span class="p">.</span><span class="n">timeStepSize</span><span class="p">(),</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="n">observer</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
-</pre></div>
-</div>
+prepares initial conditions and runs the actual Galerkin run at every test point.</p>
 <p>More specifically, what happens here is the following:</p>
 <ul class="simple">
 <li><p>the total number of modes used varies and is computed by truncating
@@ -409,26 +353,26 @@ store its history into file (this will be used for the postprocessing)</p></li>
 </ul>
 <p>At the end, you should have the following directory structure:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.
-├── CMakeFiles
-├── Makefile
-├── cmake_install.cmake
-├── default_galerkin_truncation_energybased_99.99999_runid_0
-├── default_galerkin_truncation_energybased_99.999_runid_0
-├── fom_mesh
-├── fom_test_runid_0
-├── fom_train_runid_0
-├── fom_train_runid_1
-├── offline_rom
-├── plot.py
-└── wf.yaml
+├──<span class="w"> </span>CMakeFiles
+├──<span class="w"> </span>Makefile
+├──<span class="w"> </span>cmake_install.cmake
+├──<span class="w"> </span>default_galerkin_truncation_energybased_99.99999_runid_0
+├──<span class="w"> </span>default_galerkin_truncation_energybased_99.999_runid_0
+├──<span class="w"> </span>fom_mesh
+├──<span class="w"> </span>fom_test_runid_0
+├──<span class="w"> </span>fom_train_runid_0
+├──<span class="w"> </span>fom_train_runid_1
+├──<span class="w"> </span>offline_rom
+├──<span class="w"> </span>plot.py
+└──<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 </section>
 <section id="step-4-process-results">
 <h2>Step 4: process results<a class="headerlink" href="#step-4-process-results" title="Permalink to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default</span>
-python3 <span class="nv">$REPOSRC</span>/wf_reconstruct_on_full_mesh.py
-python3 plot.py
+python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_reconstruct_on_full_mesh.py
+python3<span class="w"> </span>plot.py
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/FOM.png"><img alt="FOM" src="../_images/FOM.png" style="width: 32%;" /></a>
@@ -441,31 +385,31 @@ python3 plot.py
 Note: before you run a new experiment in the same directory, to avoid conflicts
 you need to cleanup all the existing content, which can you easily do as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default</span>
-python3 clean.py
+python3<span class="w"> </span>clean.py
 </pre></div>
 </div>
 <ul>
 <li><p>a different simulation time for the train and test runs
 so that you can assess how the ROM performs in a time extrapolation regime.
 This can easily be done by just replacing:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">fom</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
-<span class="w">  </span><span class="nt">train</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
-<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6.0</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">fom</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># ...</span>
+<span class="w">  </span><span class="nt">train</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+<span class="w">  </span><span class="c1"># ...</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6.0</span>
 </pre></div>
 </div>
 </li>
 <li><p>add new test points to the <code class="docutils literal notranslate"><span class="pre">parameterSpace</span></code> section of the workflow
 file to as follows:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">parameterSpace</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
-<span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">2</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># this test point is outside of training range</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">parameterSpace</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># ...</span>
+<span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">2</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># this test point is outside of training range</span>
 </pre></div>
 </div>
 </li>
@@ -508,7 +452,7 @@ file to as follows:</p>
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Oct 19, 2022</div>
+              Last updated on Jun 14, 2023</div>
           </div>
           <div class="right-details">
             <div class="icons">

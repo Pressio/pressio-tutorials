@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="2D SWE: default LSPG" href="swe_lspg_default.html" /><link rel="prev" title="2D SWE: default Galerkin" href="swe_galerkin_default.html" />
 
     <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
-        <title>2D SWE: hyper-reduced Galerkin (example 1) - pressio-tutorials 0.13.0</title>
+        <title>2D SWE: hyper-reduced Galerkin (example 1) - pressio-tutorials 0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -125,7 +125,7 @@
     </div>
     <div class="header-center">
       <a href="../index.html"><div class="brand">pressio-tutorials
-0.13.0</div></a>
+0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
   
   
   <span class="sidebar-brand-text">pressio-tutorials
-0.13.0</span>
+0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -159,6 +159,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build.html">Build instructions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pressioteam.slack.com">Join our Slack</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials">GitHub Repo</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials/issues">Open an issue/feature req.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -173,10 +174,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. self-contained tutorials using Eigen data types</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_eigen/nonlinsolvers2.html">nonlinear solvers: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using_eigen/ode1.html">ode: tutorial 1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using_eigen/ode2.html">ode: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../using_eigen/ode3.html">ode: tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../using_eigen/nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">3. Advanced Topics</span></p>
 <ul>
@@ -216,96 +218,96 @@
         <article role="main">
           <section id="d-swe-hyper-reduced-galerkin-example-1">
 <h1>2D SWE: hyper-reduced Galerkin (example 1)<a class="headerlink" href="#d-swe-hyper-reduced-galerkin-example-1" title="Permalink to this heading">#</a></h1>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p>ROM technique: Hyper-reduced Galerkin with gappy POD</p></li>
 <li><p>problem: <a class="reference external" href="https://pressio.github.io/pressio-demoapps/swe_2d.html">2D shallow water equations (SWE)</a></p></li>
 </ul>
-</div></blockquote>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">#</a></h2>
 <ul>
-<li><p>A valid build of the tutorials, see <a class="reference external" href="../build.html">here</a>, and the following env variables set:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">REPOSRC</span><span class="o">=</span>&lt;full-path-to-the-pressio-tutorials-source-repo&gt;/end-to-end-roms
-<span class="nb">export</span> <span class="nv">BUILDDIR</span><span class="o">=</span>&lt;full-path-to-where-you-built-the-tutorials&gt;
-</pre></div>
-</div>
-</li>
-<li><p>To run all scripts below, you MUST be in the correct end-to-end directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$BUILDDIR</span>/end-to-end-roms/2d_swe_galerkin_hypred_1
+<li><p>A valid build of the tutorials, see <a class="reference external" href="../build.html">here</a></p></li>
+<li><p>The following env variables MUST be set:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">REPOSRC</span><span class="o">=</span>&lt;full-path-to-the-pressio-tutorials-source-repo&gt;/end-to-end-roms
+<span class="nb">export</span><span class="w"> </span><span class="nv">BUILDDIR</span><span class="o">=</span>&lt;full-path-to-where-you-built-the-tutorials&gt;
 </pre></div>
 </div>
 </li>
 </ul>
+<div class="important admonition">
+<p class="admonition-title">To run the demo scripts below, you MUST be inside the correct directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span><span class="nv">$BUILDDIR</span>/end-to-end-roms/2d_swe_galerkin_hypred_1
+</pre></div>
+</div>
+</div>
 </section>
 <section id="workflow-file">
 <h2>Workflow File<a class="headerlink" href="#workflow-file" title="Permalink to this heading">#</a></h2>
 <p>The <a class="reference external" href="../../../end-to-end-roms/2d_swe_galerkin_hypred_1/wf.yaml">workflow file</a>
 for this demo is shown below for exposition purposes, but it is automatically
 copied to the build directory, so you don’t need to do anything:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">problem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2d_swe</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="nt">problem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2d_swe</span>
 <span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="nt">parameterSpace</span><span class="p">:</span><span class="w"></span>
-<span class="linenos"> 4</span><span class="w">  </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;coriolis&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;pulsemag&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;gravity&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="linenos"> 5</span><span class="w">  </span><span class="nt">trainPoints</span><span class="p">:</span><span class="w"></span>
-<span class="linenos"> 6</span><span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="linenos"> 7</span><span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="linenos"> 8</span><span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span><span class="w"></span>
-<span class="linenos"> 9</span><span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="linenos"> 3</span><span class="nt">parameterSpace</span><span class="p">:</span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;coriolis&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;pulsemag&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;gravity&#39;</span><span class="p p-Indicator">]</span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="nt">trainPoints</span><span class="p">:</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="nt">testPoints</span><span class="p">:</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.125</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">9.8</span><span class="p p-Indicator">]</span>
 <span class="linenos">10</span>
-<span class="linenos">11</span><span class="nt">fom</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">12</span><span class="w">  </span><span class="nt">meshSize</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">65</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">65</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="linenos">13</span><span class="w">  </span><span class="nt">inviscidFluxReconstruction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Weno3&quot;</span><span class="w"></span>
-<span class="linenos">14</span><span class="w">  </span><span class="nt">odeScheme</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RK4&quot;</span><span class="w"></span>
-<span class="linenos">15</span><span class="w">  </span><span class="nt">timeStepSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.005</span><span class="w"></span>
-<span class="linenos">16</span><span class="w">  </span><span class="nt">train</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">17</span><span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w"></span>
-<span class="linenos">18</span><span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="linenos">19</span><span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="linenos">20</span><span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">21</span><span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w"></span>
-<span class="linenos">22</span><span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="linenos">23</span><span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
+<span class="linenos">11</span><span class="nt">fom</span><span class="p">:</span>
+<span class="linenos">12</span><span class="w">  </span><span class="nt">meshSize</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">65</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">65</span><span class="p p-Indicator">]</span>
+<span class="linenos">13</span><span class="w">  </span><span class="nt">inviscidFluxReconstruction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Weno3&quot;</span>
+<span class="linenos">14</span><span class="w">  </span><span class="nt">odeScheme</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;RK4&quot;</span>
+<span class="linenos">15</span><span class="w">  </span><span class="nt">timeStepSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.005</span>
+<span class="linenos">16</span><span class="w">  </span><span class="nt">train</span><span class="p">:</span>
+<span class="linenos">17</span><span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+<span class="linenos">18</span><span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="linenos">19</span><span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="linenos">20</span><span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="linenos">21</span><span class="w">    </span><span class="nt">finalTime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+<span class="linenos">22</span><span class="w">    </span><span class="nt">stateSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="linenos">23</span><span class="w">    </span><span class="nt">rhsSamplingFreq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 <span class="linenos">24</span>
-<span class="linenos">25</span><span class="nt">offlineRom</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">26</span><span class="w">  </span><span class="nt">pod</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">27</span><span class="w">    </span><span class="nt">stateData</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">28</span><span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
-<span class="linenos">29</span><span class="w">    </span><span class="nt">rhsData</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">30</span><span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
-<span class="linenos">31</span><span class="w">  </span><span class="nt">sampleMesh</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">32</span><span class="w">    </span><span class="nt">random</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w"></span>
+<span class="linenos">25</span><span class="nt">offlineRom</span><span class="p">:</span>
+<span class="linenos">26</span><span class="w">  </span><span class="nt">pod</span><span class="p">:</span>
+<span class="linenos">27</span><span class="w">    </span><span class="nt">stateData</span><span class="p">:</span>
+<span class="linenos">28</span><span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="linenos">29</span><span class="w">    </span><span class="nt">rhsData</span><span class="p">:</span>
+<span class="linenos">30</span><span class="w">      </span><span class="nt">useTrainingRuns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span>
+<span class="linenos">31</span><span class="w">  </span><span class="nt">sampleMesh</span><span class="p">:</span>
+<span class="linenos">32</span><span class="w">    </span><span class="nt">random</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
 <span class="linenos">33</span>
-<span class="linenos">34</span><span class="nt">onlineRom</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">35</span><span class="w">  </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hyperreducedGalerkin</span><span class="w"></span>
-<span class="linenos">36</span><span class="w">  </span><span class="nt">podTruncation</span><span class="p">:</span><span class="w"></span>
-<span class="linenos">37</span><span class="w">    </span><span class="nt">energyBased</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">99.999</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">99.99999</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="linenos">34</span><span class="nt">onlineRom</span><span class="p">:</span>
+<span class="linenos">35</span><span class="w">  </span><span class="nt">algorithm</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hyperreducedGalerkin</span>
+<span class="linenos">36</span><span class="w">  </span><span class="nt">podTruncation</span><span class="p">:</span>
+<span class="linenos">37</span><span class="w">    </span><span class="nt">energyBased</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">99.999</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">99.99999</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
 </section>
 <section id="step-1-run-foms">
 <h2>Step 1: run FOMs<a class="headerlink" href="#step-1-run-foms" title="Permalink to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 <span class="nv">$REPOSRC</span>/wf_foms.py --wf wf.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_foms.py<span class="w"> </span>--wf<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>The FOM stage is the same as <a class="reference external" href="swe_galerkin_default.html">here</a>.</p>
 </section>
 <section id="step-2-offline-rom">
 <h2>Step 2: offline rom<a class="headerlink" href="#step-2-offline-rom" title="Permalink to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 <span class="nv">$REPOSRC</span>/wf_offline_rom.py --wf wf.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_offline_rom.py<span class="w"> </span>--wf<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>The offline rom takes care of using the FOM training data to compute the POD modes,
 computing samples meshes, and puts everything into an “offline_rom” subdirectory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>offline_rom/
-├── pod_input.yaml
-├── rhs_left_singular_vectors.bin
-├── rhs_singular_values.txt
-├── rhs_snapshots.bin
-├── sample_mesh_random_0.100
-├── state_left_singular_vectors.bin
-├── state_singular_values.txt
-└── state_snapshots.bin
+├──<span class="w"> </span>pod_input.yaml
+├──<span class="w"> </span>rhs_left_singular_vectors.bin
+├──<span class="w"> </span>rhs_singular_values.txt
+├──<span class="w"> </span>rhs_snapshots.bin
+├──<span class="w"> </span>sample_mesh_random_0.100
+├──<span class="w"> </span>state_left_singular_vectors.bin
+├──<span class="w"> </span>state_singular_values.txt
+└──<span class="w"> </span>state_snapshots.bin
 </pre></div>
 </div>
 <section id="sample-mesh">
@@ -315,8 +317,8 @@ randomly 10% of the mesh cells. The whole sample mesh is done by presssio-demoap
 Note the generated sample mesh directory <code class="docutils literal notranslate"><span class="pre">sample_mesh_random_0.100</span></code>.
 We can visualize the sample mesh as follows (note that given its random nature,
 your plot might look slightly different):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 <span class="nv">$REPOSRC</span>/../tpls/pressio-demoapps/meshing_scripts/plot_mesh.py <span class="se">\</span>
-        --wdir ./offline_rom/sample_mesh_random_0.100/ -p show
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span><span class="nv">$REPOSRC</span>/../tpls/pressio-demoapps/meshing_scripts/plot_mesh.py<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--wdir<span class="w"> </span>./offline_rom/sample_mesh_random_0.100/<span class="w"> </span>-p<span class="w"> </span>show
 </pre></div>
 </div>
 <p>which shows a plot like the following (yellow cells denote the “sample mesh”,
@@ -326,92 +328,25 @@ white cells denote the “stencil mesh”):</p>
 </section>
 <section id="step-3-galerkin-rom">
 <h2>Step 3: galerkin rom<a class="headerlink" href="#step-3-galerkin-rom" title="Permalink to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 <span class="nv">$REPOSRC</span>/wf_galerkin.py --wf wf.yaml
-</pre></div>
-</div>
-<p>Running the Galerkin driver means the following C++ code is being executed:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">ScalarType</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">FomRhsType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ExplicitGalerkinHyperReducer</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">static_assert</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">is_vector_eigen</span><span class="o">&lt;</span><span class="n">FomRhsType</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span><span class="w"></span>
-<span class="w">		</span><span class="s">&quot;FomRhsType must be an Eigen vector&quot;</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">matrix_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">ColMajor</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">matrix_type</span><span class="w"> </span><span class="n">P_</span><span class="p">;</span><span class="w"></span>
-
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">time_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScalarType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">right_hand_side_operand_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FomRhsType</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">ExplicitGalerkinHyperReducer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">projFile</span><span class="p">,</span><span class="w"></span>
-<span class="w">			       </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numModes</span><span class="p">){</span><span class="w"></span>
-<span class="w">    </span><span class="n">P_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_colmajor_eigen_matrix_and_load_from_binary_with_extents</span><span class="o">&lt;</span><span class="w"></span>
-<span class="w">      </span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">projFile</span><span class="p">,</span><span class="w"> </span><span class="n">numModes</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">ResultType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">pressio</span><span class="o">::</span><span class="n">is_vector_eigen</span><span class="o">&lt;</span><span class="n">ResultType</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="k">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">right_hand_side_operand_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">operand</span><span class="p">,</span><span class="w"></span>
-<span class="w">	     </span><span class="k">const</span><span class="w"> </span><span class="n">time_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="cm">/*unused*/</span><span class="p">,</span><span class="w"></span>
-<span class="w">	     </span><span class="n">ResultType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">P_</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">operand</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
-
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ParserType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">run_galerkin_hyperreduced</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FomSystemType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">,</span><span class="w"></span>
-<span class="w">			       </span><span class="k">const</span><span class="w"> </span><span class="n">ParserType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parser</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">ode</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">prom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">rom</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pgal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">rom</span><span class="o">::</span><span class="nn">galerkin</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="o">::</span><span class="n">scalar_type</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">reduced_state_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">modeCount</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">romModeCount</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">basisFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">romFullMeshPodBasisFile</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">basisFull</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">create_basis_and_read_from_file</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">basisFile</span><span class="p">,</span><span class="w"> </span><span class="n">modeCount</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">basisOnStencil</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">create_basis_on_stencil_mesh</span><span class="p">(</span><span class="n">basisFull</span><span class="p">,</span><span class="w"> </span><span class="n">parser</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">affineShift</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="n">create_affine_shift_on_stencil_mesh</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">parser</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">trialSpace</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">prom</span><span class="o">::</span><span class="n">create_trial_column_subspace</span><span class="o">&lt;</span><span class="w"></span>
-<span class="w">     </span><span class="n">reduced_state_type</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">basisOnStencil</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">affineShift</span><span class="p">),</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">romIsAffine</span><span class="p">());</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">reducedState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">.</span><span class="n">createReducedState</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">fill_rom_state_from_ascii</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">romInitialStateFile</span><span class="p">(),</span><span class="w"> </span><span class="n">reducedState</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">StateObserver</span><span class="w"> </span><span class="nf">observer</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">stateSamplingFreq</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">odeScheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">odeScheme</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">fom_rhs_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="o">::</span><span class="n">right_hand_side_type</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">hr_op_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ExplicitGalerkinHyperReducer</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="p">,</span><span class="w"> </span><span class="n">fom_rhs_type</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">hr_op_t</span><span class="w"> </span><span class="nf">H</span><span class="p">(</span><span class="n">parser</span><span class="p">.</span><span class="n">romGalerkinHypRedOperatorFile</span><span class="p">(),</span><span class="w"> </span><span class="n">modeCount</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">problem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pgal</span><span class="o">::</span><span class="n">create_unsteady_explicit_problem</span><span class="p">(</span><span class="n">odeScheme</span><span class="p">,</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">fomSystem</span><span class="p">,</span><span class="w"> </span><span class="n">H</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystemType</span><span class="o">::</span><span class="n">time_type</span><span class="w"> </span><span class="n">startTime</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">numSteps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepCount</span><span class="p">{</span><span class="n">parser</span><span class="p">.</span><span class="n">numSteps</span><span class="p">()};</span><span class="w"></span>
-<span class="w">  </span><span class="n">pode</span><span class="o">::</span><span class="n">advance_n_steps</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span><span class="w"> </span><span class="n">reducedState</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"></span>
-<span class="w">			</span><span class="n">parser</span><span class="p">.</span><span class="n">timeStepSize</span><span class="p">(),</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="n">observer</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_galerkin.py<span class="w"> </span>--wf<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 <p>At the end, you should have the following directory structure:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.
-├── CMakeFiles
-├── Makefile
-├── cmake_install.cmake
-├── fom_mesh
-├── fom_test_runid_0
-├── fom_train_runid_0
-├── fom_train_runid_1
-├── hyperreduced_galerkin_truncation_energybased_99.99999_sample_mesh_random_0.100_runid_0
-├── hyperreduced_galerkin_truncation_energybased_99.999_sample_mesh_random_0.100_runid_0
-├── hyperreducer_99.99999_sample_mesh_random_0.100
-├── hyperreducer_99.999_sample_mesh_random_0.100
-├── offline_rom
-├── plot.py
-└── wf.yaml
+├──<span class="w"> </span>CMakeFiles
+├──<span class="w"> </span>Makefile
+├──<span class="w"> </span>cmake_install.cmake
+├──<span class="w"> </span>fom_mesh
+├──<span class="w"> </span>fom_test_runid_0
+├──<span class="w"> </span>fom_train_runid_0
+├──<span class="w"> </span>fom_train_runid_1
+├──<span class="w"> </span>hyperreduced_galerkin_truncation_energybased_99.99999_sample_mesh_random_0.100_runid_0
+├──<span class="w"> </span>hyperreduced_galerkin_truncation_energybased_99.999_sample_mesh_random_0.100_runid_0
+├──<span class="w"> </span>hyperreducer_99.99999_sample_mesh_random_0.100
+├──<span class="w"> </span>hyperreducer_99.999_sample_mesh_random_0.100
+├──<span class="w"> </span>offline_rom
+├──<span class="w"> </span>plot.py
+└──<span class="w"> </span>wf.yaml
 </pre></div>
 </div>
 </section>
@@ -420,8 +355,8 @@ white cells denote the “stencil mesh”):</p>
 <section id="accuracy">
 <h3>Accuracy<a class="headerlink" href="#accuracy" title="Permalink to this heading">#</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/end-to-end-roms/2d_swe_default_galerkin</span>
-python3 <span class="nv">$REPOSRC</span>/wf_reconstruct_on_full_mesh.py
-python3 plot.py
+python3<span class="w"> </span><span class="nv">$REPOSRC</span>/wf_reconstruct_on_full_mesh.py
+python3<span class="w"> </span>plot.py
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/FOM1.png"><img alt="FOM" src="../_images/FOM1.png" style="width: 32%;" /></a>
@@ -496,7 +431,7 @@ elapsed 1.01332
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Oct 19, 2022</div>
+              Last updated on Jun 14, 2023</div>
           </div>
           <div class="right-details">
             <div class="icons">

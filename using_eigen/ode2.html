@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="ode: tutorial 3" href="ode3.html" /><link rel="prev" title="ode: tutorial 1" href="ode1.html" />
 
     <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
-        <title>ode: tutorial 2 - pressio-tutorials 0.13.0</title>
+        <title>ode: tutorial 2 - pressio-tutorials 0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -125,7 +125,7 @@
     </div>
     <div class="header-center">
       <a href="../index.html"><div class="brand">pressio-tutorials
-0.13.0</div></a>
+0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
   
   
   <span class="sidebar-brand-text">pressio-tutorials
-0.13.0</span>
+0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -159,6 +159,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../build.html">Build instructions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pressioteam.slack.com">Join our Slack</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials">GitHub Repo</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Pressio/pressio-tutorials/issues">Open an issue/feature req.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
@@ -173,10 +174,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. self-contained tutorials using Eigen data types</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nonlinsolvers2.html">nonlinear solvers: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ode1.html">ode: tutorial 1</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">ode: tutorial 2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ode3.html">ode: tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nonlinsolvers1.html">nonlinear solvers: tutorial 1</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">3. Advanced Topics</span></p>
 <ul>
@@ -216,109 +218,109 @@
         <article role="main">
           <section id="ode-tutorial-2">
 <h1>ode: tutorial 2<a class="headerlink" href="#ode-tutorial-2" title="Permalink to this heading">#</a></h1>
-<p>This tutorial shows how to integrate the <a class="reference external" href="https://en.wikipedia.org/wiki/Lorenz_system">original Lorenz system</a> using explicit time integration.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pressio/ode_steppers_explicit.hpp&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span>
+<p>Integrate the <a class="reference external" href="https://en.wikipedia.org/wiki/Lorenz_system">original Lorenz system</a> via explicit time integration.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pressio/ode_advancers.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pressio/ode_steppers_explicit.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">ScalarType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Lorenz3</span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="n">rho_</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">28</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="n">sigma_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="n">beta_</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lorenz3</span><span class="p">{</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">N_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="n">rho_</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">28</span><span class="p">);</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="n">sigma_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="n">beta_</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">;</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">independent_variable_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScalarType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">state_type</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">right_hand_side_type</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">state_type</span><span class="p">;</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">independent_variable_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ScalarType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">state_type</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">rhs_type</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">state_type</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">state_type</span><span class="w"> </span><span class="nf">createState</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state_type</span><span class="p">(</span><span class="n">N_</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">setConstant</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">state_type</span><span class="w"> </span><span class="nf">createState</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state_type</span><span class="p">(</span><span class="n">N_</span><span class="p">);</span>
+<span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">setConstant</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
 
-<span class="w">  </span><span class="n">right_hand_side_type</span><span class="w"> </span><span class="nf">createRightHandSide</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">right_hand_side_type</span><span class="p">(</span><span class="n">N_</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">setConstant</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">rhs_type</span><span class="w"> </span><span class="nf">createRhs</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rhs_type</span><span class="p">(</span><span class="n">N_</span><span class="p">);</span>
+<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">setConstant</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">state_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"></span>
-<span class="w">		  </span><span class="k">const</span><span class="w"> </span><span class="n">independent_variable_type</span><span class="w"> </span><span class="n">timeIn</span><span class="p">,</span><span class="w"></span>
-<span class="w">		  </span><span class="n">right_hand_side_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">rhs</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">state_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">state</span><span class="p">,</span>
+<span class="w">	   </span><span class="k">const</span><span class="w"> </span><span class="n">independent_variable_type</span><span class="w"> </span><span class="n">timeIn</span><span class="p">,</span>
+<span class="w">	   </span><span class="n">rhs_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">rhs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigma_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">rhs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">rho_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">y</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">rhs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">beta_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">rhs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sigma_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+<span class="w">    </span><span class="n">rhs</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">rho_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="n">rhs</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">beta_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">z</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
+<span class="p">};</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">ScalarType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">StateObserver</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">StateObserver</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sampleFreq</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">myfile_</span><span class="p">(</span><span class="s">&quot;state_snapshots.bin&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">out</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">),</span><span class="w"></span>
-<span class="w">      </span><span class="n">sampleFreq_</span><span class="p">(</span><span class="n">sampleFreq</span><span class="p">){}</span><span class="w"></span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">ScalarType</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StateObserver</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">StateObserver</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sampleFreq</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">myfile_</span><span class="p">(</span><span class="s">&quot;state_snapshots.bin&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">out</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">),</span>
+<span class="w">      </span><span class="n">sampleFreq_</span><span class="p">(</span><span class="n">sampleFreq</span><span class="p">){}</span>
 
-<span class="w">  </span><span class="o">~</span><span class="n">StateObserver</span><span class="p">(){</span><span class="w"> </span><span class="n">myfile_</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="o">~</span><span class="n">StateObserver</span><span class="p">(){</span><span class="w"> </span><span class="n">myfile_</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TimeType</span><span class="o">&gt;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">StepCount</span><span class="w"> </span><span class="n">step</span><span class="p">,</span><span class="w"></span>
-<span class="w">		  </span><span class="k">const</span><span class="w"> </span><span class="n">TimeType</span><span class="w"> </span><span class="cm">/*timeIn*/</span><span class="p">,</span><span class="w"></span>
-<span class="w">		  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">step</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">sampleFreq_</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span><span class="w"></span>
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;saving state at step = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">step</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">ext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="n">myfile_</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">state</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span><span class="w"> </span><span class="n">ext</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">TimeType</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">StepCount</span><span class="w"> </span><span class="n">step</span><span class="p">,</span>
+<span class="w">		  </span><span class="k">const</span><span class="w"> </span><span class="n">TimeType</span><span class="w"> </span><span class="cm">/*timeIn*/</span><span class="p">,</span>
+<span class="w">		  </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">ScalarType</span><span class="p">,</span><span class="mi">-1</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">state</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">step</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">sampleFreq_</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">ext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="n">ScalarType</span><span class="p">);</span>
+<span class="w">      </span><span class="n">myfile_</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">state</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span><span class="w"> </span><span class="n">ext</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ofstream</span><span class="w"> </span><span class="n">myfile_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">sampleFreq_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ofstream</span><span class="w"> </span><span class="n">myfile_</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">sampleFreq_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="p">};</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">initialize</span><span class="p">(</span><span class="n">pressio</span><span class="o">::</span><span class="n">logto</span><span class="o">::</span><span class="n">terminal</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">Lorenz3</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">problem</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Lorenz3</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="w"> </span><span class="n">problem</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">ode</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">scheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">RungeKutta4</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">stepperObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">create_explicit_stepper</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span><span class="w"> </span><span class="n">problem</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">namespace</span><span class="w"> </span><span class="nn">pode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pressio</span><span class="o">::</span><span class="nn">ode</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">scheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">RungeKutta4</span><span class="p">;</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">stepperObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">create_explicit_stepper</span><span class="p">(</span><span class="n">scheme</span><span class="p">,</span><span class="w"> </span><span class="n">problem</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">problem</span><span class="p">.</span><span class="n">createState</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="n">startTime</span><span class="p">{</span><span class="mf">0.0</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="n">finalTime</span><span class="p">{</span><span class="mf">40.0</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stateSampleFreq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">pode</span><span class="o">::</span><span class="n">advance_to_target_point</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"></span>
-<span class="w">				</span><span class="n">finalTime</span><span class="p">,</span><span class="w"></span>
-<span class="w">				  </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepCount</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="cm">/*unused*/</span><span class="p">,</span><span class="w"></span>
-<span class="w">				     </span><span class="k">const</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepStartAt</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="cm">/*unused*/</span><span class="p">,</span><span class="w"></span>
-<span class="w">				     </span><span class="n">pode</span><span class="o">::</span><span class="n">StepSize</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span><span class="w"></span>
-<span class="w">				  </span><span class="p">{</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01</span><span class="p">;</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
-<span class="w">				</span><span class="n">StateObserver</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">{</span><span class="n">stateSampleFreq</span><span class="p">});</span><span class="w"></span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">problem</span><span class="p">.</span><span class="n">createState</span><span class="p">();</span>
+<span class="w">  </span><span class="n">y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="n">y</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="n">startTime</span><span class="p">{</span><span class="mf">0.0</span><span class="p">};</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">scalar_type</span><span class="w"> </span><span class="n">finalTime</span><span class="p">{</span><span class="mf">40.0</span><span class="p">};</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stateSampleFreq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="n">pode</span><span class="o">::</span><span class="n">advance_to_target_point</span><span class="p">(</span><span class="n">stepperObj</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span>
+<span class="w">				</span><span class="n">finalTime</span><span class="p">,</span>
+<span class="w">				  </span><span class="p">[</span><span class="o">=</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepCount</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="cm">/*unused*/</span><span class="p">,</span>
+<span class="w">				     </span><span class="k">const</span><span class="w"> </span><span class="n">pode</span><span class="o">::</span><span class="n">StepStartAt</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="cm">/*unused*/</span><span class="p">,</span>
+<span class="w">				     </span><span class="n">pode</span><span class="o">::</span><span class="n">StepSize</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dt</span><span class="p">)</span>
+<span class="w">				  </span><span class="p">{</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01</span><span class="p">;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">				</span><span class="n">StateObserver</span><span class="o">&lt;</span><span class="n">scalar_type</span><span class="o">&gt;</span><span class="p">{</span><span class="n">stateSampleFreq</span><span class="p">});</span>
 
-<span class="w">  </span><span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">pressio</span><span class="o">::</span><span class="n">log</span><span class="o">::</span><span class="n">finalize</span><span class="p">();</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <section id="process-results">
 <h2>Process results<a class="headerlink" href="#process-results" title="Permalink to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within $BUILDDIR/ode-using-eigen-types/tutorial2</span>
-python3 plot.py
+<p>Move to <code class="docutils literal notranslate"><span class="pre">&lt;your-build-dir&gt;/ode-using-eigen-types/tutorial2</span></code> and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./ode_eigen_exe2
+python3<span class="w"> </span>plot.py
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../_images/plot.png"><img alt="Lorenz" class="align-center" src="../_images/plot.png" style="width: 50%;" /></a>
@@ -360,7 +362,7 @@ python3 plot.py
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Oct 19, 2022</div>
+              Last updated on Jun 14, 2023</div>
           </div>
           <div class="right-details">
             <div class="icons">
