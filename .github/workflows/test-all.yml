@@ -41,8 +41,7 @@ jobs:
       BUILD_DIR: /home/runner/work/build/pressio-tutorials
 
     steps:
-      - uses: actions/checkout@v2 # check out the repository with submodules
-        with: { submodules: recursive }
+      - uses: actions/checkout@v2
 
       - name: Install packages
         run: |
