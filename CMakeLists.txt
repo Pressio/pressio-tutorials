@@ -2,28 +2,13 @@
 cmake_minimum_required(VERSION 3.18.0)
 project(pressio-tutorials CXX)
 
-function(get_version_number PATH_TO_FILE OUT)
-  file(READ ${PATH_TO_FILE} tmpver)
-
-  string(FIND ${OUT} MAJOR wantMajor)
-  string(FIND ${OUT} MINOR wantMinor)
-  string(FIND ${OUT} PATCH wantPatch)
-  if (wantMajor GREATER -1)
-    string(REGEX MATCH "VERSION_MAJOR ([0-9]*)" _ ${tmpver})
-  endif()
-  if (wantMinor GREATER -1)
-    string(REGEX MATCH "VERSION_MINOR ([0-9]*)" _ ${tmpver})
-  endif()
-  if (wantPatch GREATER -1)
-    string(REGEX MATCH "VERSION_PATCH ([0-9]*)" _ ${tmpver})
-  endif()
-  set(${OUT} ${CMAKE_MATCH_1} PARENT_SCOPE)
-endfunction()
-
+# setting where other cmake commands are
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 #===================================================
 # versioning info
 #===================================================
+include(version_parse)
 
 get_version_number("version.txt" PressioTutorials_VERSION_MAJOR)
 get_version_number("version.txt" PressioTutorials_VERSION_MINOR)
