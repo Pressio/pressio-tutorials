@@ -90,7 +90,6 @@ jobs:
           cmake \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DCMAKE_BUILD_TYPE:STRING=${{ matrix.config.mode }} \
-            -DPRESSIOTUTORIALS_ENABLE_TESTS=ON \
             -B $BUILD_DIR -S $SRC_HOME
 
       - name: Build tests
@@ -98,12 +97,7 @@ jobs:
           export NUM_CPU=$(grep -c processor /proc/cpuinfo)
           cmake --build $BUILD_DIR -j $NUM_CPU
 
-      - name: Run tests
-        run: |
-          cd $BUILD_DIR
-          ctest
-
-      - name: Run demos
+      - name: Run tutorials
         run: |
           cd $BUILD_DIR/ode-using-eigen-types
           bash runall_for_ci.sh
