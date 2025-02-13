@@ -1,0 +1,181 @@
+
+# ====================================================
+# template yaml workflow file for end-to-end tutorials
+# ====================================================
+
+# ----------------------------------------------------
+# 1. problem section
+#
+# scope:
+#              set which problem to run
+# example:
+#              problem: 2d_swe
+# constraints:
+#              must be supported: this means there MUST
+#              be a subdirectory in source repo as follows:
+#              pressio-tutorials/end-to-end-roms/<problem-string>_customizations
+# ----------------------------------------------------
+problem: <string>
+
+# ----------------------------------------------------
+# 2. parameterSpace section
+#
+# scope:       specify which parameters to explore and
+#              where to pick training vs test points
+# example:
+#              parameterSpace:
+#                names: ['coriolis', 'pulsemag', 'gravity']
+#                trainPoints:
+#                  0: [-1., 0.125, 9.8]
+#                  1: [ 0., 0.5,   9.8]
+#                  2: [ 1., 0.6,   9.8]
+#                  3: [ 2., 0.8,   9.8]
+#                testPoints:
+#                  0: [-1., 0.125, 9.8]
+#                  1: [ 0., 0.5,   9.8]
+#
+# constraints:
+#              - names, trainPoints, testPoints MUST all be present
+#              - all coordinate sets must specify values following the
+#                same order used to list the names of the parameters
+# comments:
+#              - the parameters must be applicable to the chosen problem
+#              - num of train points can differ from num of test points
+# ----------------------------------------------------
+parameterSpace:
+  names: <list-of-strings>
+  trainPoints:
+    0: <coordinates-in-param-space-of-train-point0>
+    1: <coordinates-in-param-space-of-train-point1>
+    # as many as needed
+  testPoints:
+    0: <coordinates-in-param-space-of-test-point0>
+    1: <coordinates-in-param-space-of-test-point1>
+    # as many as needed
+
+# ----------------------------------------------------
+# 3. fom section
+#
+# scope:
+#              to prescribe how to execute the foms
+# example1:
+# (use the same settings for train/test runs)
+#
+#              fom:
+#                meshSize: [65, 65]
+#                inviscidFluxReconstruction: Weno3
+#                odeScheme: RK4
+#                timeStepSize: 0.005
+#                finalTime: 2.0
+#                stateSamplingFreq: 50
+#                rhsSamplingFreq: 50
+#
+# example1:
+# (partially differentiate train/test runs)
+#
+#              fom:
+#                meshSize: [65, 65]
+#                inviscidFluxReconstruction: "Weno3"
+#                timeStepSize: 0.005
+#                train:
+#                  odeScheme: "RK4"
+#                  finalTime: 2.0
+#                  stateSamplingFreq: 50
+#                  rhsSamplingFreq: 50
+#                test:
+#                  odeScheme: "SSPRK3"
+#                  finalTime: 4.0
+#                  stateSamplingFreq: 100
+#                  rhsSamplingFreq: 100
+#
+# constraints:
+#              - meshSize MUST be the same for train/test
+#              - meshSize must have as many entries as the problem's dimensionality
+#              - subfields must be applicable to the chosen problem
+#              - fields that are common for all demoapps problems and are always needed:
+#                  meshSize
+#                  odeScheme
+#                  timeStepSize
+#                  finalTime
+#                  stateSamplingFreq
+# comments:
+#              - other entries can be problem specific
+#              - some fields can be different in train/test and this can be
+#                specified via train/test subsections.
+#                To use the same settings for train/test, one can just
+#                omit the train/test subsections, leaving all fields global.
+# ----------------------------------------------------
+fom:
+  meshSize: <list-of-cells-count-for-each-axis>
+  odeScheme: RK4
+  timeStepSize: 0.005
+  train:
+    finalTime: 2.0
+    stateSamplingFreq: 50
+    rhsSamplingFreq: 50
+  test:
+    finalTime: 4.0
+    stateSamplingFreq: 100
+    rhsSamplingFreq: 100
+
+# ----------------------------------------------------
+# 4. offlineRom section
+#
+# scope:
+#              prescribes ...
+# example:
+#
+# constraints:
+#              - the training run IDs specified for useTrainingRuns must be a
+#                valid subset of the run IDs specified in the fom section.
+#                You don't necessarily have to use all fom training runs.
+# comments:
+#              - if useTrainingRuns is not present, use all train runs
+#              - rhsData is optional, if not present does not get computed
+# ----------------------------------------------------
+offlineRom:
+  pod:
+    stateData:
+      useTrainingRuns: <list-of-runids> or all
+      policy: <string>
+    rhsData:
+      useTrainingRuns: <list-of-runids> or all
+      policy: <string>
+  sampleMesh:
+    random: 0.25
+    psampling: 0.5
+    random: 0.5
+
+# ----------------------------------------------------
+# 5. onlineRom
+
+# algorithm: defaultGalerkin
+# podTruncation:
+#   energyBased: [99.999, 99.99999]
+#
+# algorithm: hyperreducedGalerkin
+# podTruncation:
+#   energyBased: [99.999, 99.99999]
+#
+# algorithm: defaultLspg
+# nonlinearSolverName: GaussNewton
+# nonlinearSolverTolerance: 1e-6
+# podTruncation:
+#   energyBased: [99.999, 99.99999]
+#
+# algorithm: hyperreducedLspg
+# nonlinearSolverName: GaussNewton
+# nonlinearSolverTolerance: 1e-6
+# podTruncation:
+#   energyBased: [99.999, 99.99999]
+#
+
+# ----------------------------------------------------
+onlineRom:
+  algorithm: <string>
+  podTruncation:
+    energyBased: <list-of-energy-percentages-to-capture>
+
+  # lspg
+  nonlinearSolverName: GaussNewton
+  nonlinearSolverTolerance: 1e-6
