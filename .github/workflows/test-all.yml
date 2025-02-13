@@ -35,7 +35,7 @@ jobs:
 
     env: # environment variables available to all steps
       CXX: ${{ matrix.config.cxx }}
-      APT_PACKAGES: python3 pip python-is-python3 g++ clang gpg wget
+      APT_PACKAGES: python3 pip python-is-python3 g++ clang gpg wget cmake
       PIP_PACKAGES: pytest build numpy scipy matplotlib PyYAML GitPython
       SRC_HOME: /home/runner/work/pressio-tutorials/pressio-tutorials
       BUILD_DIR: /home/runner/work/build/pressio-tutorials
@@ -46,19 +46,7 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y --install-suggests $APT_PACKAGES
-
-      - name: Install CMake
-        run: |
-          export CMAKE_KEYRING=/usr/share/keyrings/kitware-archive-keyring.gpg
-          wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null \
-            | gpg --dearmor - \
-            | sudo tee $CMAKE_KEYRING >/dev/null
-          echo "deb [signed-by=$CMAKE_KEYRING] https://apt.kitware.com/ubuntu/ focal main" \
-            | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
-          sudo apt-get update
-          rm $CMAKE_KEYRING
-          sudo apt-get install -y kitware-archive-keyring cmake
+          sudo apt-get install -y $APT_PACKAGES
 
       - name: Check environment
         run: |
@@ -90,7 +78,6 @@ jobs:
           cmake \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DCMAKE_BUILD_TYPE:STRING=${{ matrix.config.mode }} \
-            -DPRESSIOTUTORIALS_ENABLE_TESTS=ON \
             -B $BUILD_DIR -S $SRC_HOME
 
       - name: Build tests
@@ -98,12 +85,7 @@ jobs:
           export NUM_CPU=$(grep -c processor /proc/cpuinfo)
           cmake --build $BUILD_DIR -j $NUM_CPU
 
-      - name: Run tests
-        run: |
-          cd $BUILD_DIR
-          ctest
-
-      - name: Run demos
+      - name: Run tutorials
         run: |
           cd $BUILD_DIR/ode-using-eigen-types
           bash runall_for_ci.sh

@@ -5,3 +5,4 @@ sphinx-copybutton==0.5.0
 m2r2==0.3.2
 sphinx-design
 attrs
+standard-imghdr
