@@ -1,11 +1,11 @@
 Start reading here
 ==================
 
-Describing how to use pressio for ROMs cannot be simply
+Describing how to use pressio-rom for ROMs cannot be simply
 boiled down to presenting the API, because setting up, running
 and processing a ROM involves several steps.
 We believe the best way to understand these steps and also
-what pressio offers in this context is via demos where the logical sequence
+what pressio-rom offers in this context is via demos where the logical sequence
 of steps is presented and explained.
 To this end, we have developed a workflow-based framework where
 one can *express* what to do, and the framework helps
@@ -19,7 +19,7 @@ Key features
 - each demo is defined via a yaml workflow file (`example <swe_galerkin_default.html#workflow-file>`__),
   which is used by the `driver scripts <https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms>`__ we provide to execute that demo
 
-- one can easily extend the framework by adding new ROM methods in pressio or account
+- one can easily extend the framework by adding new ROM methods in pressio-rom or account
   for variations in how each step is run
 
 - pressio-demoapps: for the end-to-end demos we rely on pressio-demoapps,
@@ -33,7 +33,7 @@ Outcomes
 --------
 
 - by reading these end-to-end demos you should be able to understand
-  the various steps and how these steps map to pressio code
+  the various steps and how these steps map to pressio-rom code
 
 - you can easily explore the impact of changing the parameter spaces,
   or the basis size by just changing the workflow file and rerunning

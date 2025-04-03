@@ -50,7 +50,7 @@ More details on dependencies
 
 The tutorials have the following dependencies:
 
-- pressio C++ library: contains the C++ code that this tutorials repo convers
+- pressio-rom C++ library: contains the C++ code that this tutorials repo convers
 - pressio-demoapps: provides a suite of physics problems that are used in the tutorials to demonstrate the functionalities of pressio
 - Eigen: is the library used by pressio-demoapps
 - Python: is used in pressio-demoapps to implement all the ROM workflow drivers
