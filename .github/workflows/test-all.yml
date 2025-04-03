@@ -54,7 +54,7 @@ jobs:
           wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null \
             | gpg --dearmor - \
             | sudo tee $CMAKE_KEYRING >/dev/null
-          echo "deb [signed-by=$CMAKE_KEYRING] https://apt.kitware.com/ubuntu/ focal main" \
+          echo "deb [signed-by=$CMAKE_KEYRING] https://apt.kitware.com/ubuntu/ jammy main" \
             | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
           sudo apt-get update
           rm $CMAKE_KEYRING
