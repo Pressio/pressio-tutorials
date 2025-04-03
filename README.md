@@ -2,7 +2,7 @@
 # pressio-tutorials
 
 This repository contains tutorials covering
-the [pressio C++ library](https://pressio.github.io/pressio/html/index.html).
+the [pressio-rom C++ library](https://pressio.github.io/pressio-rom/html/index.html).
 
 
 Click below to checkout the documentation:

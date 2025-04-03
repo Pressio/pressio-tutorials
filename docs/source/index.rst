@@ -4,7 +4,7 @@
 Pressio Tutorials
 =====================
 
-Tutorials suite for the `pressio C++ library <https://pressio.github.io/pressio>`_.
+Tutorials suite for the `pressio-rom C++ library <https://pressio.github.io/pressio-rom>`_.
 
 
 Scope and Motivation
@@ -15,15 +15,15 @@ reduced-order models (ROMs), which is a strongly multidisciplinary topic.
 Working on a production-level ROM capability inevitably means touching
 multiple fields, ranging from, e.g., linear algebra, nonlinear solvers
 and optimization, to time integration, generic programming, and distributed computing/HPC.
-This is clearly reflected in the `structure of pressio <https://pressio.github.io/pressio>`__:
+This is clearly reflected in the `structure of pressio-rom <https://pressio.github.io/pressio-rom>`__:
 each component handles a specific capability and depends
 on the ones below it. This allows users to use a component directly, but, as a whole,
-the full stack constitutes the foundation of the top-level ``pressio/rom``.
+the full stack constitutes the foundation of the top-level ``pressio-rom/rom``.
 
-Describing how to use pressio for ROMs cannot be simply reduced to presenting the API.
+Describing how to use Pressio for ROMs cannot be simply reduced to presenting the API.
 Several steps are involved, and the best way to understand them is via examples.
 Therefore, these tutorials are designed to show how to *integrate* various
-capabilities of pressio to do something meaningful, as well as unveil
+capabilities of Pressio to do something meaningful, as well as unveil
 some details that might not be obvious, and are organized into these sections:
 
 1. End-to-end ROMs using pressio-demoapps
