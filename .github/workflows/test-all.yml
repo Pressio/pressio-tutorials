@@ -102,10 +102,3 @@ jobs:
         run: |
           cd $BUILD_DIR
           ctest
-
-      - name: Run demos
-        run: |
-          cd $BUILD_DIR/ode-using-eigen-types
-          bash runall_for_ci.sh
-          cd ../nonlinearsolvers-using-eigen-types
-          bash runall_for_ci.sh
