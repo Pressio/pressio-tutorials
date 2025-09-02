@@ -31,11 +31,18 @@ get_version_number("version.txt" PressioTutorials_VERSION_PATCH)
 set(PressioTutorials_VERSION "${PressioTutorials_VERSION_MAJOR}.${PressioTutorials_VERSION_MINOR}.${PressioTutorials_VERSION_PATCH}")
 message("pressio-tutorials version = ${PressioTutorials_VERSION}")
 
-set(pressio_version ${CMAKE_CURRENT_SOURCE_DIR}/tpls/pressio/version.txt)
-get_version_number(${pressio_version} MyPressio_VERSION_MAJOR)
-get_version_number(${pressio_version} MyPressio_VERSION_MINOR)
-get_version_number(${pressio_version} MyPressio_VERSION_PATCH)
-message("pressio version           = ${MyPressio_VERSION_MAJOR}.${MyPressio_VERSION_MINOR}.${MyPressio_VERSION_PATCH}")
+# Get Pressio libraries
+set(PRESSIO_REPOS "rom" "ops" "log")
+foreach(repo IN LISTS PRESSIO_REPOS)
+  if (NOT EXISTS ${CMAKE_SOURCE_DIR}/tpls/pressio-${repo})
+    execute_process(
+      COMMAND git clone --branch ${PressioTutorials_VERSION}
+              https://github.com/Pressio/pressio-${repo}.git
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tpls
+      OUTPUT_QUIET
+    )
+  endif()
+endforeach()
 
 #===================================================
 # c++ standard
