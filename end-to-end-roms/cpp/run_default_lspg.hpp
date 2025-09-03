@@ -78,7 +78,7 @@ void run_lspg_default(const FomSystemType & fomSystem,
 
   const auto odeScheme = parser.odeScheme();
   auto problem = plspg::create_unsteady_problem(odeScheme, trialSpace, fomSystem);
-  lspg_pick_solver_and_run(parser, problem.lspgStepper(), reducedState);
+  lspg_pick_solver_and_run(parser, problem, reducedState);
 }
 
 #endif
