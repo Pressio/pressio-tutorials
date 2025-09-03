@@ -31,8 +31,11 @@ get_version_number("version.txt" PressioTutorials_VERSION_PATCH)
 set(PressioTutorials_VERSION "${PressioTutorials_VERSION_MAJOR}.${PressioTutorials_VERSION_MINOR}.${PressioTutorials_VERSION_PATCH}")
 message("pressio-tutorials version = ${PressioTutorials_VERSION}")
 
-# Get Pressio libraries
-set(PRESSIO_REPOS "rom" "ops" "log")
+#===================================================
+# fetch pressio libraries
+#===================================================
+
+set(PRESSIO_REPOS "demoapps" "rom" "ops" "log")
 foreach(repo IN LISTS PRESSIO_REPOS)
   if (NOT EXISTS ${CMAKE_SOURCE_DIR}/tpls/pressio-${repo})
     execute_process(
