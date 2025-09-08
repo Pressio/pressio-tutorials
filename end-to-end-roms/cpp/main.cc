@@ -48,8 +48,7 @@
 
 #include "pressio_cmake_config.h"
 #include "pressiodemoapps/swe2d.hpp"
-#include "pressio/ode_steppers_explicit.hpp"
-#include "pressio/ode_steppers_implicit.hpp"
+#include "pressio/ode_steppers.hpp"
 #include "pressio/ode_advancers.hpp"
 
 #include "parsers.hpp"
