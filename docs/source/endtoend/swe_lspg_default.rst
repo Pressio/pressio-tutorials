@@ -47,7 +47,7 @@ Step 1: execute FOMs
 .. code-block:: bash
 
    # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_default
-   python3 $REPOSRC/wf_foms.py --wf wf.yaml
+   python3 $REPOSRC/end-to-end-roms/wf_foms.py --wf wf.yaml
 
 .. warning::
 

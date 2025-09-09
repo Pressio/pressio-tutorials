@@ -47,7 +47,7 @@ The FOM stage is the same as `here <swe_lspg_default.html>`_.
 .. code-block:: bash
 
    # from within $BUILDDIR/end-to-end-roms/2d_swe_lspg_hypred_1
-   python3 $REPOSRC/wf_foms.py --wf wf.yaml
+   python3 $REPOSRC/end-to-end-roms/wf_foms.py --wf wf.yaml
 
 .. warning::
 

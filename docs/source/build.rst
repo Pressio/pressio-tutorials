@@ -28,7 +28,7 @@ Steps
    cd $BUILDDIR && make -j4
 
    # ensure you have all required Python packages installed
-   pip3 install <path-to-your-cloned-repo>/py_requirements.txt
+   pip3 install -r <path-to-your-cloned-repo>/py_requirements.txt
 
 
 Verify the build
