@@ -46,7 +46,7 @@ Step 1: execute FOMs
 .. code-block:: bash
 
    # from within $BUILDDIR/end-to-end-roms/2d_swe_galerkin_default
-   python3 $REPOSRC/end-to-end-roms/wf_foms.py --wf wf.yaml
+   python3 $REPOSRC/wf_foms.py --wf wf.yaml
 
 This driver script automates this first stage by creating input files,
 generating run directories and running the C++ executable

@@ -46,7 +46,7 @@ Step 1: run FOMs
 
 .. code-block:: bash
 
-   python3 $REPOSRC/end-to-end-roms/wf_foms.py --wf wf.yaml
+   python3 $REPOSRC/wf_foms.py --wf wf.yaml
 
 The FOM stage is the same as `here <swe_galerkin_default.html>`_.
 
