@@ -1,5 +1,15 @@
+# artifacts
 docs/generated_docs
 build
-end-to-end-roms/__pycache__/
-end-to-end-roms/customizations_2d_swe/__pycache__/
+install
+
+# pressio repos
+pressio-demoapps
+pressio-rom
+pressio-ops
+pressio-log
+
+# misc
+.vscode
+__pycache__
 .idea

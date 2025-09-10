@@ -151,7 +151,7 @@ void run_lspg_hyperreduced(const FomSystemType & fomSystem,
   HypRedUpdater<scalar_type> hrUpdater(parser);
   auto problem = plspg::create_unsteady_problem(odeScheme, trialSpace, fomSystem, hrUpdater);
 
-  lspg_pick_solver_and_run(parser, problem.lspgStepper(), reducedState);
+  lspg_pick_solver_and_run(parser, problem, reducedState);
 }
 
 #endif

@@ -117,8 +117,8 @@ void run_galerkin_hyperreduced(const FomSystemType & fomSystem,
 
   typename FomSystemType::time_type startTime{0};
   const auto numSteps = pode::StepCount{parser.numSteps()};
-  pode::advance_n_steps(problem, reducedState, startTime,
-			parser.timeStepSize(), numSteps, observer);
+  auto policy = pode::steps_fixed_dt(startTime, numSteps, parser.timeStepSize());
+  pode::advance(problem, reducedState, policy, observer);
   }
   else{
     throw std::runtime_error("Hyper-reduced implicit galerkin not impl yet");

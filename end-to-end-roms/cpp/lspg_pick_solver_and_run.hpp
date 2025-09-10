@@ -55,7 +55,7 @@ void lspg_pick_solver_and_run(const ParserType & parser,
 			      RomStateType & reducedState)
 {
   namespace pode   = pressio::ode;
-  namespace pnlins = pressio::nonlinearsolvers;
+  namespace pnlins = pressio::nlsol;
 
   using scalar_type = typename pressio::Traits<RomStateType>::scalar_type;
   const auto startTime = static_cast<typename LspgStepperType::independent_variable_type>(0);
@@ -65,17 +65,16 @@ void lspg_pick_solver_and_run(const ParserType & parser,
   if (parser.nonlinearSolver() == "GaussNewton")
   {
   using hessian_t       = Eigen::Matrix<scalar_type, -1, -1>;
-  using solver_tag      = pressio::linearsolvers::direct::HouseholderQR;
-  using linear_solver_t = pressio::linearsolvers::Solver<solver_tag, hessian_t>;
+  using solver_tag      = pressio::linsol::direct::HouseholderQR;
+  using linear_solver_t = pressio::linsol::Solver<solver_tag, hessian_t>;
   linear_solver_t linearSolver;
 
-  auto solver = pressio::create_gauss_newton_solver(lspgStepper, linearSolver);
+  auto solver = pressio::nlsol::create_gauss_newton_solver(lspgStepper, linearSolver);
   solver.setStopCriterion(pnlins::Stop::WhenAbsolutel2NormOfGradientBelowTolerance);
   solver.setStopTolerance(parser.nonlinearSolverTolerance());
 
-  pode::advance_n_steps(lspgStepper, reducedState, startTime,
-			parser.timeStepSize(), numSteps,
-			observer, solver);
+  auto policy = pode::steps_fixed_dt(startTime, numSteps, parser.timeStepSize());
+  pode::advance(lspgStepper, reducedState, policy, solver, observer);
   }
 
   else if (parser.nonlinearSolver() == "GaussNewtonQR")
@@ -83,30 +82,28 @@ void lspg_pick_solver_and_run(const ParserType & parser,
   using mat_t = typename LspgStepperType::jacobian_type;
   using qr_solver_t = pressio::qr::QRSolver<mat_t, pressio::qr::Householder>;
   qr_solver_t qrSolver;
-  auto solver = pressio::experimental::create_gauss_newton_qr_solver(lspgStepper, qrSolver);
+  auto solver = pressio::nlsol::experimental::create_gauss_newton_qr_solver(lspgStepper, qrSolver);
   solver.setStopCriterion(pnlins::Stop::WhenAbsolutel2NormOfGradientBelowTolerance);
   solver.setStopTolerance(parser.nonlinearSolverTolerance());
 
-  pode::advance_n_steps(lspgStepper, reducedState, startTime,
-			parser.timeStepSize(), numSteps,
-			observer, solver);
+  auto policy = pode::steps_fixed_dt(startTime, numSteps, parser.timeStepSize());
+  pode::advance(lspgStepper, reducedState, policy, solver, observer);
   }
 
   else if (parser.nonlinearSolver() == "LevenbergMarquardt")
   {
   using hessian_t       = Eigen::Matrix<scalar_type, -1, -1>;
-  using solver_tag      = pressio::linearsolvers::direct::HouseholderQR;
-  using linear_solver_t = pressio::linearsolvers::Solver<solver_tag, hessian_t>;
+  using solver_tag      = pressio::linsol::direct::HouseholderQR;
+  using linear_solver_t = pressio::linsol::Solver<solver_tag, hessian_t>;
   linear_solver_t linearSolver;
 
-  auto solver = pressio::create_levenberg_marquardt_solver(lspgStepper, linearSolver);
+  auto solver = pressio::nlsol::create_levenberg_marquardt_solver(lspgStepper, linearSolver);
   solver.setUpdateCriterion(pnlins::Update::LMSchedule2);
   solver.setStopCriterion(pnlins::Stop::WhenAbsolutel2NormOfGradientBelowTolerance);
   solver.setStopTolerance(parser.nonlinearSolverTolerance());
 
-  pode::advance_n_steps(lspgStepper, reducedState, startTime,
-			parser.timeStepSize(), numSteps,
-			observer, solver);
+  auto policy = pode::steps_fixed_dt(startTime, numSteps, parser.timeStepSize());
+  pode::advance(lspgStepper, reducedState, policy, solver, observer);
   }
 }
 #endif
