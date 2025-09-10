@@ -46,10 +46,9 @@
 //@HEADER
 */
 
+#include "pressio_cmake_config.h"
 #include "pressiodemoapps/swe2d.hpp"
-
-#include "pressio/ode_steppers_explicit.hpp"
-#include "pressio/ode_steppers_implicit.hpp"
+#include "pressio/ode_steppers.hpp"
 #include "pressio/ode_advancers.hpp"
 
 #include "parsers.hpp"
@@ -111,8 +110,8 @@ std::string check_and_get_inputfile(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-  pressio::log::initialize(pressio::logto::terminal);
-  pressio::log::setVerbosity({pressio::log::level::info});
+  PRESSIOLOG_INITIALIZE(pressiolog::LogLevel::info);
+
 
   // local scope because it is helps
   {
@@ -147,6 +146,6 @@ int main(int argc, char *argv[])
     std::cout << "elapsed " << fs.count() << std::endl;
   }
 
-  pressio::log::finalize();
+  PRESSIOLOG_FINALIZE();
   return 0;
 }

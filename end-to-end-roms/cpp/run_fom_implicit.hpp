@@ -49,7 +49,7 @@
 #ifndef PRESSIO_TUTORIALS_ENDTOEND_WORKFLOW_RUN_FOM_IMPLICIT_HPP_
 #define PRESSIO_TUTORIALS_ENDTOEND_WORKFLOW_RUN_FOM_IMPLICIT_HPP_
 
-#include "pressio/ode_steppers_implicit.hpp"
+#include "pressio/ode_steppers.hpp"
 #include "pressio/ode_advancers.hpp"
 #include "observer.hpp"
 
@@ -58,8 +58,8 @@ void run_fom_implicit(const FomSystemType & fomSystem,
 		      const ParserType & parser)
 {
   namespace pode   = pressio::ode;
-  namespace plins  = pressio::linearsolvers;
-  namespace pnlins = pressio::nonlinearsolvers;
+  namespace plins  = pressio::linsol;
+  namespace pnlins = pressio::nlsol;
 
   auto state = fomSystem.initialCondition();
   write_vector_to_binary(state, "initial_state.bin");
@@ -77,16 +77,14 @@ void run_fom_implicit(const FomSystemType & fomSystem,
   // nonlinear solver
   const auto nonlinSolverType = parser.nonlinearSolver();
   assert(nonlinSolverType == "NewtonRaphson");
-  auto nonLinearSolver = pressio::create_newton_solver(stepperObj, linearSolver);
+  auto nonLinearSolver = pressio::nlsol::create_newton_solver(stepperObj, linearSolver);
   nonLinearSolver.setStopTolerance(parser.nonlinearSolverTolerance());
 
   // advance in time
   StateObserver observer(parser.stateSamplingFreq());
   const auto startTime = static_cast<typename FomSystemType::scalar_type>(0);
-  pode::advance_n_steps(stepperObj, state, startTime,
-			parser.timeStepSize(),
-			pode::StepCount(parser.numSteps()),
-			observer, nonLinearSolver);
+  auto policy = pode::steps_fixed_dt(startTime, pode::StepCount(parser.numSteps()), parser.timeStepSize());
+  pode::advance(stepperObj, state, policy, nonLinearSolver, observer);
 }
 
 #endif
