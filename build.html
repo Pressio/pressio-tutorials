@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="License" href="license.html" /><link rel="prev" title="Pressio Tutorials" href="index.html" />
 
     <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
-        <title>Build instructions - pressio-tutorials 0.16.0</title>
+        <title>Build instructions - pressio-tutorials 0.17.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
@@ -125,7 +125,7 @@
     </div>
     <div class="header-center">
       <a href="index.html"><div class="brand">pressio-tutorials
-0.16.0</div></a>
+0.17.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
   
   
   <span class="sidebar-brand-text">pressio-tutorials
-0.16.0</span>
+0.17.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -227,7 +227,7 @@ cmake<span class="w"> </span>-DPRESSIOTUTORIALS_ENABLE_TESTS<span class="o">=</s
 <span class="nb">cd</span><span class="w"> </span><span class="nv">$BUILDDIR</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>-j4
 
 <span class="c1"># ensure you have all required Python packages installed</span>
-pip3<span class="w"> </span>install<span class="w"> </span>&lt;path-to-your-cloned-repo&gt;/py_requirements.txt
+pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>&lt;path-to-your-cloned-repo&gt;/py_requirements.txt
 </pre></div>
 </div>
 </section>
@@ -246,11 +246,12 @@ pip3<span class="w"> </span>install<span class="w"> </span>&lt;path-to-your-clon
 <h2>More details on dependencies<a class="headerlink" href="#more-details-on-dependencies" title="Permalink to this heading">#</a></h2>
 <p>The tutorials have the following dependencies:</p>
 <ul class="simple">
-<li><p>pressio-rom C++ library: contains the C++ code that this tutorials repo convers</p></li>
+<li><p>pressio-rom C++ library: contains the C++ code that this tutorials repo covers</p></li>
 <li><p>pressio-demoapps: provides a suite of physics problems that are used in the tutorials to demonstrate the functionalities of pressio</p></li>
 <li><p>Eigen: is the library used by pressio-demoapps</p></li>
 <li><p>Python: is used in pressio-demoapps to implement all the ROM workflow drivers</p></li>
 </ul>
+<p>During configuration, all Pressio repositories will be automatically cloned inside of the tutorials directory.</p>
 </section>
 </section>
 
@@ -289,7 +290,7 @@ pip3<span class="w"> </span>install<span class="w"> </span>&lt;path-to-your-clon
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Sep 02, 2025</div>
+              Last updated on Sep 10, 2025</div>
           </div>
           <div class="right-details">
             <div class="icons">
