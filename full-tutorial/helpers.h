@@ -66,3 +66,35 @@ auto trial_space_to_reduced_state( const TrialSpaceType& trialSpace, const FomSy
     // Return the reduced state
     return reducedState;
 }
+
+// Simple pseudoinverse using SVD
+template<typename matrix_t>
+matrix_t pinv(const matrix_t& A, double tol = 1e-10)
+{
+    Eigen::JacobiSVD<matrix_t> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    const auto& S = svd.singularValues();
+    const int r = static_cast<int>(S.size());
+
+    // Build S^{-1} as r x r
+    matrix_t Sinv = matrix_t::Zero(r, r);
+    for (int i = 0; i < r; ++i)
+        if (S(i) > tol) Sinv(i,i) = 1.0 / S(i);
+
+    // Using thin SVD: A = U_r S_r V_r^T => A^+ = V_r S_r^{-1} U_r^T
+    matrix_t V_r = svd.matrixV().leftCols(r); // n x r
+    matrix_t U_r = svd.matrixU().leftCols(r); // m x r
+    return (V_r * Sinv * U_r.transpose()).eval();
+}
+
+std::vector<int> make_stride_samples(std::size_t N, std::size_t m)
+{
+    m = std::max<std::size_t>(1, std::min(N, m));
+    std::vector<int> idx;
+    idx.reserve(m);
+    const double stride = static_cast<double>(N) / static_cast<double>(m);
+    for (std::size_t j = 0; j < m; ++j) {
+        int i = static_cast<int>(std::floor(j * stride)) % static_cast<int>(N);
+        idx.push_back(i);
+    }
+    return idx;
+}

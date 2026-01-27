@@ -103,7 +103,8 @@
  *   2. Run FOM simulations for training parameter values
  *   3. Collect snapshots and compute POD basis
  *   4. Construct Galerkin ROM [5] with Pressio
- *   5. Run ROM on test parameters and compare against FOM
+ *   5. (Optional) Implement hyper-reduction for efficiency
+ *   6. Run ROM on test parameters and compare against FOM
  *
  * Expected Result: ROM should deliver ~100-1000× speedup
  * with minimal error (< 1%) on test cases within training range.
@@ -129,11 +130,17 @@
  * The logging macros (from pressio-log) are also included here.
  */
 #include <pressio/rom.hpp>
+#include <vector>
 
 /**
  * We'll also need some helper functions along the way.
  */
 #include "helpers.h"
+
+/**
+ * And some functions for hyper-reduction.
+ */
+#include "hyperreduction.h"
 
 /**
  * Pressio supports various linear algebra backends (such as
@@ -238,8 +245,14 @@ class Burgers1dFom
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// Step 2: Run the FOM to generate snapshots
+// Step 2: Run the FOM to generate snapshots (states and RHS)
 ////////////////////////////////////////////////////////////////////////////////
+
+struct SnapshotSet
+{
+    matrix_t stateSnapshots;
+    matrix_t rhsSnapshots;
+};
 
 /**
  * Building and running the FOM doesn't require any Pressio utilities.
@@ -248,10 +261,13 @@ class Burgers1dFom
  * to build the ROM with Pressio.
  */
 template <typename FomSystem>
-matrix_t runFOM( FomSystem& fom, typename FomSystem::time_type startTime, int numSteps, double dt )
+SnapshotSet runFOM( FomSystem& fom, typename FomSystem::time_type startTime, int numSteps, double dt )
 {
     // We will store each snapshot vector in a std::vector for now
-    std::vector< vector_t > snapshots;
+    // For a typical ROM, we would only need the state snapshots. However,
+    // for hyper-reduction, we will also need snapshots of the RHS.
+    std::vector< vector_t > stateSnaps;
+    std::vector< vector_t > rhsSnaps;
 
     // Compute the initial condition
     auto u = computeInitialCondition< FomSystem, vector_t >( fom );
@@ -259,21 +275,25 @@ matrix_t runFOM( FomSystem& fom, typename FomSystem::time_type startTime, int nu
     // Time integration loop (using Forward Euler)
     double t = startTime;
     for ( int step = 0; step < numSteps; ++step ) {
-        snapshots.push_back( u );   // Store snapshot
-        auto f = fom.createRhs();   // Create RHS vector
-        fom.rhs( u, t, f );         // Compute RHS
-        u += dt * f;                // Update solution
-        t += dt;                    // Advance time
+        stateSnaps.push_back( u );   // Store state snapshot
+        auto f = fom.createRhs();    // Create RHS vector
+        fom.rhs( u, t, f );          // Compute RHS
+        rhsSnaps.push_back( f );     // Store RHS snapshot
+        u += dt * f;                 // Update solution
+        t += dt;                     // Advance time
     }
 
-    // Convert our vector of snapshot vectors into a matrix
-    const std::size_t numSnapshots = snapshots.size();
-    matrix_t snapshotMatrix( fom.N(), numSnapshots );
+    // Convert our vector of snapshot vectors into matrices
+    const std::size_t numSnapshots = stateSnaps.size();
+    matrix_t stateMatrix( fom.N(), numSnapshots );
+    matrix_t rhsMatrix( fom.N(), numSnapshots );
     for ( std::size_t i = 0; i < numSnapshots; ++i ) {
-        snapshotMatrix.col( i ) = snapshots[ i ];
+        stateMatrix.col( i ) = stateSnaps[ i ];
+        rhsMatrix.col( i )      = rhsSnaps[ i ];
     }
 
-    return snapshotMatrix;
+    // Return both snapshot matrices
+    return SnapshotSet{ std::move(stateMatrix), std::move(rhsMatrix) };
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,21 +301,25 @@ matrix_t runFOM( FomSystem& fom, typename FomSystem::time_type startTime, int nu
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Now we use the Pressio ecosystem to construct a Galerkin ROM representation
+ * Now we use the Pressio ecosystem to construct a ROM representation
  * with the snapshot matrix. As before, there are various APIs that we can meet
- * to use different types of ROMs. We'll start with a default Galerkin here,
- * but there are other options for features like hyper-reduction.
+ * to use different types of ROMs. We'll use a Galerkin ROM here, with the option
+ * for hyper-reduction. Typically, you would choose which ROM is best suited for
+ * your application (as opposed to trying both as we do here for demonstration).
  */
 template <typename FomSystem>
-auto buildAndRunROM( const matrix_t& snapshots, FomSystem& fom, typename FomSystem::time_type startTime, int numSteps, double dt )
+auto buildAndRunROM(const SnapshotSet& snaps, FomSystem& fom,
+                        typename FomSystem::time_type startTime, int numSteps, double dt,
+                        bool useHyperReduction = false )
 {
-    // Use helper functions (helpers.h) to compute the trial subspace from snapshots
-    // and initialize the reduced state by projecting the FOM initial condition.
-    // Typically this would be done offline by the app using Pressio.
-    auto trialSpace   = snapshots_to_trial_space< FomSystem, matrix_t, vector_t >( snapshots, fom );
+    const auto& stateSnaps = snaps.stateSnapshots;
+    const auto& rhsSnaps   = snaps.rhsSnapshots;
+
+    // Build state trial space (Phi) and reduced state init
+    auto trialSpace   = snapshots_to_trial_space< FomSystem, matrix_t, vector_t >( stateSnaps, fom );
     auto reducedState = trial_space_to_reduced_state< FomSystem, vector_t >( trialSpace, fom );
 
-    // Now we can set up the time integration scheme and policy with Pressio
+    // Now we can set up the time integration scheme and ODE policy with Pressio
     auto stepScheme = pressio::ode::StepScheme::ForwardEuler;
     auto policy = pressio::ode::steps_fixed_dt(
         startTime,
@@ -303,13 +327,43 @@ auto buildAndRunROM( const matrix_t& snapshots, FomSystem& fom, typename FomSyst
         dt
     );
 
-    // And finally build the default Galerkin ROM
-    auto rom = pressio::rom::galerkin::create_unsteady_explicit_problem(
-        stepScheme, trialSpace, fom
-    );
+    // Check if hyperreduction is enabled
+    if ( useHyperReduction )
+    {
+        /**
+         * Hyper-reduced ROMs do not evaluate the full RHS at every time step.
+         * Instead, they sample the RHS at selected indices and use a
+         * projection to approximate the reduced RHS. This can greatly
+         * reduce the computational cost of evaluating the ROM, especially
+         * when the FOM is large and the RHS evaluation is expensive.
+         *
+         * However, there are trade-offs in accuracy, as you'll see.
+         *
+         * Here, we build the hyper-reducer using the RHS snapshot matrix
+         * and the trial space. The hyper-reducer is a functor that will
+         * be used by the ROM to compute the reduced RHS from sampled FOM RHSs.
+         */
+        auto hyperReducer = buildHyperReducer< vector_t, matrix_t >( rhsSnaps, trialSpace );
 
-    // Then we use Pressio to run the ROM time integration
-    pressio::ode::advance( rom, reducedState, policy ); /* might need observer */
+        // Build the hyperreduced Galerkin ROM by passing the hyper-reducer
+        // functor to the ROM factory function.
+        auto rom = pressio::rom::galerkin::create_unsteady_explicit_problem(
+            stepScheme, trialSpace, fom, hyperReducer
+        );
+
+        // Run the hyperreduced ROM time integration
+        pressio::ode::advance( rom, reducedState, policy );
+    }
+    else
+    {
+        // Build the default Galerkin ROM (no hyperreduction)
+        auto rom = pressio::rom::galerkin::create_unsteady_explicit_problem(
+            stepScheme, trialSpace, fom
+        );
+
+        // Run the ROM time integration
+        pressio::ode::advance( rom, reducedState, policy );
+    }
 
     // At this point, reducedState contains the ROM solution at final time.
     // We just have to reconstruct the full-order solution from the
@@ -333,8 +387,10 @@ double compareFomAndRom( const matrix_t& fomSolution, const matrix_t& romSolutio
     return error;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
 // Main driver
+///////////////////////////////////////////////////////////////////////////////
+
 int main() {
     // Initialize the logger so we can see Pressio output
     // Change the log level to "debug" for more information
@@ -354,17 +410,21 @@ int main() {
     const double dt    = 0.001;
     const int numSteps = 1000;
     time_t startTime   = 0.0;
-    matrix_t snapshotMatrix = runFOM< FomSystem >( fom, startTime, numSteps, dt );
-    PRESSIOLOG_INFO( "2. Generated snapshot matrix with {} snapshots", snapshotMatrix.cols() );
+    SnapshotSet snapshots = runFOM< FomSystem >( fom, startTime, numSteps, dt );
+    PRESSIOLOG_INFO( "2. Generated snapshot matrix with {} snapshots", snapshots.stateSnapshots.cols() );
 
     // 3. Build the ROM from the snapshot matrix and run it
-    auto romSolution = buildAndRunROM< FomSystem >( snapshotMatrix, fom, startTime, numSteps, dt );
-    PRESSIOLOG_INFO( "3. Built and ran the ROM" );
+    auto hypredSolution = buildAndRunROM< FomSystem >( snapshots, fom, startTime, numSteps, dt, true );
+    auto romSolution    = buildAndRunROM< FomSystem >( snapshots, fom, startTime, numSteps, dt );
+
+    PRESSIOLOG_INFO( "3. Built and ran the ROM (both default and hyper-reduced)" );
 
     // 4. Compare ROM solution against FOM solution (the last snapshot)
-    auto fomSolution = snapshotMatrix.col( snapshotMatrix.cols() - 1 );
-    auto error = compareFomAndRom( fomSolution, romSolution );
-    PRESSIOLOG_INFO( "4. Relative error between FOM and ROM: {}", error );
+    auto fomSolution = snapshots.stateSnapshots.col( snapshots.stateSnapshots.cols() - 1 );
+    auto romError = compareFomAndRom( fomSolution, romSolution );
+    PRESSIOLOG_INFO( "4. Relative error between FOM and default ROM: {}", romError );
+    auto hypredError = compareFomAndRom( fomSolution, hypredSolution );
+    PRESSIOLOG_INFO( "   Relative error between FOM and hyper-reduced ROM: {}", hypredError );
 
     // Finalize the logger
     PRESSIOLOG_FINALIZE();
