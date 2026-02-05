@@ -112,6 +112,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// Step 0: Pressio Setup
+//////////////////////////////////////////////////////////////////////////////////
+
 /**
  * Pressio uses macros to enable features like logging and TPLs.
  * Typically, these would be set during configuration, but we will
@@ -130,7 +134,6 @@
  * The logging macros (from pressio-log) are also included here.
  */
 #include <pressio/rom.hpp>
-#include <vector>
 
 /**
  * We'll also need some helper functions along the way.
@@ -141,6 +144,11 @@
  * And some functions for hyper-reduction.
  */
 #include "hyperreduction.h"
+
+/**
+ * And we'll use std::vectors to store snapshots.
+ */
+#include <vector>
 
 /**
  * Pressio supports various linear algebra backends (such as
@@ -303,9 +311,7 @@ SnapshotSet runFOM( FomSystem& fom, typename FomSystem::time_type startTime, int
 /**
  * Now we use the Pressio ecosystem to construct a ROM representation
  * with the snapshot matrix. As before, there are various APIs that we can meet
- * to use different types of ROMs. We'll use a Galerkin ROM here, with the option
- * for hyper-reduction. Typically, you would choose which ROM is best suited for
- * your application (as opposed to trying both as we do here for demonstration).
+ * to use different types of ROMs. We'll use a basic Galerkin ROM here.
  */
 
 template <typename FomSystem>
