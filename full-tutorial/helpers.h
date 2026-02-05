@@ -1,9 +1,37 @@
+#include <fstream>
+#include <iomanip>
+#include <filesystem>
+
 #include <pressio/rom.hpp>
+
+/**
+ * Observer to capture ROM solutions at each timestep
+ * Signature: void operator()(StepCount, Time, State const&) const
+ */
+template <typename vector_t, typename TrialSpaceType>
+struct RomObserver
+{
+    std::vector<vector_t>& trajectory;
+    const TrialSpaceType& trialSpace;
+    mutable int stepCount;
+
+    RomObserver(std::vector<vector_t>& traj, const TrialSpaceType& ts)
+        : trajectory(traj), trialSpace(ts), stepCount(0) {}
+
+    // Observer call signature required by Pressio
+    template <typename StepCountType, typename TimeType, typename StateType>
+    void operator()(StepCountType step, TimeType /*time*/, const StateType& reducedState) const
+    {
+        // Capture every timestep
+        auto fullState = trialSpace.createFullStateFromReducedState(reducedState);
+        trajectory.push_back(fullState);
+        ++stepCount;
+    }
+};
 
 /**
  * Determine the FOM initial condition
  */
-
 template <typename FomSystem, typename vector_t>
 vector_t computeInitialCondition( const FomSystem& fom )
 {
@@ -86,15 +114,35 @@ matrix_t pinv(const matrix_t& A, double tol = 1e-10)
     return (V_r * Sinv * U_r.transpose()).eval();
 }
 
-std::vector<int> make_stride_samples(std::size_t N, std::size_t m)
+/**
+ * Write solutions to CSV file in the specified output directory
+ */
+template <typename vector_t>
+void writeTrajectoryToCSV( const std::string& outputDir,
+                           const std::string& filename,
+                           const std::vector< vector_t >& trajectory )
 {
-    m = std::max<std::size_t>(1, std::min(N, m));
-    std::vector<int> idx;
-    idx.reserve(m);
-    const double stride = static_cast<double>(N) / static_cast<double>(m);
-    for (std::size_t j = 0; j < m; ++j) {
-        int i = static_cast<int>(std::floor(j * stride)) % static_cast<int>(N);
-        idx.push_back(i);
+    // Ensure directory exists
+    std::filesystem::create_directories(outputDir);
+
+    // Construct full file path
+    std::filesystem::path filepath = std::filesystem::path(outputDir) / filename;
+
+    std::ofstream file(filepath);
+    for (int i = 0; i < trajectory[0].size(); ++i) {
+        file << "x" << i;
+        if (i < trajectory[0].size() - 1) file << ",";
     }
-    return idx;
+    file << "\n";
+
+    // Write data: each row is one timestep
+    for (const auto& state : trajectory) {
+        for (int i = 0; i < state.size(); ++i) {
+            file << std::scientific << std::setprecision(12) << state(i);
+            if (i < state.size() - 1) file << ",";
+        }
+        file << "\n";
+    }
+
+    file.close();
 }

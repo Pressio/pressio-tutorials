@@ -40,6 +40,25 @@ public:
     }
 };
 
+/**
+ * Typical hyperreducers would use a more refined sampling strategy,
+ * such as the Discrete Empirical Interpolation Method (DEIM) or
+ * Q-DEIM. Here, for simplicity, we use uniform striding to select
+ * sample indices.
+ */
+std::vector<int> make_stride_samples(std::size_t N, std::size_t m)
+{
+    m = std::max<std::size_t>(1, std::min(N, m));
+    std::vector<int> idx;
+    idx.reserve(m);
+    const double stride = static_cast<double>(N) / static_cast<double>(m);
+    for (std::size_t j = 0; j < m; ++j) {
+        int i = static_cast<int>(std::floor(j * stride)) % static_cast<int>(N);
+        idx.push_back(i);
+    }
+    return idx;
+}
+
 template <typename vector_t, typename matrix_t>
 auto buildHyperReducer(const matrix_t& rhsSnaps, auto& trialSpace) {
     // POD on RHS snapshots
@@ -48,7 +67,7 @@ auto buildHyperReducer(const matrix_t& rhsSnaps, auto& trialSpace) {
     int K = std::max(r+1, std::min<int>(rhsSnaps.rows(), 3*r + 1));
     matrix_t Theta = svdRhs.matrixU().leftCols(K);
 
-    // Sample selection
+    // Sample selection (via striding here for simplicity)
     const int N = static_cast<int>(rhsSnaps.rows());
     const int m = std::min(N, std::max(K, std::max(r+1, 20))); // at least r+1, K, 20
     auto samp = make_stride_samples(N, m);
@@ -61,13 +80,13 @@ auto buildHyperReducer(const matrix_t& rhsSnaps, auto& trialSpace) {
     matrix_t Phi = trialSpace.basisOfTranslatedSpace(); // N x r
 
     // Compute H = (Phi^T Theta) * pinv(ThetaS)
-    matrix_t cross = Phi.transpose() * Theta;           // r x K
+    matrix_t cross = Phi.transpose() * Theta; // r x K
     matrix_t ThetaS_pinv = pinv<matrix_t>(ThetaS);
 
     PRESSIOLOG_DEBUG("hyper dims: r={} K={} m={} cross=({},{}) pinv=({},{})",
                      r, K, m, cross.rows(), cross.cols(), ThetaS_pinv.rows(), ThetaS_pinv.cols());
 
-    matrix_t H = cross * ThetaS_pinv;              // r x m
+    matrix_t H = cross * ThetaS_pinv; // r x m
 
     // Hyperreducer functor
     ExplicitGalerkinHyperReducer<vector_t, matrix_t> hyperreducer(std::move(H), std::move(samp));

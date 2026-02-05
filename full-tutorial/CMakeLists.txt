@@ -20,3 +20,10 @@ target_include_directories(${exename} PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/../tpls/pressio-ops/include
 	${CMAKE_CURRENT_SOURCE_DIR}/../tpls/pressio-log/include
 )
+
+# Copy plot.py to the build directory
+add_custom_command(TARGET ${exename} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${CMAKE_CURRENT_SOURCE_DIR}/plot.py
+	${CMAKE_CURRENT_BINARY_DIR}/plot.py
+)
