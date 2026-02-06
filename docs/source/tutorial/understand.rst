@@ -31,7 +31,7 @@ Step 0: Pressio Setup
 Pressio is a **header-only** library that provides building blocks
 to create reduced-order models (ROMs) for large-scale dynamical systems.
 
-Because it is header-only, we depends on user-set macros to
+Because it is header-only, we depend on user-set macros to
 enable or disable features at compile time. These macros may
 be set via CMake configuration or directly in the source code
 before including any Pressio headers.
@@ -91,7 +91,7 @@ output from the library as we go:
 
 .. code-block:: cpp
 
-   pressio::log::initialize(pressiolog::LogLevel::info);
+   PRESSIOLOG_INITIALIZE(pressiolog::LogLevel::info);
 
 You can change the ``LogLevel`` argument to ``debug`` for more information,
 or ``sparse`` for less.

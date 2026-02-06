@@ -5,9 +5,9 @@ This tutorial demonstrates how to set up and run a reduced order model (ROM)
 for the 1-D Burgers' equation using the Pressio library. The tutorial covers
 the following key steps:
 
-1. Setting up the full order model (FOM) and generating snapshots.
-2. Constructing the reduced basis using Proper Orthogonal Decomposition (POD).
-3. Building both default and hyper-reduced ROMs.
+1. Setting up the full order model (FOM).
+2. Running the FOM to generate a snapshot matrix.
+3. Building both basic and hyper-reduced ROMs.
 4. Running the ROMs and capturing trajectories.
 5. Comparing the ROM solutions with the FOM solution.
 6. Writing trajectories to CSV files for further analysis.
