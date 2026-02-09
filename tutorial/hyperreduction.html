@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="2D SWE: default Galerkin" href="swe_galerkin_default.html"><link rel="prev" title="Hyper-Reduction" href="../tutorial/hyperreduction.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Start reading here" href="../endtoend/readthisfirst.html"><link rel="prev" title="How do I use Pressio to build and run a ROM?" href="understand.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
-        <title>Start reading here - pressio-tutorials 0.17.0</title>
+        <title>Hyper-Reduction - pressio-tutorials 0.17.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
@@ -198,22 +198,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">1. Full Tutorial: 1-D Burgers' Equation</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorial/overview.html">End-to-end Tutorial: 1-D Burgers’ Equation</a><input aria-label="Toggle navigation of End-to-end Tutorial: 1-D Burgers’ Equation" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/background.html">Background</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/start.html">Quick Start</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/understand.html">How do I use Pressio to build and run a ROM?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/hyperreduction.html">Hyper-Reduction</a></li>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="overview.html">End-to-end Tutorial: 1-D Burgers’ Equation</a><input aria-label="Toggle navigation of End-to-end Tutorial: 1-D Burgers’ Equation" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="start.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understand.html">How do I use Pressio to build and run a ROM?</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Hyper-Reduction</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. End-to-end ROMs Using pressio-demoapps</span></p>
-<ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Start reading here</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_galerkin_default.html">2D SWE: default Galerkin</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_galerkin_hypred_1.html">2D SWE: hyper-reduced Galerkin (example 1)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_lspg_default.html">2D SWE: default LSPG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_lspg_hypred_1.html">2D SWE: hyper-reduced LSPG (example 1)</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/readthisfirst.html">Start reading here</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_galerkin_default.html">2D SWE: default Galerkin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_galerkin_hypred_1.html">2D SWE: hyper-reduced Galerkin (example 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_lspg_default.html">2D SWE: default LSPG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_lspg_hypred_1.html">2D SWE: hyper-reduced LSPG (example 1)</a></li>
 </ul>
 
 </div>
@@ -234,7 +234,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/endtoend/readthisfirst.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/tutorial/hyperreduction.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -252,45 +252,107 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="start-reading-here">
-<h1>Start reading here<a class="headerlink" href="#start-reading-here" title="Link to this heading">¶</a></h1>
-<p>Describing how to use pressio-rom for ROMs cannot be simply
-boiled down to presenting the API, because setting up, running
-and processing a ROM involves several steps.
-We believe the best way to understand these steps and also
-what pressio-rom offers in this context is via demos where the logical sequence
-of steps is presented and explained.
-To this end, we have developed a workflow-based framework where
-one can <em>express</em> what to do, and the framework helps
-automating (to some extent) the execution.</p>
-<section id="key-features">
-<h2>Key features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>each demo is documented in a step-by-step manner (see <a class="reference external" href="swe_galerkin_default.html">example</a>)</p></li>
-<li><p>each demo is defined via a yaml workflow file (<a class="reference external" href="swe_galerkin_default.html#workflow-file">example</a>),
-which is used by the <a class="reference external" href="https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms">driver scripts</a> we provide to execute that demo</p></li>
-<li><p>one can easily extend the framework by adding new ROM methods in pressio-rom or account
-for variations in how each step is run</p></li>
-<li><p>pressio-demoapps: for the end-to-end demos we rely on pressio-demoapps,
-which have built-in support for the sample mesh.
-While we adopt a specific problem (2d Shallow water equations), one can easily
-setup and run similar workflows for any other problem in pressio-demoapps.
-This would only require minimal work.</p></li>
-</ul>
+          <section id="hyper-reduction">
+<h1>Hyper-Reduction<a class="headerlink" href="#hyper-reduction" title="Link to this heading">¶</a></h1>
+<p>This tutorial builds off of the information presented in
+<a class="reference internal" href="understand.html"><span class="doc">How do I use Pressio to build and run a ROM?</span></a> to demonstrate how to set up and run a hyper-reduced
+reduced-order model (ROM) for the 1-D Burgers’ equation using the Pressio library.</p>
+<p>If you have not completed that initial tutorial, please do so before proceeding.</p>
+<p>This page will follow the same structure as the previous tutorial,
+going through the enumerated steps but only highlighting the differences
+needed to implement hyper-reduction.</p>
+<section id="first-why-use-hyper-reduction">
+<h2>First: Why use hyper-reduction?<a class="headerlink" href="#first-why-use-hyper-reduction" title="Link to this heading">¶</a></h2>
+<p>As discussed above, a typical ROM uses only the state snapshots
+to build the reduced basis.</p>
+<p>This reduces the dimensionality of the system, but
+we still evaluate the full-order RHS at each time step,
+which can be computationally expensive. <strong>Hyper-reduction</strong>
+addresses this issue by approximating the RHS using a
+reduced basis constructed from the RHS snapshots.</p>
+<p>So instead of a reduced state basis alone, we will
+also build a reduced basis for the RHS using the
+RHS snapshots we collected earlier.</p>
+<p>With this, we can begin the tutorial.</p>
 </section>
-<section id="outcomes">
-<h2>Outcomes<a class="headerlink" href="#outcomes" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>by reading these end-to-end demos you should be able to understand
-the various steps and how these steps map to pressio-rom code</p></li>
-<li><p>you can easily explore the impact of changing the parameter spaces,
-or the basis size by just changing the workflow file and rerunning</p></li>
-<li><p>while the workflow driver scripts and code are tailored to
-pressio-demoapps running in shared memory mode, one can easily
-recycle these scripts/code and adapt them to another code.
-Because the steps involved would NOT change, but how you implement
-each step does change and can be application specific.</p></li>
-</ul>
+<section id="steps-0-1-as-before">
+<h2>Steps 0-1: As Before<a class="headerlink" href="#steps-0-1-as-before" title="Link to this heading">¶</a></h2>
+<p>Setting up Pressio and constructing your FOM is done exactly
+the same, regardless of the type of ROM you will build.</p>
+</section>
+<section id="step-2-run-the-fom-to-generate-snapshots">
+<h2>Step 2: Run the FOM to generate snapshots<a class="headerlink" href="#step-2-run-the-fom-to-generate-snapshots" title="Link to this heading">¶</a></h2>
+<p>In the original tutorial, we defined a <code class="docutils literal notranslate"><span class="pre">SnapshotSet</span></code>
+to collect snapshots for both the <code class="docutils literal notranslate"><span class="pre">state</span></code> and the
+right-hand side <code class="docutils literal notranslate"><span class="pre">rhs</span></code> of the full-order model (FOM).</p>
+<p>You may have noticed that the default ROM did not use
+the RHS snapshots at all. However, for hyper-reduction,
+we will need these RHS snapshots to build the
+hyper-reduction basis.</p>
+<p>We will explain this further in subsequent steps.</p>
+<p>If you are not implementing hyper-reduction, there is no
+need to store the RHS snapshots. You can simply return
+the state snapshots directly.</p>
+</section>
+<section id="step-3-build-the-rom-from-the-snapshot-matrix">
+<h2>Step 3: Build the ROM from the snapshot matrix<a class="headerlink" href="#step-3-build-the-rom-from-the-snapshot-matrix" title="Link to this heading">¶</a></h2>
+<p>The process begins identically to before: we use the
+state snapshots to compute the trial space, and then use
+that to get the reduced state. We will also use the same
+<code class="docutils literal notranslate"><span class="pre">ForwardEuler</span></code> time stepper as before.</p>
+<p>The key difference is in the definition of a <strong>hyper-reducer</strong>.</p>
+<p>The hyper-reducer is a functor that takes in a sampled
+FOM RHS vector and projects it into a reduced space.</p>
+<p>The process is similar to that of the trial space: we
+compute a POD basis from the RHS snapshots using SVD,
+and then use that basis to project the FOM RHS onto
+a lower-dimensional subspace.</p>
+<p>There are refined techniques for selecting which rows
+of the RHS to sample, such as the Discrete Empirical
+Interpolation Method (DEIM). For simplicity in this tutorial,
+we will use a basic sampling approach that selects rows at
+a uniform interval (or stride).</p>
+<p>Here is a general outline of how the hyper-reducer functor
+is defined:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">svdRhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* compute SVD of RHS snapshot matrix */</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">rhsBasis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* extract leading left singular vectors from SVD */</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">sampleIndices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* select sample indices uniformly */</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">sampledBasis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* extract rows of rhsBasis at sampleIndices */</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">trialBasis</span><span class="w"> </span><span class="cm">/* aka Phi */</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">.</span><span class="n">basisOfTranslatedSpace</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">hypredMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* (Phi^T rhsBasis) * pinv(sampledBasis) */</span><span class="p">;</span>
+
+<span class="c1">// Construct hyperreducer functor</span>
+<span class="n">ExplicitGalerkinHyperReducer</span><span class="w"> </span><span class="nf">hyperReducer</span><span class="p">(</span><span class="n">hypredMatrix</span><span class="p">,</span><span class="w"> </span><span class="n">sampleIndices</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This code is implemented fully in the <code class="docutils literal notranslate"><span class="pre">hyperreduction.h</span></code> file
+by the <code class="docutils literal notranslate"><span class="pre">buildHyperReducer</span></code> function.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ExplicitGalerkinHyperReducer</span></code> above is a
+user-defined functor that implements an <code class="docutils literal notranslate"><span class="pre">operator()</span></code> method
+that takes in a sampled FOM RHS vector and outputs the reduced RHS vector.</p>
+<p>Like with the other Pressio interfaces, you can define your
+hyperreducer in any way you like, as long as it meets the API requirements.</p>
+<p>Now that we have defined the hyper-reducer, we can
+build the ROM almost identically to before, but passing
+the hyperreducer functor as an additional argument:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">rom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">galerkin</span><span class="o">::</span><span class="n">create_default_problem_with_hyperreduction</span><span class="p">(</span>
+<span class="w">    </span><span class="n">stepScheme</span><span class="p">,</span>
+<span class="w">    </span><span class="n">trialSpace</span><span class="p">,</span>
+<span class="w">    </span><span class="n">fom</span><span class="p">,</span>
+<span class="w">    </span><span class="n">hyperReducer</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-6-as-before">
+<h2>Step 4-6: As Before<a class="headerlink" href="#step-4-6-as-before" title="Link to this heading">¶</a></h2>
+<p>The rest of the steps are identical regardless of whether
+you are using hyper-reduction or not. You can refer to the
+<a class="reference internal" href="understand.html"><span class="doc">How do I use Pressio to build and run a ROM?</span></a> page for details on how to run the ROM,
+reconstruct the full-order solution, compare to the FOM,
+and examine the output files.</p>
 </section>
 </section>
 
@@ -299,23 +361,23 @@ each step does change and can be application specific.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="swe_galerkin_default.html">
+          <a class="next-page" href="../endtoend/readthisfirst.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">2D SWE: default Galerkin</div>
+                <div class="title">Start reading here</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../tutorial/hyperreduction.html">
+          <a class="prev-page" href="understand.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Hyper-Reduction</div>
+                <div class="title">How do I use Pressio to build and run a ROM?</div>
                 
               </div>
             </a>
@@ -350,9 +412,12 @@ each step does change and can be application specific.</p></li>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Start reading here</a><ul>
-<li><a class="reference internal" href="#key-features">Key features</a></li>
-<li><a class="reference internal" href="#outcomes">Outcomes</a></li>
+<li><a class="reference internal" href="#">Hyper-Reduction</a><ul>
+<li><a class="reference internal" href="#first-why-use-hyper-reduction">First: Why use hyper-reduction?</a></li>
+<li><a class="reference internal" href="#steps-0-1-as-before">Steps 0-1: As Before</a></li>
+<li><a class="reference internal" href="#step-2-run-the-fom-to-generate-snapshots">Step 2: Run the FOM to generate snapshots</a></li>
+<li><a class="reference internal" href="#step-3-build-the-rom-from-the-snapshot-matrix">Step 3: Build the ROM from the snapshot matrix</a></li>
+<li><a class="reference internal" href="#step-4-6-as-before">Step 4-6: As Before</a></li>
 </ul>
 </li>
 </ul>

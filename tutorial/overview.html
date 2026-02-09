@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="2D SWE: default Galerkin" href="swe_galerkin_default.html"><link rel="prev" title="Hyper-Reduction" href="../tutorial/hyperreduction.html">
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Background" href="background.html"><link rel="prev" title="License" href="../license.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
-        <title>Start reading here - pressio-tutorials 0.17.0</title>
+        <title>End-to-end Tutorial: 1-D Burgers’ Equation - pressio-tutorials 0.17.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=949a1ff5" />
@@ -174,7 +174,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -198,22 +198,22 @@
 <li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">1. Full Tutorial: 1-D Burgers' Equation</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tutorial/overview.html">End-to-end Tutorial: 1-D Burgers’ Equation</a><input aria-label="Toggle navigation of End-to-end Tutorial: 1-D Burgers’ Equation" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/background.html">Background</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/start.html">Quick Start</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/understand.html">How do I use Pressio to build and run a ROM?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorial/hyperreduction.html">Hyper-Reduction</a></li>
+<ul class="current">
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">End-to-end Tutorial: 1-D Burgers’ Equation</a><input aria-label="Toggle navigation of End-to-end Tutorial: 1-D Burgers’ Equation" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="start.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="understand.html">How do I use Pressio to build and run a ROM?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hyperreduction.html">Hyper-Reduction</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">2. End-to-end ROMs Using pressio-demoapps</span></p>
-<ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Start reading here</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_galerkin_default.html">2D SWE: default Galerkin</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_galerkin_hypred_1.html">2D SWE: hyper-reduced Galerkin (example 1)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_lspg_default.html">2D SWE: default LSPG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="swe_lspg_hypred_1.html">2D SWE: hyper-reduced LSPG (example 1)</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/readthisfirst.html">Start reading here</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_galerkin_default.html">2D SWE: default Galerkin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_galerkin_hypred_1.html">2D SWE: hyper-reduced Galerkin (example 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_lspg_default.html">2D SWE: default LSPG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../endtoend/swe_lspg_hypred_1.html">2D SWE: hyper-reduced LSPG (example 1)</a></li>
 </ul>
 
 </div>
@@ -234,7 +234,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/endtoend/readthisfirst.rst.txt" title="View this page">
+  <a class="muted-link" href="../_sources/tutorial/overview.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -247,51 +247,34 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="start-reading-here">
-<h1>Start reading here<a class="headerlink" href="#start-reading-here" title="Link to this heading">¶</a></h1>
-<p>Describing how to use pressio-rom for ROMs cannot be simply
-boiled down to presenting the API, because setting up, running
-and processing a ROM involves several steps.
-We believe the best way to understand these steps and also
-what pressio-rom offers in this context is via demos where the logical sequence
-of steps is presented and explained.
-To this end, we have developed a workflow-based framework where
-one can <em>express</em> what to do, and the framework helps
-automating (to some extent) the execution.</p>
-<section id="key-features">
-<h2>Key features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>each demo is documented in a step-by-step manner (see <a class="reference external" href="swe_galerkin_default.html">example</a>)</p></li>
-<li><p>each demo is defined via a yaml workflow file (<a class="reference external" href="swe_galerkin_default.html#workflow-file">example</a>),
-which is used by the <a class="reference external" href="https://github.com/Pressio/pressio-tutorials/tree/develop/end-to-end-roms">driver scripts</a> we provide to execute that demo</p></li>
-<li><p>one can easily extend the framework by adding new ROM methods in pressio-rom or account
-for variations in how each step is run</p></li>
-<li><p>pressio-demoapps: for the end-to-end demos we rely on pressio-demoapps,
-which have built-in support for the sample mesh.
-While we adopt a specific problem (2d Shallow water equations), one can easily
-setup and run similar workflows for any other problem in pressio-demoapps.
-This would only require minimal work.</p></li>
+          <section id="end-to-end-tutorial-1-d-burgers-equation">
+<h1>End-to-end Tutorial: 1-D Burgers’ Equation<a class="headerlink" href="#end-to-end-tutorial-1-d-burgers-equation" title="Link to this heading">¶</a></h1>
+<p>This tutorial demonstrates how to set up and run a reduced order model (ROM)
+for the 1-D Burgers’ equation using the Pressio library. The tutorial covers
+the following key steps:</p>
+<ol class="arabic simple">
+<li><p>Setting up the full order model (FOM).</p></li>
+<li><p>Running the FOM to generate a snapshot matrix.</p></li>
+<li><p>Building both basic and hyper-reduced ROMs.</p></li>
+<li><p>Running the ROMs and capturing trajectories.</p></li>
+<li><p>Comparing the ROM solutions with the FOM solution.</p></li>
+<li><p>Writing trajectories to CSV files for further analysis.</p></li>
+</ol>
+<p>The tutorial is implemented in C++ and leverages Pressio’s capabilities for
+model reduction and time integration.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="understand.html">How do I use Pressio to build and run a ROM?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hyperreduction.html">Hyper-Reduction</a></li>
 </ul>
-</section>
-<section id="outcomes">
-<h2>Outcomes<a class="headerlink" href="#outcomes" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>by reading these end-to-end demos you should be able to understand
-the various steps and how these steps map to pressio-rom code</p></li>
-<li><p>you can easily explore the impact of changing the parameter spaces,
-or the basis size by just changing the workflow file and rerunning</p></li>
-<li><p>while the workflow driver scripts and code are tailored to
-pressio-demoapps running in shared memory mode, one can easily
-recycle these scripts/code and adapt them to another code.
-Because the steps involved would NOT change, but how you implement
-each step does change and can be application specific.</p></li>
-</ul>
-</section>
+</div>
 </section>
 
         </article>
@@ -299,23 +282,23 @@ each step does change and can be application specific.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="swe_galerkin_default.html">
+          <a class="next-page" href="background.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">2D SWE: default Galerkin</div>
+                <div class="title">Background</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../tutorial/hyperreduction.html">
+          <a class="prev-page" href="../license.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Hyper-Reduction</div>
+                <div class="title">License</div>
                 
               </div>
             </a>
@@ -338,28 +321,8 @@ each step does change and can be application specific.</p></li>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Start reading here</a><ul>
-<li><a class="reference internal" href="#key-features">Key features</a></li>
-<li><a class="reference internal" href="#outcomes">Outcomes</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -370,5 +333,6 @@ each step does change and can be application specific.</p></li>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=ff8fa330"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
