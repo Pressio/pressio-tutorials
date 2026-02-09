@@ -36,7 +36,7 @@ Verify the build
 
 .. code-block:: cpp
 
-   cd $BUIlDDIR
+   cd $BUILDDIR
    ctest
 
 Then what?
