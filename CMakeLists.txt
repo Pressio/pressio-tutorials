@@ -62,3 +62,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 enable_testing()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/end-to-end-roms)
+
+# Build the standalone full tutorial (burgers example)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/full-tutorial)

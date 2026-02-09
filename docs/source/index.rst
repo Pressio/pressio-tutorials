@@ -39,19 +39,21 @@ Find us on `Slack <https://pressioteam.slack.com>`_.
 
 .. toctree::
    :maxdepth: 1
-   :hidden:
 
    build
-   Join our Slack <https://pressioteam.slack.com>
-   GitHub Repo <https://github.com/Pressio/pressio-tutorials>
-   Open an issue/feature req. <https://github.com/Pressio/pressio-tutorials/issues>
    license
-
 
 .. toctree::
    :maxdepth: 0
    :hidden:
-   :caption: 1. End-to-end ROMs using pressio-demoapps
+   :caption: 1. Full Tutorial: 1-D Burgers' Equation
+
+   ./tutorial/overview
+
+.. toctree::
+   :maxdepth: 0
+   :hidden:
+   :caption: 2. End-to-end ROMs Using pressio-demoapps
 
    ./endtoend/readthisfirst
    ./endtoend/swe_galerkin_default
