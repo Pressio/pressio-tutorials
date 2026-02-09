@@ -11,6 +11,30 @@ This page will follow the same structure as the previous tutorial,
 going through the enumerated steps but only highlighting the differences
 needed to implement hyper-reduction.
 
+First: Why use hyper-reduction?
+-------------------------------
+
+As discussed above, a typical ROM uses only the state snapshots
+to build the reduced basis.
+
+This reduces the dimensionality of the system, but
+we still evaluate the full-order RHS at each time step,
+which can be computationally expensive. **Hyper-reduction**
+addresses this issue by approximating the RHS using a
+reduced basis constructed from the RHS snapshots.
+
+So instead of a reduced state basis alone, we will
+also build a reduced basis for the RHS using the
+RHS snapshots we collected earlier.
+
+With this, we can begin the tutorial.
+
+Steps 0-1: As Before
+--------------------
+
+Setting up Pressio and constructing your FOM is done exactly
+the same, regardless of the type of ROM you will build.
+
 Step 2: Run the FOM to generate snapshots
 -----------------------------------------
 
@@ -31,19 +55,6 @@ the state snapshots directly.
 
 Step 3: Build the ROM from the snapshot matrix
 ----------------------------------------------
-
-A typical ROM uses only the state snapshots to build
-the reduced basis via Proper Orthogonal Decomposition (POD).
-
-This reduces the dimensionality of the system, but
-we still evaluate the full-order RHS at each time step,
-which can be computationally expensive. **Hyper-reduction**
-addresses this issue by approximating the RHS using a
-reduced basis constructed from the RHS snapshots.
-
-So instead of a reduced state basis alone, we will
-also build a reduced basis for the RHS using the
-RHS snapshots we collected earlier.
 
 The process begins identically to before: we use the
 state snapshots to compute the trial space, and then use

@@ -36,7 +36,7 @@ enable or disable features at compile time. These macros may
 be set via CMake configuration or directly in the source code
 before including any Pressio headers.
 
-A complete dicussion of Pressio's macros can be found in the
+A complete discussion of Pressio's macros can be found in the
 `pressio-rom documentation <https://pressio.github.io/pressio-rom/keywords.html>`_.
 
 In this tutorial, we simply define the key macros in the source code,
@@ -144,6 +144,11 @@ that meets the following API:
 - A method ``createRhs()`` that returns a new right-hand side vector
 - A method ``rhs(const state_type & u, time_type t, rhs_type & f)`` that computes the right-hand side
 
+.. note::
+
+   "RHS" here stands for "right-hand side," and refers to the function
+   :math:`\mathbf{f}(\mathbf{u}, t; \mu)` in the ODE above.
+
 Step 2: Run the FOM to generate snapshots
 -----------------------------------------
 
@@ -172,6 +177,13 @@ to construct the reduced basis via Proper Orthogonal Decomposition (POD).
 
 Step 3: Build the ROM from the snapshot matrix
 ----------------------------------------------
+
+.. note::
+
+   The ``burgers.cpp`` driver includes code for building both standard and
+   hyper-reduced ROMs. For now, we'll focus on the standard ROM, and leave
+   a discussion of hyper-reduction for the  :doc:`hyperreduction` tutorial
+   that follows this one.
 
 Before we can use Pressio to construct the ROM, we need to find
 the reduced basis from the collected snapshots. This is done using

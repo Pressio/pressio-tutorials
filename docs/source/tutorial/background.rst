@@ -1,6 +1,10 @@
 Background
 ==========
 
+Reduced-order models (ROMs) can be used to simulate a variety of physical phenomena
+modeled by partial differential equations (PDEs). In this tutorial, we will focus
+on the 1-D Burgers' equation as a representative example.
+
 1-D Burgers' Equation
 ----------------------
 
