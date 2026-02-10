@@ -91,7 +91,11 @@ is defined:
     auto trialBasis /* aka Phi */ = trialSpace.basisOfTranslatedSpace();
     auto hypredMatrix = /* (Phi^T rhsBasis) * pinv(sampledBasis) */;
 
-    // Construct hyperreducer functor
+    /*
+     * Construct hyperreducer functor with operator() that:
+     *   - Samples full RHS at sampleIndices
+     *   - Applies hypredMatrix to get reduced RHS
+     */
     ExplicitGalerkinHyperReducer hyperReducer(hypredMatrix, sampleIndices);
 
 This code is implemented fully in the ``hyperreduction.h`` file
@@ -102,7 +106,8 @@ user-defined functor that implements an ``operator()`` method
 that takes in a sampled FOM RHS vector and outputs the reduced RHS vector.
 
 Like with the other Pressio interfaces, you can define your
-hyperreducer in any way you like, as long as it meets the API requirements.
+hyperreducer in any way you like, as long as it meets the API requirements
+(namely, defining the ``operator()``).
 
 Now that we have defined the hyper-reducer, we can
 build the ROM almost identically to before, but passing
