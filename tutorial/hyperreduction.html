@@ -323,7 +323,11 @@ is defined:</p>
 <span class="k">auto</span><span class="w"> </span><span class="n">trialBasis</span><span class="w"> </span><span class="cm">/* aka Phi */</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">.</span><span class="n">basisOfTranslatedSpace</span><span class="p">();</span>
 <span class="k">auto</span><span class="w"> </span><span class="n">hypredMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* (Phi^T rhsBasis) * pinv(sampledBasis) */</span><span class="p">;</span>
 
-<span class="c1">// Construct hyperreducer functor</span>
+<span class="cm">/*</span>
+<span class="cm"> * Construct hyperreducer functor with operator() that:</span>
+<span class="cm"> *   - Samples full RHS at sampleIndices</span>
+<span class="cm"> *   - Applies hypredMatrix to get reduced RHS</span>
+<span class="cm"> */</span>
 <span class="n">ExplicitGalerkinHyperReducer</span><span class="w"> </span><span class="nf">hyperReducer</span><span class="p">(</span><span class="n">hypredMatrix</span><span class="p">,</span><span class="w"> </span><span class="n">sampleIndices</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -333,7 +337,8 @@ by the <code class="docutils literal notranslate"><span class="pre">buildHyperRe
 user-defined functor that implements an <code class="docutils literal notranslate"><span class="pre">operator()</span></code> method
 that takes in a sampled FOM RHS vector and outputs the reduced RHS vector.</p>
 <p>Like with the other Pressio interfaces, you can define your
-hyperreducer in any way you like, as long as it meets the API requirements.</p>
+hyperreducer in any way you like, as long as it meets the API requirements
+(namely, defining the <code class="docutils literal notranslate"><span class="pre">operator()</span></code>).</p>
 <p>Now that we have defined the hyper-reducer, we can
 build the ROM almost identically to before, but passing
 the hyperreducer functor as an additional argument:</p>
@@ -391,7 +396,7 @@ and examine the output files.</p>
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Feb 09, 2026</div>
+              Last updated on Feb 10, 2026</div>
           </div>
           <div class="right-details">
             

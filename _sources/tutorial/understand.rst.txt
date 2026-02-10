@@ -1,3 +1,5 @@
+.. _top-of-page:
+
 How do I use Pressio to build and run a ROM?
 ============================================
 
@@ -8,12 +10,13 @@ Pressio.
 We recommend reading this step-by-step explanation alongside
 the source code itself, which is fully commented to provide
 additional context. The source code for this tutorial
-can be found in ``$SRC/full-tutorial/burgers.cpp``
+can be found in ``$SRC/full-tutorial/burgers.cpp``. It is
+also included :ref:`at the bottom of this page <full-source-file>` for reference.
 
-Each step found below corresponds to the same-named
-section of the source code. After Step 0, we recommend
-you jump to the ``main`` function and follow along with
-the steps as they are explained.
+Each step found below (and in the Table of Contents to the right)
+corresponds to the same-named section of the source code.
+After Step 0, we recommend you jump to the ``main`` function
+and follow along with the steps as they are explained.
 
 .. note::
 
@@ -415,3 +418,17 @@ The plot will be saved to your current directory as
    You'll find that the hyper-reduced ROM does not perform quite as well
    as the standard ROM. But the tradeoff is that the hyper-reduced ROM
    is computationally cheaper to run, especially for large-scale systems.
+
+:ref:`Go to top <top-of-page>`
+
+.. _full-source-file:
+
+Full Source File
+----------------
+
+.. literalinclude:: ../../../full-tutorial/burgers.cpp
+   :language: cpp
+   :lines: 113-
+   :linenos:
+
+:ref:`Go to top <top-of-page>`

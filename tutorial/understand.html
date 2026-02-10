@@ -253,18 +253,19 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="how-do-i-use-pressio-to-build-and-run-a-rom">
-<h1>How do I use Pressio to build and run a ROM?<a class="headerlink" href="#how-do-i-use-pressio-to-build-and-run-a-rom" title="Link to this heading">¶</a></h1>
+<span id="top-of-page"></span><h1>How do I use Pressio to build and run a ROM?<a class="headerlink" href="#how-do-i-use-pressio-to-build-and-run-a-rom" title="Link to this heading">¶</a></h1>
 <p>This tutorial is designed to show the entire, end-to-end
 process of building and running a reduced-order model with
 Pressio.</p>
 <p>We recommend reading this step-by-step explanation alongside
 the source code itself, which is fully commented to provide
 additional context. The source code for this tutorial
-can be found in <code class="docutils literal notranslate"><span class="pre">$SRC/full-tutorial/burgers.cpp</span></code></p>
-<p>Each step found below corresponds to the same-named
-section of the source code. After Step 0, we recommend
-you jump to the <code class="docutils literal notranslate"><span class="pre">main</span></code> function and follow along with
-the steps as they are explained.</p>
+can be found in <code class="docutils literal notranslate"><span class="pre">$SRC/full-tutorial/burgers.cpp</span></code>. It is
+also included <a class="reference internal" href="#full-source-file"><span class="std std-ref">at the bottom of this page</span></a> for reference.</p>
+<p>Each step found below (and in the Table of Contents to the right)
+corresponds to the same-named section of the source code.
+After Step 0, we recommend you jump to the <code class="docutils literal notranslate"><span class="pre">main</span></code> function
+and follow along with the steps as they are explained.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You’ll notice that the Pressio examples, this one included,
@@ -578,6 +579,403 @@ closely tracks the FOM solution throughout the time integration.</p>
 as the standard ROM. But the tradeoff is that the hyper-reduced ROM
 is computationally cheaper to run, especially for large-scale systems.</p>
 </div>
+<p><a class="reference internal" href="#top-of-page"><span class="std std-ref">Go to top</span></a></p>
+</section>
+<section id="full-source-file">
+<span id="id1"></span><h2>Full Source File<a class="headerlink" href="#full-source-file" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">  2</span><span class="c1">// Step 0: Pressio Setup</span>
+<span class="linenos">  3</span><span class="c1">//////////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">  4</span>
+<span class="linenos">  5</span><span class="cm">/**</span>
+<span class="linenos">  6</span><span class="cm"> * Pressio uses macros to enable features like logging and TPLs.</span>
+<span class="linenos">  7</span><span class="cm"> * Typically, these would be set during configuration, but we will</span>
+<span class="linenos">  8</span><span class="cm"> * define them explicitly here for demonstration purposes.</span>
+<span class="linenos">  9</span><span class="cm"> *</span>
+<span class="linenos"> 10</span><span class="cm"> * Importantly, these macros should be defined BEFORE including any Pressio</span>
+<span class="linenos"> 11</span><span class="cm"> * headers.</span>
+<span class="linenos"> 12</span><span class="cm"> */</span>
+<span class="linenos"> 13</span><span class="cp">#define PRESSIO_ENABLE_LOGGING</span>
+<span class="linenos"> 14</span><span class="cp">#define PRESSIO_ENABLE_TPL_EIGEN</span>
+<span class="linenos"> 15</span>
+<span class="linenos"> 16</span><span class="cm">/**</span>
+<span class="linenos"> 17</span><span class="cm"> * Due to the hierarchical structure of Pressio, including</span>
+<span class="linenos"> 18</span><span class="cm"> * pressio/rom.hpp will also pull in all necessary dependencies</span>
+<span class="linenos"> 19</span><span class="cm"> * (including Eigen, since we defined the macro above).</span>
+<span class="linenos"> 20</span><span class="cm"> * The logging macros (from pressio-log) are also included here.</span>
+<span class="linenos"> 21</span><span class="cm"> */</span>
+<span class="linenos"> 22</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pressio/rom.hpp&gt;</span>
+<span class="linenos"> 23</span>
+<span class="linenos"> 24</span><span class="cm">/**</span>
+<span class="linenos"> 25</span><span class="cm"> * We&#39;ll also need some helper functions along the way.</span>
+<span class="linenos"> 26</span><span class="cm"> */</span>
+<span class="linenos"> 27</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;helpers.h&quot;</span>
+<span class="linenos"> 28</span>
+<span class="linenos"> 29</span><span class="cm">/**</span>
+<span class="linenos"> 30</span><span class="cm"> * And some functions for hyper-reduction.</span>
+<span class="linenos"> 31</span><span class="cm"> */</span>
+<span class="linenos"> 32</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;hyperreduction.h&quot;</span>
+<span class="linenos"> 33</span>
+<span class="linenos"> 34</span><span class="cm">/**</span>
+<span class="linenos"> 35</span><span class="cm"> * And we&#39;ll use std::vectors to store snapshots.</span>
+<span class="linenos"> 36</span><span class="cm"> */</span>
+<span class="linenos"> 37</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 38</span>
+<span class="linenos"> 39</span><span class="cm">/**</span>
+<span class="linenos"> 40</span><span class="cm"> * Pressio supports various linear algebra backends (such as</span>
+<span class="linenos"> 41</span><span class="cm"> * Eigen, Tpetra, and Kokkos) and provides a unified interface</span>
+<span class="linenos"> 42</span><span class="cm"> * with the pressio::ops library for common operations. In this</span>
+<span class="linenos"> 43</span><span class="cm"> * tutorial, we will use Eigen.</span>
+<span class="linenos"> 44</span><span class="cm"> */</span>
+<span class="linenos"> 45</span><span class="k">using</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">;</span>
+<span class="linenos"> 46</span><span class="k">using</span><span class="w"> </span><span class="n">matrix_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">;</span>
+<span class="linenos"> 47</span>
+<span class="linenos"> 48</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos"> 49</span><span class="c1">// Step 1: Define the Full-Order Model (FOM)</span>
+<span class="linenos"> 50</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos"> 51</span>
+<span class="linenos"> 52</span><span class="cm">/**</span>
+<span class="linenos"> 53</span><span class="cm"> * Pressio requires a specific API to be used for the FOM class. This API can</span>
+<span class="linenos"> 54</span><span class="cm"> * vary depending on the type of problem. For the 1D Burgers&#39; equation,</span>
+<span class="linenos"> 55</span><span class="cm"> * we will use the API for a semi-discrete FOM for time-dependent problems of</span>
+<span class="linenos"> 56</span><span class="cm"> * the form:</span>
+<span class="linenos"> 57</span><span class="cm"> *</span>
+<span class="linenos"> 58</span><span class="cm"> *     d/dt y(t) = f(y, t).</span>
+<span class="linenos"> 59</span><span class="cm"> *</span>
+<span class="linenos"> 60</span><span class="cm"> * The various FOM APIs can be found in pressio/rom/concepts.hpp.</span>
+<span class="linenos"> 61</span><span class="cm"> *</span>
+<span class="linenos"> 62</span><span class="cm"> * According to the semi-discrete API, our FOM class must define the following:</span>
+<span class="linenos"> 63</span><span class="cm"> *</span>
+<span class="linenos"> 64</span><span class="cm"> *     1. Three core types</span>
+<span class="linenos"> 65</span><span class="cm"> *         - time_type, state_type, rhs_type</span>
+<span class="linenos"> 66</span><span class="cm"> *</span>
+<span class="linenos"> 67</span><span class="cm"> *     2. A method to create the RHS vector</span>
+<span class="linenos"> 68</span><span class="cm"> *         - createRhs() -&gt; rhs_type</span>
+<span class="linenos"> 69</span><span class="cm"> *</span>
+<span class="linenos"> 70</span><span class="cm"> *     3. A method to compute the RHS</span>
+<span class="linenos"> 71</span><span class="cm"> *         - rhs(const state_type &amp; u, time_type t, rhs_type &amp; f) -&gt; void</span>
+<span class="linenos"> 72</span><span class="cm"> *</span>
+<span class="linenos"> 73</span><span class="cm"> * And that&#39;s it!</span>
+<span class="linenos"> 74</span><span class="cm"> */</span>
+<span class="linenos"> 75</span><span class="k">class</span><span class="w"> </span><span class="nc">Burgers1dFom</span>
+<span class="linenos"> 76</span><span class="p">{</span>
+<span class="linenos"> 77</span><span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos"> 78</span><span class="w">        </span><span class="c1">// API Requirement: Core types</span>
+<span class="linenos"> 79</span><span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="n">time_type</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span>
+<span class="linenos"> 80</span><span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="n">state_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vector_t</span><span class="p">;</span>
+<span class="linenos"> 81</span><span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="n">rhs_type</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">vector_t</span><span class="p">;</span>
+<span class="linenos"> 82</span>
+<span class="linenos"> 83</span><span class="w">    </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos"> 84</span><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">N_</span><span class="p">{</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos"> 85</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">dx_</span><span class="p">{</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos"> 86</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">nu_</span><span class="p">{</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos"> 87</span>
+<span class="linenos"> 88</span><span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos"> 89</span><span class="w">        </span><span class="n">Burgers1dFom</span><span class="p">(</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">domainLength</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">viscosity</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos"> 90</span><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">N_</span><span class="p">(</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">),</span><span class="w"> </span><span class="n">dx_</span><span class="p">(</span><span class="w"> </span><span class="n">domainLength</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">),</span><span class="w"> </span><span class="n">nu_</span><span class="p">(</span><span class="w"> </span><span class="n">viscosity</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos"> 91</span><span class="w">        </span><span class="p">{</span>
+<span class="linenos"> 92</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="w"> </span><span class="n">N_</span><span class="w">  </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos"> 93</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="w"> </span><span class="n">dx_</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos"> 94</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="w"> </span><span class="n">nu_</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos"> 95</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 96</span>
+<span class="linenos"> 97</span><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">N_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 98</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">dx</span><span class="p">()</span><span class="w">     </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">dx_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 99</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">nu</span><span class="p">()</span><span class="w">     </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">nu_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">100</span>
+<span class="linenos">101</span><span class="w">        </span><span class="c1">// API Requirement: createRhs() method</span>
+<span class="linenos">102</span><span class="w">        </span><span class="n">rhs_type</span><span class="w"> </span><span class="n">createRhs</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="linenos">103</span><span class="w">        </span><span class="p">{</span>
+<span class="linenos">104</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">rhs_type</span><span class="o">::</span><span class="n">Zero</span><span class="p">(</span><span class="w"> </span><span class="n">N_</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">105</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">106</span>
+<span class="linenos">107</span><span class="w">        </span><span class="c1">// API Requirement: rhs(...) method</span>
+<span class="linenos">108</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">rhs</span><span class="p">(</span>
+<span class="linenos">109</span><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">state_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">u</span><span class="p">,</span>
+<span class="linenos">110</span><span class="w">            </span><span class="n">time_type</span><span class="w"> </span><span class="cm">/*t*/</span><span class="p">,</span>
+<span class="linenos">111</span><span class="w">            </span><span class="n">rhs_type</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span>
+<span class="linenos">112</span><span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="linenos">113</span><span class="w">        </span><span class="p">{</span>
+<span class="linenos">114</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">N_</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">115</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">N_</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">116</span>
+<span class="linenos">117</span><span class="w">            </span><span class="c1">// periodic indexing helpers</span>
+<span class="linenos">118</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="p">](</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N_</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos">119</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">im</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="p">](</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">N_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N_</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos">120</span>
+<span class="linenos">121</span><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">inv2dx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dx_</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">122</span><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">invdx2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">dx_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dx_</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">123</span>
+<span class="linenos">124</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N_</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">125</span><span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">iL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">im</span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">126</span><span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">iR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ip</span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">127</span>
+<span class="linenos">128</span><span class="w">                </span><span class="c1">// convective term: -(1/2 d/dx (u^2)) using centered flux difference</span>
+<span class="linenos">129</span><span class="w">                </span><span class="c1">// d/dx (u^2) ~ (u_{i+1}^2 - u_{i-1}^2) / (2 dx)</span>
+<span class="linenos">130</span><span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">dudt_conv</span><span class="w"> </span><span class="o">=</span>
+<span class="linenos">131</span><span class="w">                    </span><span class="mf">-0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">iR</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">iR</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">iL</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">iL</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">inv2dx</span><span class="p">;</span>
+<span class="linenos">132</span>
+<span class="linenos">133</span><span class="w">                </span><span class="c1">// viscous term: nu * u_xx using second-order centered FD</span>
+<span class="linenos">134</span><span class="w">                </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">dudt_diff</span><span class="w"> </span><span class="o">=</span>
+<span class="linenos">135</span><span class="w">                    </span><span class="n">nu_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">iR</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">u</span><span class="p">[</span><span class="w"> </span><span class="n">iL</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">invdx2</span><span class="p">;</span>
+<span class="linenos">136</span><span class="w">                </span><span class="n">f</span><span class="p">[</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dudt_conv</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dudt_diff</span><span class="p">;</span>
+<span class="linenos">137</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">138</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">139</span><span class="p">};</span>
+<span class="linenos">140</span>
+<span class="linenos">141</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">142</span><span class="c1">// Step 2: Run the FOM to generate snapshots (states and RHS)</span>
+<span class="linenos">143</span><span class="c1">////////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">144</span>
+<span class="linenos">145</span><span class="k">struct</span><span class="w"> </span><span class="nc">SnapshotSet</span>
+<span class="linenos">146</span><span class="p">{</span>
+<span class="linenos">147</span><span class="w">    </span><span class="n">matrix_t</span><span class="w"> </span><span class="n">stateSnapshots</span><span class="p">;</span>
+<span class="linenos">148</span><span class="w">    </span><span class="n">matrix_t</span><span class="w"> </span><span class="n">rhsSnapshots</span><span class="p">;</span>
+<span class="linenos">149</span><span class="p">};</span>
+<span class="linenos">150</span>
+<span class="linenos">151</span><span class="cm">/**</span>
+<span class="linenos">152</span><span class="cm"> * Building and running the FOM doesn&#39;t require any Pressio utilities.</span>
+<span class="linenos">153</span><span class="cm"> * For this example, we&#39;ll define a simple Forward Euler time integrator</span>
+<span class="linenos">154</span><span class="cm"> * to advance the FOM in time and collect the snapshots that will be used</span>
+<span class="linenos">155</span><span class="cm"> * to build the ROM with Pressio.</span>
+<span class="linenos">156</span><span class="cm"> */</span>
+<span class="linenos">157</span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">&gt;</span>
+<span class="linenos">158</span><span class="n">SnapshotSet</span><span class="w"> </span><span class="n">runFOM</span><span class="p">(</span><span class="w"> </span><span class="n">FomSystem</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">::</span><span class="n">time_type</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">159</span><span class="p">{</span>
+<span class="linenos">160</span><span class="w">    </span><span class="c1">// We will store each snapshot vector in a std::vector for now</span>
+<span class="linenos">161</span><span class="w">    </span><span class="c1">// For a typical ROM, we would only need the state snapshots. However,</span>
+<span class="linenos">162</span><span class="w">    </span><span class="c1">// for hyper-reduction, we will also need snapshots of the RHS.</span>
+<span class="linenos">163</span><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">stateSnaps</span><span class="p">;</span>
+<span class="linenos">164</span><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">rhsSnaps</span><span class="p">;</span>
+<span class="linenos">165</span>
+<span class="linenos">166</span><span class="w">    </span><span class="c1">// Compute the initial condition</span>
+<span class="linenos">167</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">computeInitialCondition</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="p">,</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">fom</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">168</span>
+<span class="linenos">169</span><span class="w">    </span><span class="c1">// Time integration loop (using Forward Euler)</span>
+<span class="linenos">170</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">startTime</span><span class="p">;</span>
+<span class="linenos">171</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numSteps</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">step</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">172</span><span class="w">        </span><span class="n">stateSnaps</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="p">);</span><span class="w">   </span><span class="c1">// Store state snapshot</span>
+<span class="linenos">173</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fom</span><span class="p">.</span><span class="n">createRhs</span><span class="p">();</span><span class="w">    </span><span class="c1">// Create RHS vector</span>
+<span class="linenos">174</span><span class="w">        </span><span class="n">fom</span><span class="p">.</span><span class="n">rhs</span><span class="p">(</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">);</span><span class="w">          </span><span class="c1">// Compute RHS</span>
+<span class="linenos">175</span><span class="w">        </span><span class="n">rhsSnaps</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">);</span><span class="w">     </span><span class="c1">// Store RHS snapshot</span>
+<span class="linenos">176</span><span class="w">        </span><span class="n">u</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w">                 </span><span class="c1">// Update solution</span>
+<span class="linenos">177</span><span class="w">        </span><span class="n">t</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">dt</span><span class="p">;</span><span class="w">                     </span><span class="c1">// Advance time</span>
+<span class="linenos">178</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">179</span>
+<span class="linenos">180</span><span class="w">    </span><span class="c1">// Convert our vector of snapshot vectors into matrices</span>
+<span class="linenos">181</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">numSnapshots</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stateSnaps</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos">182</span><span class="w">    </span><span class="n">matrix_t</span><span class="w"> </span><span class="nf">stateMatrix</span><span class="p">(</span><span class="w"> </span><span class="n">fom</span><span class="p">.</span><span class="n">N</span><span class="p">(),</span><span class="w"> </span><span class="n">numSnapshots</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">183</span><span class="w">    </span><span class="n">matrix_t</span><span class="w"> </span><span class="nf">rhsMatrix</span><span class="p">(</span><span class="w"> </span><span class="n">fom</span><span class="p">.</span><span class="n">N</span><span class="p">(),</span><span class="w"> </span><span class="n">numSnapshots</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">184</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numSnapshots</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">185</span><span class="w">        </span><span class="n">stateMatrix</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stateSnaps</span><span class="p">[</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">];</span>
+<span class="linenos">186</span><span class="w">        </span><span class="n">rhsMatrix</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">)</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">rhsSnaps</span><span class="p">[</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="p">];</span>
+<span class="linenos">187</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">188</span>
+<span class="linenos">189</span><span class="w">    </span><span class="c1">// Return both snapshot matrices</span>
+<span class="linenos">190</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">SnapshotSet</span><span class="p">{</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">stateMatrix</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">rhsMatrix</span><span class="p">)</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos">191</span><span class="p">}</span>
+<span class="linenos">192</span>
+<span class="linenos">193</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">194</span><span class="c1">// Step 3: Build the ROM from the snapshot matrix</span>
+<span class="linenos">195</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">196</span>
+<span class="linenos">197</span><span class="cm">/**</span>
+<span class="linenos">198</span><span class="cm"> * Now we use the Pressio ecosystem to construct a ROM representation</span>
+<span class="linenos">199</span><span class="cm"> * with the snapshot matrix. As before, there are various APIs that we can meet</span>
+<span class="linenos">200</span><span class="cm"> * to use different types of ROMs. We&#39;ll use a basic Galerkin ROM here.</span>
+<span class="linenos">201</span><span class="cm"> */</span>
+<span class="linenos">202</span>
+<span class="linenos">203</span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">&gt;</span>
+<span class="linenos">204</span><span class="k">auto</span><span class="w"> </span><span class="n">buildStandardGalerkinROM</span><span class="p">(</span><span class="w"> </span><span class="n">FomSystem</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">stepScheme</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">trialSpace</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">205</span><span class="p">{</span>
+<span class="linenos">206</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">galerkin</span><span class="o">::</span><span class="n">create_unsteady_explicit_problem</span><span class="p">(</span>
+<span class="linenos">207</span><span class="w">        </span><span class="n">stepScheme</span><span class="p">,</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span>
+<span class="linenos">208</span><span class="w">    </span><span class="p">);</span>
+<span class="linenos">209</span><span class="p">}</span>
+<span class="linenos">210</span>
+<span class="linenos">211</span><span class="cm">/**</span>
+<span class="linenos">212</span><span class="cm"> * Hyper-reduced ROMs do not evaluate the full RHS at every time step.</span>
+<span class="linenos">213</span><span class="cm"> * Instead, they sample the RHS at selected indices and use a</span>
+<span class="linenos">214</span><span class="cm"> * projection to approximate the reduced RHS. This can greatly</span>
+<span class="linenos">215</span><span class="cm"> * reduce the computational cost of evaluating the ROM, especially</span>
+<span class="linenos">216</span><span class="cm"> * when the FOM is large and the RHS evaluation is expensive.</span>
+<span class="linenos">217</span><span class="cm"> *</span>
+<span class="linenos">218</span><span class="cm"> * However, there are trade-offs in accuracy, as you&#39;ll see.</span>
+<span class="linenos">219</span><span class="cm"> */</span>
+<span class="linenos">220</span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">&gt;</span>
+<span class="linenos">221</span><span class="k">auto</span><span class="w"> </span><span class="n">buildHyperReducedGalerkinROM</span><span class="p">(</span><span class="w"> </span><span class="n">FomSystem</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">stepScheme</span><span class="p">,</span>
+<span class="linenos">222</span><span class="w">                                   </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">hyperReducer</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">223</span><span class="p">{</span>
+<span class="linenos">224</span><span class="w">    </span><span class="c1">// Build the hyperreduced Galerkin ROM by passing the hyper-reducer</span>
+<span class="linenos">225</span><span class="w">    </span><span class="c1">// functor to the ROM factory function.</span>
+<span class="linenos">226</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pressio</span><span class="o">::</span><span class="n">rom</span><span class="o">::</span><span class="n">galerkin</span><span class="o">::</span><span class="n">create_unsteady_explicit_problem</span><span class="p">(</span>
+<span class="linenos">227</span><span class="w">        </span><span class="n">stepScheme</span><span class="p">,</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="n">hyperReducer</span>
+<span class="linenos">228</span><span class="w">    </span><span class="p">);</span>
+<span class="linenos">229</span><span class="p">}</span>
+<span class="linenos">230</span>
+<span class="linenos">231</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">232</span><span class="c1">// Step 4: Run the ROM with trajectory capture</span>
+<span class="linenos">233</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">234</span><span class="cm">/**</span>
+<span class="linenos">235</span><span class="cm"> * To run the ROM, we will define a simple observer that captures</span>
+<span class="linenos">236</span><span class="cm"> * the reduced state at each time step and reconstructs the full-order</span>
+<span class="linenos">237</span><span class="cm"> * state using the trial space. This allows us to capture the full</span>
+<span class="linenos">238</span><span class="cm"> * trajectory of the ROM solution for later analysis.</span>
+<span class="linenos">239</span><span class="cm"> */</span>
+<span class="linenos">240</span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">&gt;</span>
+<span class="linenos">241</span><span class="k">auto</span><span class="w"> </span><span class="n">runROM</span><span class="p">(</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rom</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">reducedState</span><span class="p">,</span>
+<span class="linenos">242</span><span class="w">             </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">::</span><span class="n">time_type</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span>
+<span class="linenos">243</span><span class="w">             </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector_t</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">trajectory</span>
+<span class="linenos">244</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">245</span><span class="w">    </span><span class="c1">// Define the ODE time stepping policy</span>
+<span class="linenos">246</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">steps_fixed_dt</span><span class="p">(</span>
+<span class="linenos">247</span><span class="w">        </span><span class="n">startTime</span><span class="p">,</span>
+<span class="linenos">248</span><span class="w">        </span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">StepCount</span><span class="p">(</span><span class="w"> </span><span class="n">numSteps</span><span class="w"> </span><span class="p">),</span>
+<span class="linenos">249</span><span class="w">        </span><span class="n">dt</span>
+<span class="linenos">250</span><span class="w">    </span><span class="p">);</span>
+<span class="linenos">251</span>
+<span class="linenos">252</span><span class="w">    </span><span class="cm">/**</span>
+<span class="linenos">253</span><span class="cm">     * In Pressio, observers are functors that are called at each time step</span>
+<span class="linenos">254</span><span class="cm">     * during time integration. Here, we define an observer that captures</span>
+<span class="linenos">255</span><span class="cm">     * the full-order state at each time step by reconstructing it from</span>
+<span class="linenos">256</span><span class="cm">     * the reduced state using the trial space.</span>
+<span class="linenos">257</span><span class="cm">     *</span>
+<span class="linenos">258</span><span class="cm">     * Observers must meet a specific API defined by Pressio. Namely, they</span>
+<span class="linenos">259</span><span class="cm">     * must implement the operator() with the signature shown in helpers.h.</span>
+<span class="linenos">260</span><span class="cm">     */</span>
+<span class="linenos">261</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">observer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RomObserver</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="p">,</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">trialSpace</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">trajectory</span><span class="p">,</span><span class="w"> </span><span class="n">trialSpace</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">262</span>
+<span class="linenos">263</span><span class="w">    </span><span class="c1">// Run the ROM time integration with observer</span>
+<span class="linenos">264</span><span class="w">    </span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">advance</span><span class="p">(</span><span class="w"> </span><span class="n">rom</span><span class="p">,</span><span class="w"> </span><span class="n">reducedState</span><span class="p">,</span><span class="w"> </span><span class="n">policy</span><span class="p">,</span><span class="w"> </span><span class="n">observer</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">265</span>
+<span class="linenos">266</span><span class="w">    </span><span class="cm">/**</span>
+<span class="linenos">267</span><span class="cm">     * At this point, reducedState contains the ROM solution at the</span>
+<span class="linenos">268</span><span class="cm">     * final timestep. We just have to reconstruct the full-order</span>
+<span class="linenos">269</span><span class="cm">     * solution from the time reduced coordinates via the trial subspace.</span>
+<span class="linenos">270</span><span class="cm">     */</span>
+<span class="linenos">271</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">romSolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trialSpace</span><span class="p">.</span><span class="n">createFullStateFromReducedState</span><span class="p">(</span><span class="w"> </span><span class="n">reducedState</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">272</span>
+<span class="linenos">273</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">romSolution</span><span class="p">;</span>
+<span class="linenos">274</span><span class="p">}</span>
+<span class="linenos">275</span>
+<span class="linenos">276</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">277</span><span class="c1">// Step 5: Compare FOM and ROM solutions</span>
+<span class="linenos">278</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">279</span>
+<span class="linenos">280</span><span class="cm">/**</span>
+<span class="linenos">281</span><span class="cm"> * To compare the FOM and ROM solutions, we can compute the relative error</span>
+<span class="linenos">282</span><span class="cm"> * between the two solution vectors at the final timestep.</span>
+<span class="linenos">283</span><span class="cm"> */</span>
+<span class="linenos">284</span><span class="kt">double</span><span class="w"> </span><span class="n">compareFomAndRom</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">matrix_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fomSolution</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">matrix_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">romSolution</span><span class="w"> </span><span class="p">)</span>
+<span class="linenos">285</span><span class="p">{</span>
+<span class="linenos">286</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">fomSolution</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">romSolution</span><span class="w"> </span><span class="p">).</span><span class="n">norm</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">fomSolution</span><span class="p">.</span><span class="n">norm</span><span class="p">();</span>
+<span class="linenos">287</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">error</span><span class="p">;</span>
+<span class="linenos">288</span><span class="p">}</span>
+<span class="linenos">289</span>
+<span class="linenos">290</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">291</span><span class="c1">// Main driver</span>
+<span class="linenos">292</span><span class="c1">///////////////////////////////////////////////////////////////////////////////</span>
+<span class="linenos">293</span>
+<span class="linenos">294</span><span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">295</span><span class="w">    </span><span class="c1">// Initialize the logger so we can see Pressio output</span>
+<span class="linenos">296</span><span class="w">    </span><span class="c1">// Change the log level to &quot;debug&quot; for more information</span>
+<span class="linenos">297</span><span class="w">    </span><span class="n">PRESSIOLOG_INITIALIZE</span><span class="p">(</span><span class="n">pressiolog</span><span class="o">::</span><span class="n">LogLevel</span><span class="o">::</span><span class="n">info</span><span class="p">);</span>
+<span class="linenos">298</span>
+<span class="linenos">299</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">FomSystem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Burgers1dFom</span><span class="p">;</span>
+<span class="linenos">300</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">FomSystem</span><span class="o">::</span><span class="n">time_type</span><span class="p">;</span>
+<span class="linenos">301</span>
+<span class="linenos">302</span><span class="w">    </span><span class="c1">// 1. Create the FOM</span>
+<span class="linenos">303</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w">          </span><span class="c1">// Number of spatial points</span>
+<span class="linenos">304</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">domainLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w">    </span><span class="c1">// Domain length</span>
+<span class="linenos">305</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">viscosity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.01</span><span class="p">;</span><span class="w">      </span><span class="c1">// Viscosity parameter</span>
+<span class="linenos">306</span><span class="w">    </span><span class="n">FomSystem</span><span class="w"> </span><span class="nf">fom</span><span class="p">(</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">domainLength</span><span class="p">,</span><span class="w"> </span><span class="n">viscosity</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">307</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;1. Created FOM with N = {}, dx = {}, nu = {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span><span class="p">.</span><span class="n">N</span><span class="p">(),</span><span class="w"> </span><span class="n">fom</span><span class="p">.</span><span class="n">dx</span><span class="p">(),</span><span class="w"> </span><span class="n">fom</span><span class="p">.</span><span class="n">nu</span><span class="p">()</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">308</span>
+<span class="linenos">309</span><span class="w">    </span><span class="c1">// 2. Run the FOM to generate a snapshot matrix</span>
+<span class="linenos">310</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">dt</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mf">0.001</span><span class="p">;</span>
+<span class="linenos">311</span><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numSteps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+<span class="linenos">312</span><span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">startTime</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="linenos">313</span><span class="w">    </span><span class="n">SnapshotSet</span><span class="w"> </span><span class="n">snapshots</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runFOM</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">314</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;2. Generated snapshot matrix with {} snapshots&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">315</span>
+<span class="linenos">316</span><span class="w">    </span><span class="c1">// 3 and 4. Build and run the ROM(s)</span>
+<span class="linenos">317</span>
+<span class="linenos">318</span><span class="w">    </span><span class="cm">/**</span>
+<span class="linenos">319</span><span class="cm">     * This tutorial covers both standard and hyper-reduced ROMs.</span>
+<span class="linenos">320</span><span class="cm">     * These variables below will hold the trajectories and solutions,</span>
+<span class="linenos">321</span><span class="cm">     * which we can analyze at the end.</span>
+<span class="linenos">322</span><span class="cm">     */</span>
+<span class="linenos">323</span><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">standardRomTrajectory</span><span class="p">;</span>
+<span class="linenos">324</span><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">hypredRomTrajectory</span><span class="p">;</span>
+<span class="linenos">325</span><span class="w">    </span><span class="n">matrix_t</span><span class="w"> </span><span class="n">standardSolution</span><span class="p">;</span>
+<span class="linenos">326</span><span class="w">    </span><span class="n">matrix_t</span><span class="w"> </span><span class="n">hypredSolution</span><span class="p">;</span>
+<span class="linenos">327</span>
+<span class="linenos">328</span><span class="w">    </span><span class="c1">// Start with the standard ROM</span>
+<span class="linenos">329</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Standard ROM:&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">330</span><span class="w">    </span><span class="p">{</span>
+<span class="linenos">331</span><span class="w">        </span><span class="c1">// 3. Build the ROM</span>
+<span class="linenos">332</span>
+<span class="linenos">333</span><span class="w">        </span><span class="c1">// Build the state trial space (Phi) from state snapshots</span>
+<span class="linenos">334</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">standardTrialSpace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">snapshots_to_trial_space</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="p">,</span><span class="w"> </span><span class="n">matrix_t</span><span class="p">,</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">335</span><span class="w">        </span><span class="c1">// Create the initial reduced state by projecting the FOM initial condition</span>
+<span class="linenos">336</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">standardReducedState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trial_space_to_reduced_state</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="p">,</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">standardTrialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">337</span><span class="w">        </span><span class="c1">// Select the time integration scheme with Pressio</span>
+<span class="linenos">338</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">stepScheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
+<span class="linenos">339</span><span class="w">        </span><span class="c1">// Build the standard ROM</span>
+<span class="linenos">340</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">standardRom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buildStandardGalerkinROM</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="n">stepScheme</span><span class="p">,</span><span class="w"> </span><span class="n">standardTrialSpace</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">341</span><span class="w">        </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;  3. Built standard Galerkin ROM&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">342</span>
+<span class="linenos">343</span><span class="w">        </span><span class="c1">// 4. Run the ROM and capture the trajectory</span>
+<span class="linenos">344</span><span class="w">        </span><span class="n">standardSolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runROM</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">standardRom</span><span class="p">,</span><span class="w"> </span><span class="n">standardTrialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">standardReducedState</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">standardRomTrajectory</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">345</span><span class="w">        </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;  4. Ran standard ROM and captured trajectory&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">346</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">347</span>
+<span class="linenos">348</span><span class="w">    </span><span class="c1">// Follow a similar process for hyper-reduced ROM</span>
+<span class="linenos">349</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;Hyper-reduced ROM:&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">350</span><span class="w">    </span><span class="p">{</span>
+<span class="linenos">351</span><span class="w">        </span><span class="c1">// 3. Build the ROM</span>
+<span class="linenos">352</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hypredTrialSpace</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">snapshots_to_trial_space</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="p">,</span><span class="w"> </span><span class="n">matrix_t</span><span class="p">,</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">353</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hypredReducedState</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trial_space_to_reduced_state</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="p">,</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">hypredTrialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">fom</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">354</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">stepScheme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pressio</span><span class="o">::</span><span class="n">ode</span><span class="o">::</span><span class="n">StepScheme</span><span class="o">::</span><span class="n">ForwardEuler</span><span class="p">;</span>
+<span class="linenos">355</span><span class="w">        </span><span class="cm">/**</span>
+<span class="linenos">356</span><span class="cm">         * Here, we build the hyper-reducer using the RHS snapshot matrix</span>
+<span class="linenos">357</span><span class="cm">         * and the trial space. The hyper-reducer is a functor that will</span>
+<span class="linenos">358</span><span class="cm">         * be used by the ROM to compute the reduced RHS from sampled FOM RHSs.</span>
+<span class="linenos">359</span><span class="cm">         */</span>
+<span class="linenos">360</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hyperReducer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buildHyperReducer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="p">,</span><span class="w"> </span><span class="n">matrix_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">rhsSnapshots</span><span class="p">,</span><span class="w"> </span><span class="n">hypredTrialSpace</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">361</span><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">hypredRom</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">buildHyperReducedGalerkinROM</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">fom</span><span class="p">,</span><span class="w"> </span><span class="n">stepScheme</span><span class="p">,</span><span class="w"> </span><span class="n">hypredTrialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">hyperReducer</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">362</span><span class="w">        </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;  3. Built hyper-reduced Galerkin ROM&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">363</span>
+<span class="linenos">364</span><span class="w">        </span><span class="c1">// 4. Run the ROM and capture the trajectory</span>
+<span class="linenos">365</span><span class="w">        </span><span class="n">hypredSolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runROM</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FomSystem</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">hypredRom</span><span class="p">,</span><span class="w"> </span><span class="n">hypredTrialSpace</span><span class="p">,</span><span class="w"> </span><span class="n">hypredReducedState</span><span class="p">,</span><span class="w"> </span><span class="n">startTime</span><span class="p">,</span><span class="w"> </span><span class="n">numSteps</span><span class="p">,</span><span class="w"> </span><span class="n">dt</span><span class="p">,</span><span class="w"> </span><span class="n">hypredRomTrajectory</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">366</span><span class="w">        </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;  4. Ran hyper-reduced ROM and captured trajectory&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">367</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">368</span>
+<span class="linenos">369</span><span class="w">    </span><span class="c1">// 5. Compare ROM solution against FOM solution (the last snapshot)</span>
+<span class="linenos">370</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fomSolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">371</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">romError</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compareFomAndRom</span><span class="p">(</span><span class="w"> </span><span class="n">fomSolution</span><span class="p">,</span><span class="w"> </span><span class="n">standardSolution</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">372</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;5. Relative error between FOM and standard ROM: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">romError</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">373</span><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">hypredError</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compareFomAndRom</span><span class="p">(</span><span class="w"> </span><span class="n">fomSolution</span><span class="p">,</span><span class="w"> </span><span class="n">hypredSolution</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">374</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;   Relative error between FOM and hyper-reduced ROM: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">hypredError</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">375</span>
+<span class="linenos">376</span><span class="w">    </span><span class="c1">// 6. Write trajectories to CSV files in output directory</span>
+<span class="linenos">377</span><span class="w">    </span><span class="c1">// Get FOM trajectory from snapshots</span>
+<span class="linenos">378</span><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fomTrajectory</span><span class="p">;</span>
+<span class="linenos">379</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">380</span><span class="w">        </span><span class="n">fomTrajectory</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">snapshots</span><span class="p">.</span><span class="n">stateSnapshots</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
+<span class="linenos">381</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">382</span><span class="w">    </span><span class="n">writeTrajectoryToCSV</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;output&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fom_trajectory.csv&quot;</span><span class="p">,</span><span class="w">         </span><span class="n">fomTrajectory</span><span class="p">);</span>
+<span class="linenos">383</span><span class="w">    </span><span class="n">writeTrajectoryToCSV</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;output&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;standard_rom_trajectory.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">standardRomTrajectory</span><span class="p">);</span>
+<span class="linenos">384</span><span class="w">    </span><span class="n">writeTrajectoryToCSV</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector_t</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;output&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hypred_rom_trajectory.csv&quot;</span><span class="p">,</span><span class="w">  </span><span class="n">hypredRomTrajectory</span><span class="p">);</span>
+<span class="linenos">385</span><span class="w">    </span><span class="n">PRESSIOLOG_INFO</span><span class="p">(</span><span class="w"> </span><span class="s">&quot;6. Wrote trajectories to output/{fom,default_rom,hypred_rom}_trajectory.csv&quot;</span><span class="w"> </span><span class="p">);</span>
+<span class="linenos">386</span>
+<span class="linenos">387</span><span class="w">    </span><span class="c1">// Finalize the logger</span>
+<span class="linenos">388</span><span class="w">    </span><span class="n">PRESSIOLOG_FINALIZE</span><span class="p">();</span>
+<span class="linenos">389</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">390</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#top-of-page"><span class="std std-ref">Go to top</span></a></p>
 </section>
 </section>
 
@@ -616,7 +1014,7 @@ is computationally cheaper to run, especially for large-scale systems.</p>
             
             <a href="https://github.com/pradyunsg/furo">Furo</a>
             <div class="last-updated">
-              Last updated on Feb 09, 2026</div>
+              Last updated on Feb 10, 2026</div>
           </div>
           <div class="right-details">
             
@@ -645,6 +1043,7 @@ is computationally cheaper to run, especially for large-scale systems.</p>
 <li><a class="reference internal" href="#step-4-run-the-rom">Step 4: Run the ROM</a></li>
 <li><a class="reference internal" href="#step-5-compare-rom-and-fom-solutions">Step 5: Compare ROM and FOM Solutions</a></li>
 <li><a class="reference internal" href="#step-6-analyze-the-results">Step 6: Analyze the Results</a></li>
+<li><a class="reference internal" href="#full-source-file">Full Source File</a></li>
 </ul>
 </li>
 </ul>
